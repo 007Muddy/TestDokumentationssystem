@@ -1,0 +1,14 @@
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Dokumentationssystem.Views.InspectionListPage"
+             Title="Inspections">
+
+    <VerticalStackLayout Padding="20" Spacing="10">
+        <Label Text="Your Inspections" FontSize="24" HorizontalOptions="Center" />
+        <Button Text="Create New Inspection" Clicked="OnCreateInspectionClicked" />
+        <!-- ListView for displaying existing inspections -->
+        <ListView x:Name="InspectionListView">
+            <!-- Define ListView ItemTemplate here -->
+        </ListView>
+    </VerticalStackLayout>
+</ContentPage>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Dokumentationssystem.Views.StartPage"
+             Title="Start Page">
+
+    <VerticalStackLayout Padding="30" Spacing="20" VerticalOptions="Center">
+        <Label 
+            Text="Welcome! Please choose an option:"
+            FontSize="24"
+            HorizontalOptions="Center" />
+
+        <!-- Login Button -->
+        <Button Text="Login"
+                Clicked="OnLoginClicked"
+                HorizontalOptions="Center" />
+
+        <!-- Register Button -->
+        <Button Text="Register"
+                Clicked="OnRegisterClicked"
+                HorizontalOptions="Center" />
+    </VerticalStackLayout>
+
+</ContentPage>

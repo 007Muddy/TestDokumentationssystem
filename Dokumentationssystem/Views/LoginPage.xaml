@@ -1,0 +1,24 @@
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Dokumentationssystem.Views.LoginPage"
+             Title="Login">
+    <VerticalStackLayout>
+        <Label 
+            Text="Login"
+            FontSize="24"
+            HorizontalOptions="Center" />
+
+        <!-- Username Entry -->
+        <Entry x:Name="UsernameEntry" 
+               Placeholder="Enter Username" />
+
+        <!-- Password Entry -->
+        <Entry x:Name="PasswordEntry" 
+               Placeholder="Enter Password" 
+               IsPassword="True" />
+
+        <!-- Login Button -->
+        <Button Text="Login"
+                Clicked="OnLoginClicked" />
+    </VerticalStackLayout>
+</ContentPage>
