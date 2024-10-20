@@ -1,6 +1,7 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using WebApplicationApi.Model;
 
 namespace WebApplicationApi.Data
 {
@@ -10,5 +11,9 @@ namespace WebApplicationApi.Data
             : base(options)
         {
         }
+
+        public DbSet<Inspection> Inspections { get; set; }  // Add Inspections DbSet
+        public DbSet<LoginModel> LoginModels { get; set; }
+
     }
 }

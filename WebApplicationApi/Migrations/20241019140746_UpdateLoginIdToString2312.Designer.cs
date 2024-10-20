@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebApplicationApi.Data;
 
@@ -10,9 +11,11 @@ using WebApplicationApi.Data;
 namespace WebApplicationApi.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241019140746_UpdateLoginIdToString2312")]
+    partial class UpdateLoginIdToString2312
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.10");
@@ -219,9 +222,6 @@ namespace WebApplicationApi.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("TEXT");
-
                     b.Property<DateTime>("Date")
                         .HasColumnType("TEXT");
 
@@ -229,7 +229,18 @@ namespace WebApplicationApi.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("LoginId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("LoginModelId")
+                        .HasColumnType("INTEGER");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("LoginId");
+
+                    b.HasIndex("LoginModelId");
 
                     b.ToTable("Inspections");
                 });
@@ -302,6 +313,26 @@ namespace WebApplicationApi.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("WebApplicationApi.Model.Inspection", b =>
+                {
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("LoginId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WebApplicationApi.Model.LoginModel", null)
+                        .WithMany("Inspections")
+                        .HasForeignKey("LoginModelId");
+
+                    b.Navigation("CreatedBy");
+                });
+
+            modelBuilder.Entity("WebApplicationApi.Model.LoginModel", b =>
+                {
+                    b.Navigation("Inspections");
                 });
 #pragma warning restore 612, 618
         }

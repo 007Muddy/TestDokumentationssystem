@@ -1,13 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Dokumentationssystem.Views.CreateInspectionPage"
              Title="Create Inspection">
-
-    <VerticalStackLayout Padding="20" Spacing="15">
-        <Label Text="Create a New Inspection" FontSize="24" HorizontalOptions="Center" />
+    <VerticalStackLayout Padding="30">
         <Entry x:Name="InspectionNameEntry" Placeholder="Inspection Name" />
         <Entry x:Name="AddressEntry" Placeholder="Address" />
         <DatePicker x:Name="InspectionDatePicker" />
-        <Button Text="Save Inspection" Clicked="OnSaveInspectionClicked" />
+        <Button Text="Create Inspection" Clicked="OnCreateInspectionClicked" />
     </VerticalStackLayout>
 </ContentPage>

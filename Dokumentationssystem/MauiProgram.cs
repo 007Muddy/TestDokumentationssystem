@@ -22,7 +22,7 @@ namespace Dokumentationssystem
             builder.Services.AddSingleton<StartPage>();
             builder.Services.AddSingleton<CreateInspectionPage>();
             builder.Services.AddSingleton<InspectionListPage>();
-            builder.Services.AddSingleton<PhotoRatingPage>();
+
 
 
 

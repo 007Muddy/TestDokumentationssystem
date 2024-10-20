@@ -35,9 +35,13 @@ builder.Services.AddAuthentication(options =>
         ValidateIssuerSigningKey = true,
         ValidIssuer = builder.Configuration["Jwt:Issuer"],
         ValidAudience = builder.Configuration["Jwt:Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
+        ClockSkew = TimeSpan.Zero // Optional: to avoid issues with slight clock skew
     };
 });
+
+
+
 
 // Add Swagger services
 builder.Services.AddEndpointsApiExplorer();
@@ -53,6 +57,7 @@ app.UseCors(policy => policy
     .AllowAnyHeader()
 );
 
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -62,8 +67,9 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseAuthentication();
+app.UseAuthentication();  
 app.UseAuthorization();
+
 
 app.MapControllers();
 

@@ -6,8 +6,6 @@ using System.Security.Claims;
 using System.Text;
 using WebApplicationApi.Model;
 
-
-
 namespace WebApplicationApi.Controllers
 {
     [Route("api/[controller]")]
@@ -24,18 +22,22 @@ namespace WebApplicationApi.Controllers
             _signInManager = signInManager;
             _configuration = configuration;
         }
+
+        // Fetches all users from the UserManager
         [HttpGet("users")]
         public async Task<IActionResult> GetUsers()
         {
-            var users = _userManager.Users.ToList(); // Fetches all users from the UserManager
+            var users = _userManager.Users.ToList();
             var userList = users.Select(user => new
             {
                 user.UserName,
                 user.Email
-            }).ToList(); // Selects only the necessary fields (username and email) for each user
+            }).ToList();
 
-            return Ok(userList); // Returns the list of users
+            return Ok(userList);
         }
+
+        // Register a new user and generate a JWT token
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterModel model)
         {
@@ -46,7 +48,9 @@ namespace WebApplicationApi.Controllers
 
                 if (result.Succeeded)
                 {
-                    return Ok(new { Result = "User registered successfully!" });
+                    // Generate JWT Token after successful registration
+                    var token = GenerateJwtToken(user);
+                    return Ok(new { Token = token, Result = "User registered successfully!" });
                 }
                 else
                 {
@@ -57,6 +61,7 @@ namespace WebApplicationApi.Controllers
             return BadRequest(ModelState);
         }
 
+        // Log in user and check for valid token
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginModel model)
         {
@@ -67,7 +72,8 @@ namespace WebApplicationApi.Controllers
                 if (result.Succeeded)
                 {
                     var user = await _userManager.FindByNameAsync(model.Username);
-                    var token = GenerateJwtToken(user);
+                    var token = GenerateJwtToken(user);  // Generate JWT token
+
                     return Ok(new { Token = token });
                 }
                 else
@@ -79,13 +85,17 @@ namespace WebApplicationApi.Controllers
             return BadRequest(ModelState);
         }
 
+
+
+        // Generate JWT Token
         private string GenerateJwtToken(IdentityUser user)
         {
             var claims = new[]
-            {
-            new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-        };
+  {
+    new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
+    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+    new Claim(ClaimTypes.NameIdentifier, user.Id) // Add the UserId as a claim
+};
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -94,11 +104,13 @@ namespace WebApplicationApi.Controllers
                 issuer: _configuration["Jwt:Issuer"],
                 audience: _configuration["Jwt:Audience"],
                 claims: claims,
-                expires: DateTime.Now.AddMinutes(Convert.ToDouble(_configuration["Jwt:ExpiryMinutes"])),
+                expires: DateTime.Now.AddMinutes(30),
                 signingCredentials: creds
             );
 
             return new JwtSecurityTokenHandler().WriteToken(token);
+
         }
+
     }
 }

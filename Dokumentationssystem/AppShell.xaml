@@ -6,4 +6,5 @@
 
     <!-- Register the RegistrationPage -->
     <ShellContent Title="Registration" ContentTemplate="{DataTemplate views:StartPage}" />
+
 </Shell>
