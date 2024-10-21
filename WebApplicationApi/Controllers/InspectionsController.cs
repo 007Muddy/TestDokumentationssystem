@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using WebApplicationApi.Data;
 using WebApplicationApi.Model;
 
@@ -17,18 +19,29 @@ namespace WebApplicationApi.Controllers
             _context = context;
         }
 
-        // GET: api/inspections - Fetch all inspections
         [HttpGet]
-    
+        [Authorize]
         public async Task<IActionResult> GetInspections()
         {
-            var inspections = await _context.Inspections.ToListAsync();
+            var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized(new { message = "User is not authenticated." });
+            }
+
+            var inspections = await _context.Inspections
+                .Where(i => i.CreatedBy == userId)  // Fetch only the inspections created by the logged-in user
+                .ToListAsync();
+
             return Ok(inspections);
         }
 
+
+
         // GET: api/inspections/{id} - Fetch a specific inspection by ID
         [HttpGet("{id}")]
-       
+
         public async Task<IActionResult> GetInspection(int id)
         {
             var inspection = await _context.Inspections.FindAsync(id);
@@ -42,19 +55,19 @@ namespace WebApplicationApi.Controllers
 
 
         [HttpPost("createinspection")]
-        //[Authorize]  // Ensure only authenticated users can access this method
+        [Authorize]
         public async Task<IActionResult> CreateInspection([FromBody] Inspection model)
         {
-            // Get the logged-in user's username from the JWT claims
-            var userName = User?.Identity?.Name;
+            var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
 
-            //if (string.IsNullOrEmpty(userName))
-            //{
-            //    return Unauthorized(new { message = "User is not authenticated." });
-            //}
+            Console.WriteLine($"Authenticated User ID: {userId}");
 
-            // Assign the created inspection to the logged-in user
-            model.CreatedBy = userName;
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized(new { message = "User is not authenticated." });
+            }
+
+            model.CreatedBy = userId;  // Save the User ID
             _context.Inspections.Add(model);
             await _context.SaveChangesAsync();
 
@@ -62,12 +75,9 @@ namespace WebApplicationApi.Controllers
         }
 
 
-
-
-
         // PUT: api/inspections/{id} - Update an existing inspection
         [HttpPut("{id}")]
-      
+
         public async Task<IActionResult> UpdateInspection(int id, [FromBody] Inspection model)
         {
             var existingInspection = await _context.Inspections.FindAsync(id);
@@ -76,9 +86,10 @@ namespace WebApplicationApi.Controllers
                 return NotFound();
             }
 
-            existingInspection.InspectionName   = model.InspectionName;
+            existingInspection.InspectionName = model.InspectionName;
             existingInspection.Address = model.Address;
             existingInspection.Date = model.Date;
+
 
             await _context.SaveChangesAsync();
 
@@ -87,7 +98,7 @@ namespace WebApplicationApi.Controllers
 
         // DELETE: api/inspections/{id} - Delete an inspection
         [HttpDelete("{id}")]
-       
+
         public async Task<IActionResult> DeleteInspection(int id)
         {
             var inspection = await _context.Inspections.FindAsync(id);

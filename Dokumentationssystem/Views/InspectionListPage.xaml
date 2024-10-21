@@ -7,7 +7,9 @@
         <ListView x:Name="InspectionListView" ItemTapped="OnInspectionSelected">
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <TextCell Text="{Binding Name}" Detail="{Binding Date}" />
+                    <!-- Display Inspection Name, Date, and CreatedBy -->
+                    <TextCell Text="{Binding InspectionName}" 
+                              Detail="{Binding Date, StringFormat='Date: {0:MM/dd/yyyy} | Created By: {Binding CreatedBy}'}" />
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>

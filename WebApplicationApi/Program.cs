@@ -36,27 +36,34 @@ builder.Services.AddAuthentication(options =>
         ValidIssuer = builder.Configuration["Jwt:Issuer"],
         ValidAudience = builder.Configuration["Jwt:Audience"],
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
-        ClockSkew = TimeSpan.Zero // Optional: to avoid issues with slight clock skew
+        ClockSkew = TimeSpan.Zero // Optional: minimize clock skew issues
     };
 });
 
-
-
-
-// Add Swagger services
+// Add Swagger services for API documentation
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // Build the app (this must come before `app.UseCors`)
 var app = builder.Build();
 
-// Configure CORS after building the app
-app.UseCors(policy => policy
-    .AllowAnyOrigin()
-    .AllowAnyMethod()
-    .AllowAnyHeader()
-);
-
+// Configure CORS based on environment
+if (app.Environment.IsDevelopment())
+{
+    // Allow any origin for development purposes
+    app.UseCors(policy => policy
+        .AllowAnyOrigin()
+        .AllowAnyMethod()
+        .AllowAnyHeader());
+}
+else
+{
+    // Restrict CORS in production to specific origins (replace with your allowed origins)
+    app.UseCors(policy => policy
+        .WithOrigins("https://yourproductionurl.com")
+        .AllowAnyMethod()
+        .AllowAnyHeader());
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -64,13 +71,20 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+else
+{
+    // Ensure HTTPS redirection in production
+    app.UseHttpsRedirection();
+}
 
 app.UseHttpsRedirection();
 
-app.UseAuthentication();  
+// Add Authentication and Authorization middleware in the correct order
+app.UseAuthentication();  // This should come before UseAuthorization
 app.UseAuthorization();
 
-
+// Map controllers to endpoints
 app.MapControllers();
 
+// Run the application
 app.Run();

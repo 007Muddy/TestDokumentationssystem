@@ -17,29 +17,31 @@ namespace Dokumentationssystem.Views
             base.OnAppearing();
 
             var httpClient = new HttpClient();
-
-            // Retrieve the stored JWT token
             var token = Preferences.Get("JwtToken", string.Empty);
 
             if (string.IsNullOrEmpty(token))
             {
                 await DisplayAlert("Error", "User is not authenticated. Please log in.", "OK");
-                await Navigation.PopToRootAsync(); // Navigate back to login page
+                await Navigation.PopToRootAsync();
                 return;
             }
 
-            // Set the Authorization header with the Bearer token
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-            var response = await httpClient.GetAsync("https://localhost:7250/api/inspections");
+            var response = await httpClient.GetAsync("https://localhost:7250/api/inspections"); // Use the correct API endpoint
 
             if (response.IsSuccessStatusCode)
             {
                 var json = await response.Content.ReadAsStringAsync();
-                var inspections = JsonSerializer.Deserialize<List<Inspection>>(json);
-
-                InspectionListView.ItemsSource = inspections; // Set the ListView's data source
-
+                try
+                {
+                    var inspections = JsonSerializer.Deserialize<List<Inspection>>(json);
+                    InspectionListView.ItemsSource = inspections;
+                }
+                catch (JsonException ex)
+                {
+                    await DisplayAlert("Error", $"Failed to parse response: {ex.Message}", "OK");
+                }
             }
             else
             {
