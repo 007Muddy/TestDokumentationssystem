@@ -11,7 +11,7 @@ namespace Dokumentationssystem.Models
         public class Inspection
         {
             public int Id { get; set; }
-            public string Name { get; set; }
+            public string InspectionName { get; set; }
             public string Address { get; set; }
             public DateTime Date { get; set; }
             public string CreatedBy { get; set; }

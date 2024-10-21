@@ -45,8 +45,7 @@ namespace Dokumentationssystem.Views
                     // Read the response content
                     var resultJson = await response.Content.ReadAsStringAsync();
 
-                    // Debug to verify the JSON response structure
-                    await DisplayAlert("Debug", $"Response JSON: {resultJson}", "OK");
+         
 
                     // Deserialize the response to extract the token
                     var result = JsonSerializer.Deserialize<LoginResponse>(resultJson);
@@ -58,7 +57,7 @@ namespace Dokumentationssystem.Views
                         Preferences.Set("JwtToken", result.Token);
 
                         // Show success message
-                        await DisplayAlert("Success", "Login successful!", "OK");
+                        await DisplayAlert("Success", "Login successful! welcome to our system", "OK");
 
                         // Redirect to the CreateInspectionPage after successful login
                         await Navigation.PushAsync(new CreateInspectionPage());

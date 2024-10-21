@@ -4,9 +4,19 @@
              x:Class="Dokumentationssystem.Views.CreateInspectionPage"
              Title="Create Inspection">
     <VerticalStackLayout Padding="30">
+        <!-- ReadOnly CreatedBy Entry -->
+        <Entry x:Name="CreatedByEntry" Placeholder="Created By" IsReadOnly="True" />
+
+        <!-- Inspection Name Entry -->
         <Entry x:Name="InspectionNameEntry" Placeholder="Inspection Name" />
+
+        <!-- Address Entry -->
         <Entry x:Name="AddressEntry" Placeholder="Address" />
-        <DatePicker x:Name="InspectionDatePicker" />
+
+        <!-- DatePicker (Date Only) -->
+        <DatePicker x:Name="InspectionDatePicker" Format="D" />
+
+        <!-- Button to create inspection -->
         <Button Text="Create Inspection" Clicked="OnCreateInspectionClicked" />
     </VerticalStackLayout>
 </ContentPage>
