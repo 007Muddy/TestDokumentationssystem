@@ -4,21 +4,35 @@
              x:Class="Dokumentationssystem.Views.StartPage"
              Title="Start Page">
 
-    <VerticalStackLayout Padding="30" Spacing="20" VerticalOptions="Center">
-        <Label 
-            Text="Welcome! Please choose an option:"
-            FontSize="24"
-            HorizontalOptions="Center" />
+    <Grid Padding="30" BackgroundColor="#F0F0F0" VerticalOptions="Center">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
 
-        <!-- Login Button -->
-        <Button Text="Login"
-                Clicked="OnLoginClicked"
-                HorizontalOptions="Center" />
+        <Label Text="Welcome! Please choose an option:" 
+               FontSize="24" 
+               FontAttributes="Bold" 
+               HorizontalOptions="Center" 
+               VerticalOptions="Start"
+               TextColor="#333"/>
 
-        <!-- Register Button -->
-        <Button Text="Register"
-                Clicked="OnRegisterClicked"
-                HorizontalOptions="Center" />
-    </VerticalStackLayout>
+        <VerticalStackLayout Grid.Row="1" Spacing="20" HorizontalOptions="Center" VerticalOptions="Center">
+            <Button Text="Login" 
+                    BackgroundColor="#007AFF" 
+                    TextColor="White" 
+                    CornerRadius="8"
+                    FontSize="18"
+                    WidthRequest="150"
+                    Clicked="OnLoginClicked"/>
 
+            <Button Text="Register" 
+                    BackgroundColor="#34C759" 
+                    TextColor="White" 
+                    CornerRadius="8"
+                    FontSize="18"
+                    WidthRequest="150"
+                    Clicked="OnRegisterClicked"/>
+        </VerticalStackLayout>
+    </Grid>
 </ContentPage>

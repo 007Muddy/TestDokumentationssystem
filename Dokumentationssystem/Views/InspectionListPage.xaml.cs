@@ -1,7 +1,6 @@
+using Dokumentationssystem.Models.Dokumentationssystem.Models;
 using System.Net.Http.Headers;
 using System.Text.Json;
-using Dokumentationssystem.Models.Dokumentationssystem.Models;
-using Microsoft.Maui.Storage;
 
 namespace Dokumentationssystem.Views
 {
@@ -10,49 +9,57 @@ namespace Dokumentationssystem.Views
         public InspectionListPage()
         {
             InitializeComponent();
+            LoadInspections();
         }
 
-        protected override async void OnAppearing()
+      
+
+        private async void LoadInspections()
         {
-            base.OnAppearing();
-
-            var httpClient = new HttpClient();
-            var token = Preferences.Get("JwtToken", string.Empty);
-
-            if (string.IsNullOrEmpty(token))
+            try
             {
-                await DisplayAlert("Error", "User is not authenticated. Please log in.", "OK");
-                await Navigation.PopToRootAsync();
-                return;
-            }
+                // Get the JWT token from Preferences
+                var jwtToken = Preferences.Get("JwtToken", string.Empty);
 
-            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                // Initialize HttpClient and set JWT in Authorization header
+                var httpClient = new HttpClient();
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
 
-            var response = await httpClient.GetAsync("https://localhost:7250/api/inspections"); // Use the correct API endpoint
+                // Send GET request to fetch inspections
+                var response = await httpClient.GetAsync("https://localhost:7250/api/inspections");
 
-            if (response.IsSuccessStatusCode)
-            {
-                var json = await response.Content.ReadAsStringAsync();
-                try
+                // Check if request was successful
+                if (response.IsSuccessStatusCode)
                 {
-                    var inspections = JsonSerializer.Deserialize<List<Inspection>>(json);
-                    InspectionListView.ItemsSource = inspections;
+                    var json = await response.Content.ReadAsStringAsync();
+                    var inspections = JsonSerializer.Deserialize<List<Inspection>>(json, new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    });
+
+                    // Ensure dates are set correctly and update binding
+                    foreach (var inspection in inspections)
+                    {
+                        if (inspection.Date == DateTime.MinValue)
+                        {
+                            inspection.Date = DateTime.Now;  // Set a default date or handle as needed
+                        }
+                    }
+
+                    // Bind the inspections to the CollectionView
+                    InspectionsCollectionView.ItemsSource = inspections;
                 }
-                catch (JsonException ex)
+                else
                 {
-                    await DisplayAlert("Error", $"Failed to parse response: {ex.Message}", "OK");
+                    await DisplayAlert("Error", "Failed to load inspections.", "OK");
                 }
             }
-            else
+            catch (Exception ex)
             {
-                await DisplayAlert("Error", "Failed to load inspections. Please log in again.", "OK");
+                // Handle any errors
+                await DisplayAlert("Error", $"An error occurred: {ex.Message}", "OK");
             }
         }
 
-        private async void OnInspectionSelected(object sender, ItemTappedEventArgs e)
-        {
-            var selectedInspection = (Inspection)e.Item;
-            // Navigate to inspection details page or handle selection logic
-        }
     }
 }

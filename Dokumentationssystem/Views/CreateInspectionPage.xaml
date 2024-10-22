@@ -3,20 +3,34 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Dokumentationssystem.Views.CreateInspectionPage"
              Title="Create Inspection">
-    <VerticalStackLayout Padding="30">
-        <!-- ReadOnly CreatedBy Entry -->
-        <Entry x:Name="CreatedByEntry" Placeholder="Created By" IsReadOnly="True" />
+    <Grid Padding="30" BackgroundColor="#F0F0F0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
 
-        <!-- Inspection Name Entry -->
-        <Entry x:Name="InspectionNameEntry" Placeholder="Inspection Name" />
+        <Label Text="Create New Inspection" 
+               FontSize="24" 
+               FontAttributes="Bold" 
+               HorizontalOptions="Center" 
+               VerticalOptions="Start"
+               TextColor="#333"/>
 
-        <!-- Address Entry -->
-        <Entry x:Name="AddressEntry" Placeholder="Address" />
+        <VerticalStackLayout Grid.Row="1" Spacing="15" Padding="10">
+            <Entry x:Name="CreatedByEntry" Placeholder="Created By" IsReadOnly="True" BackgroundColor="White" TextColor="Black" />
 
-        <!-- DatePicker (Date Only) -->
-        <DatePicker x:Name="InspectionDatePicker" Format="D" />
+            <Entry x:Name="InspectionNameEntry" Placeholder="Inspection Name" BackgroundColor="White"  TextColor="Black"/>
 
-        <!-- Button to create inspection -->
-        <Button Text="Create Inspection" Clicked="OnCreateInspectionClicked" />
-    </VerticalStackLayout>
+            <Entry x:Name="AddressEntry" Placeholder="Address" BackgroundColor="White" TextColor="Black" />
+
+            <DatePicker x:Name="InspectionDatePicker" Format="D" BackgroundColor="White" TextColor="Black" />
+
+            <Button Text="Create Inspection" 
+                    BackgroundColor="#007AFF" 
+                    TextColor="White" 
+                    CornerRadius="8"
+                    FontSize="18"
+                    Clicked="OnCreateInspectionClicked" />
+        </VerticalStackLayout>
+    </Grid>
 </ContentPage>

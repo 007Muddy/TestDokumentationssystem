@@ -1,24 +1,35 @@
+<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Dokumentationssystem.Views.RegistrationPage"
              Title="User Registration">
 
-    <VerticalStackLayout Padding="30" Spacing="20">
-        <Label Text="Create a New Account"
-               FontSize="24"
-               HorizontalOptions="Center" />
+    <Grid Padding="30" BackgroundColor="#F0F0F0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
 
-        <Entry x:Name="UsernameEntry"
-               Placeholder="Username" />
+        <Label Text="Create a New Account" 
+               FontSize="24" 
+               FontAttributes="Bold" 
+               HorizontalOptions="Center" 
+               VerticalOptions="Start"
+               TextColor="#333"/>
 
-        <Entry x:Name="EmailEntry"
-               Placeholder="Email" />
+        <VerticalStackLayout Grid.Row="1" Spacing="20" Padding="10">
+            <Entry x:Name="UsernameEntry" Placeholder="Username" BackgroundColor="White" TextColor="Black" />
 
-        <Entry x:Name="PasswordEntry"
-               Placeholder="Password"
-               IsPassword="True" />
+            <Entry x:Name="EmailEntry" Placeholder="Email" BackgroundColor="White" TextColor="Black" />
 
-        <Button Text="Register"
-                Clicked="OnRegisterClicked" />
-    </VerticalStackLayout>
+            <Entry x:Name="PasswordEntry" Placeholder="Password" IsPassword="True" BackgroundColor="White" TextColor="Black" />
+
+            <Button Text="Register" 
+                    BackgroundColor="#007AFF" 
+                    TextColor="White" 
+                    CornerRadius="8"
+                    FontSize="18"
+                    Clicked="OnRegisterClicked" />
+        </VerticalStackLayout>
+    </Grid>
 </ContentPage>

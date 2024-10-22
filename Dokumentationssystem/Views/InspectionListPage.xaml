@@ -1,17 +1,69 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Dokumentationssystem.Views.InspectionListPage"
              Title="Inspections">
-    <VerticalStackLayout Padding="30">
-        <ListView x:Name="InspectionListView" ItemTapped="OnInspectionSelected">
-            <ListView.ItemTemplate>
+
+    <Grid Padding="20" BackgroundColor="#F0F0F0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Page Title -->
+        <Label Text="Your Inspections" 
+               FontSize="24" 
+               FontAttributes="Bold" 
+               HorizontalOptions="Center" 
+               VerticalOptions="Start" 
+               TextColor="#333" />
+
+        <!-- CollectionView to display list of inspections -->
+        <CollectionView Grid.Row="1"
+                        x:Name="InspectionsCollectionView"
+                        VerticalOptions="FillAndExpand"
+                        HorizontalOptions="FillAndExpand"
+                        BackgroundColor="Transparent"
+                        ItemsLayout="VerticalList">
+
+            <CollectionView.ItemTemplate>
                 <DataTemplate>
-                    <!-- Display Inspection Name, Date, and CreatedBy -->
-                    <TextCell Text="{Binding InspectionName}" 
-                              Detail="{Binding Date, StringFormat='Date: {0:MM/dd/yyyy} | Created By: {Binding CreatedBy}'}" />
+                    <Frame CornerRadius="8" 
+                           BorderColor="LightGray" 
+                           Padding="15" 
+                           Margin="10" 
+                           HasShadow="True" 
+                           BackgroundColor="White">
+
+                        <VerticalStackLayout Spacing="8">
+                            <!-- Created By (Username) -->
+                            <Label 
+    Text="{Binding CreatedBy, StringFormat='Created By: {0}'}" 
+    FontAttributes="Bold" 
+    FontSize="18" 
+    TextColor="Black"/>
+
+
+                            <!-- Inspection Name -->
+                            <Label Text="{Binding InspectionName, StringFormat='Inspection name: {0}'}" 
+                                   FontSize="14" 
+                                   TextColor="Black" 
+                                   FontAttributes="Bold" />
+
+                            <!-- Address -->
+                            <Label Text="{Binding Address, StringFormat='Address: {0}'}" 
+                                   FontSize="14" 
+                                   TextColor="Black" />
+
+                            <!-- Inspection Date -->
+                            <Label Text="{Binding Date, StringFormat='{}{0:dd MMM yyyy}'}" 
+       FontSize="14" 
+       TextColor="Black"/>
+
+                        </VerticalStackLayout>
+                    </Frame>
                 </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
-    </VerticalStackLayout>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
 </ContentPage>
