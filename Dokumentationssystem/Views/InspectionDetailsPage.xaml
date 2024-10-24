@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:Dokumentationssystem.Views"
              xmlns:converters="clr-namespace:Dokumentationssystem.Converters"
-             x:Class="Dokumentationssystem.Views.InspectionDetailsPage"   
+             x:Class="Dokumentationssystem.Views.InspectionDetailsPage"
              Title="Inspection Details">
 
     <!-- Page Resources -->
@@ -52,26 +53,33 @@
 
                     <Label Text="Photos" FontSize="20" FontAttributes="Bold" TextColor="Black"/>
 
-                    <!-- CollectionView to display the photos in a grid -->
                     <CollectionView x:Name="PhotoCollectionView" 
-                                    BackgroundColor="White"
-                                    HeightRequest="350"
-                                    ItemsSource="{Binding PhotoPaths}">
+                BackgroundColor="White"
+                HeightRequest="350"
+                ItemsSource="{Binding PhotoPaths}">
                         <CollectionView.ItemsLayout>
-                            <!-- Set to Grid with 3 columns -->
-                            <GridItemsLayout Orientation="Vertical" Span="3" />
+                            <GridItemsLayout Orientation="Vertical" 
+                         Span="3" 
+                         VerticalItemSpacing="5" 
+                         HorizontalItemSpacing="5" />
                         </CollectionView.ItemsLayout>
                         <CollectionView.ItemTemplate>
                             <DataTemplate>
-                                <Frame BorderColor="Transparent" Padding="2" HasShadow="True" CornerRadius="10" BackgroundColor="White" WidthRequest="250" HeightRequest="250">
+                                <Frame BorderColor="Transparent" Padding="0" Margin="0" HasShadow="False" CornerRadius="0" BackgroundColor="White" WidthRequest="250" HeightRequest="250">
                                     <Image Source="{Binding ., Converter={StaticResource Base64ToImageConverter}}" 
-                                           HeightRequest="250" 
-                                           WidthRequest="250" 
-                                           Aspect="AspectFit" />
+                       HeightRequest="250" 
+                       WidthRequest="250" 
+                       Aspect="AspectFit">
+                                        <!-- Add TapGestureRecognizer to handle image click -->
+                                        <Image.GestureRecognizers>
+                                            <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type local:InspectionDetailsPage}}, Path=TapImageCommand}" CommandParameter="{Binding .}" />
+                                        </Image.GestureRecognizers>
+                                    </Image>
                                 </Frame>
                             </DataTemplate>
                         </CollectionView.ItemTemplate>
                     </CollectionView>
+
 
                 </VerticalStackLayout>
             </ScrollView>
