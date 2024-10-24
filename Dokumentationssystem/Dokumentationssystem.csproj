@@ -78,7 +78,7 @@
 	  <MauiXaml Update="Views\CreateInspectionPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Views\FullImagePage.xaml">
+	  <MauiXaml Update="ServiceHelper\FullImagePage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\InspectionDetailsPage.xaml">
