@@ -11,8 +11,8 @@ using WebApplicationApi.Data;
 namespace WebApplicationApi.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241020001822_TestLog")]
-    partial class TestLog
+    [Migration("20241024120115_FixPhotoPathsColumn")]
+    partial class FixPhotoPathsColumn
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -229,6 +229,10 @@ namespace WebApplicationApi.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("InspectionName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("PhotoPaths")
                         .IsRequired()
                         .HasColumnType("TEXT");
 

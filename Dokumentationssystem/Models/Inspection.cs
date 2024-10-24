@@ -15,6 +15,10 @@ namespace Dokumentationssystem.Models
             public string Address { get; set; }
             public DateTime Date { get; set; }
             public string CreatedBy { get; set; }
+
+            //public string PhotoDescription { get; set; }
+            public List<string> PhotoPaths { get; set; } = new List<string>();
+
         }
     }
 

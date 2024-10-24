@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:converters="clr-namespace:Dokumentationssystem.Converters"
+             x:Class="Dokumentationssystem.Views.InspectionDetailsPage"   
+             Title="Inspection Details">
+
+    <!-- Page Resources -->
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <!-- Register the Base64 to Image converter -->
+            <converters:Base64ToImageConverter x:Key="Base64ToImageConverter"/>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <Grid Padding="20" BackgroundColor="#F0F0F0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Page Title -->
+        <Label Text="Inspection Details" 
+               FontSize="28" 
+               FontAttributes="Bold" 
+               HorizontalOptions="Center" 
+               VerticalOptions="Start" 
+               TextColor="#333" 
+               Margin="10"/>
+
+        <!-- Frame to display Inspection details -->
+        <Frame Grid.Row="1" Padding="20" BackgroundColor="White" Margin="10" CornerRadius="12" HasShadow="True">
+            <ScrollView>
+                <VerticalStackLayout Spacing="20">
+
+                    <Label Text="{Binding InspectionName, StringFormat='Inspection Name: {0}'}" 
+                           FontSize="20" 
+                           FontAttributes="Bold" 
+                           TextColor="Black" />
+
+                    <Label Text="{Binding CreatedBy, StringFormat='Created By: {0}'}" 
+                           FontSize="18" 
+                           TextColor="Black" />
+
+                    <Label Text="{Binding Address, StringFormat='Address: {0}'}" 
+                           FontSize="18" 
+                           TextColor="Black" />
+
+                    <Label Text="{Binding Date, StringFormat='Date: {0:dd MMM yyyy}'}" 
+                           FontSize="18" 
+                           TextColor="Black" />
+
+                    <Label Text="Photos" FontSize="20" FontAttributes="Bold" TextColor="Black"/>
+
+                    <!-- CollectionView to display the photos in a grid -->
+                    <CollectionView x:Name="PhotoCollectionView" 
+                                    BackgroundColor="White"
+                                    HeightRequest="350"
+                                    ItemsSource="{Binding PhotoPaths}">
+                        <CollectionView.ItemsLayout>
+                            <!-- Set to Grid with 3 columns -->
+                            <GridItemsLayout Orientation="Vertical" Span="3" />
+                        </CollectionView.ItemsLayout>
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Frame BorderColor="Transparent" Padding="2" HasShadow="True" CornerRadius="10" BackgroundColor="White" WidthRequest="250" HeightRequest="250">
+                                    <Image Source="{Binding ., Converter={StaticResource Base64ToImageConverter}}" 
+                                           HeightRequest="250" 
+                                           WidthRequest="250" 
+                                           Aspect="AspectFit" />
+                                </Frame>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+
+                </VerticalStackLayout>
+            </ScrollView>
+        </Frame>
+    </Grid>
+</ContentPage>

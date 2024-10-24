@@ -14,8 +14,12 @@ namespace WebApplicationApi.Model
         public string Address { get; set; }
         public DateTime Date { get; set; }
 
+        //public string PhotoDescription { get; set; }
+
         //[JsonIgnore]
         public string? CreatedBy { get; set; }  // This will be set by the server
+        public List<string> PhotoPaths { get; set; } = new List<string>();
+
     }
 
 }

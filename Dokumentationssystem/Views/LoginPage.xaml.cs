@@ -60,7 +60,7 @@ namespace Dokumentationssystem.Views
                         await DisplayAlert("Success", "Login successful! welcome to our system", "OK");
 
                         // Redirect to the CreateInspectionPage after successful login
-                        await Navigation.PushAsync(new CreateInspectionPage());
+                        await Navigation.PushAsync(new SeeOrCreateNewInspection());
                     }
                     else
                     {

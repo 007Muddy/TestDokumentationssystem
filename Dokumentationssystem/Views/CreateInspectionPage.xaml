@@ -1,8 +1,16 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:Dokumentationssystem.Converters"
              x:Class="Dokumentationssystem.Views.CreateInspectionPage"
              Title="Create Inspection">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <local:Base64ToImageConverter x:Key="Base64ToImageConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+
     <Grid Padding="30" BackgroundColor="#F0F0F0">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -24,6 +32,28 @@
             <Entry x:Name="AddressEntry" Placeholder="Address" BackgroundColor="White" TextColor="Black" />
 
             <DatePicker x:Name="InspectionDatePicker" Format="D" BackgroundColor="White" TextColor="Black" />
+
+            <!-- Add Button to Pick Photos -->
+            <Button Text="Pick Photos" 
+                    BackgroundColor="#4CAF50" 
+                    TextColor="White" 
+                    CornerRadius="8" 
+                    FontSize="18" 
+                    Clicked="OnPickPhotosClicked" />
+
+            <!-- CollectionView to preview selected photos -->
+            <CollectionView x:Name="PhotoCollectionView" 
+                BackgroundColor="White"
+                HeightRequest="200">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Image Source="{Binding ., Converter={StaticResource Base64ToImageConverter}}" 
+                   HeightRequest="100" 
+                   WidthRequest="100"/>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
 
             <Button Text="Create Inspection" 
                     BackgroundColor="#007AFF" 

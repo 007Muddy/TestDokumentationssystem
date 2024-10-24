@@ -51,6 +51,8 @@ namespace Dokumentationssystem.Views
                 {
                     // Display success message
                     await DisplayAlert("Success", "User registered successfully!", "OK");
+                    await Navigation.PushAsync(new LoginPage());
+
                 }
                 else
                 {

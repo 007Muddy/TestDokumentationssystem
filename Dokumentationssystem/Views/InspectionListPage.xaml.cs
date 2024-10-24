@@ -59,7 +59,19 @@ namespace Dokumentationssystem.Views
                 // Handle any errors
                 await DisplayAlert("Error", $"An error occurred: {ex.Message}", "OK");
             }
+
         }
+        private async void OnInspectionSelected(object sender, SelectionChangedEventArgs e)
+        {
+            var selectedInspection = (Inspection)e.CurrentSelection.FirstOrDefault();
+            if (selectedInspection != null)
+            {
+                // Navigate to the details page with the selected inspection
+                await Navigation.PushAsync(new InspectionDetailsPage(selectedInspection));
+            }
+        }
+
+
 
     }
 }

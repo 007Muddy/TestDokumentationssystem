@@ -222,10 +222,14 @@ namespace WebApplicationApi.Migrations
                     b.Property<string>("CreatedBy")
                         .HasColumnType("TEXT");
 
-                    b.Property<DateOnly>("Date")
+                    b.Property<DateTime>("Date")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("InspectionName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("PhotoPaths")
                         .IsRequired()
                         .HasColumnType("TEXT");
 

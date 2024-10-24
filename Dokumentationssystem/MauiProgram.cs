@@ -21,7 +21,9 @@ namespace Dokumentationssystem
             builder.Services.AddSingleton<LoginPage>();
             builder.Services.AddSingleton<StartPage>();
             builder.Services.AddSingleton<CreateInspectionPage>();
-            builder.Services.AddSingleton<InspectionListPage>();
+            builder.Services.AddSingleton<InspectionListPage>(); 
+            builder.Services.AddSingleton<InspectionDetailsPage>();
+
 
 
 

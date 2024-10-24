@@ -20,50 +20,44 @@
 
         <!-- CollectionView to display list of inspections -->
         <CollectionView Grid.Row="1"
-                        x:Name="InspectionsCollectionView"
-                        VerticalOptions="FillAndExpand"
-                        HorizontalOptions="FillAndExpand"
-                        BackgroundColor="Transparent"
-                        ItemsLayout="VerticalList">
-
+                x:Name="InspectionsCollectionView"
+                SelectionMode="Single"
+                SelectionChanged="OnInspectionSelected"
+                VerticalOptions="FillAndExpand"
+                HorizontalOptions="FillAndExpand"
+                BackgroundColor="Transparent"
+                ItemsLayout="VerticalList">
             <CollectionView.ItemTemplate>
                 <DataTemplate>
                     <Frame CornerRadius="8" 
-                           BorderColor="LightGray" 
-                           Padding="15" 
-                           Margin="10" 
-                           HasShadow="True" 
-                           BackgroundColor="White">
-
+                   BorderColor="LightGray" 
+                   Padding="15" 
+                   Margin="10" 
+                   HasShadow="True" 
+                   BackgroundColor="White">
                         <VerticalStackLayout Spacing="8">
-                            <!-- Created By (Username) -->
-                            <Label 
-    Text="{Binding CreatedBy, StringFormat='Created By: {0}'}" 
-    FontAttributes="Bold" 
-    FontSize="18" 
-    TextColor="Black"/>
+                            <Label Text="{Binding CreatedBy, StringFormat='Created By: {0}'}" 
+                           FontAttributes="Bold" 
+                           FontSize="18" 
+                           TextColor="Black"/>
 
-
-                            <!-- Inspection Name -->
                             <Label Text="{Binding InspectionName, StringFormat='Inspection name: {0}'}" 
-                                   FontSize="14" 
-                                   TextColor="Black" 
-                                   FontAttributes="Bold" />
+                           FontSize="14" 
+                           TextColor="Black" 
+                           FontAttributes="Bold" />
 
-                            <!-- Address -->
                             <Label Text="{Binding Address, StringFormat='Address: {0}'}" 
-                                   FontSize="14" 
-                                   TextColor="Black" />
+                           FontSize="14" 
+                           TextColor="Black" />
 
-                            <!-- Inspection Date -->
                             <Label Text="{Binding Date, StringFormat='{}{0:dd MMM yyyy}'}" 
-       FontSize="14" 
-       TextColor="Black"/>
-
+                           FontSize="14" 
+                           TextColor="Black"/>
                         </VerticalStackLayout>
                     </Frame>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>
+
     </Grid>
 </ContentPage>
