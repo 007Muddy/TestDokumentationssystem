@@ -5,17 +5,18 @@ using Microsoft.Maui.Controls;
 
 namespace Dokumentationssystem.Converters
 {
-    public class Base64ToImageConverter : IValueConverter
+    public class ByteArrayToImageConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value != null && value is string base64String && !string.IsNullOrEmpty(base64String))
+            // Check if the value is a byte array
+            if (value is byte[] imageBytes && imageBytes.Length > 0)
             {
-                byte[] imageBytes = System.Convert.FromBase64String(base64String);
-                MemoryStream stream = new MemoryStream(imageBytes);
-                return ImageSource.FromStream(() => stream);
+                // Convert the byte array to an ImageSource
+                return ImageSource.FromStream(() => new MemoryStream(imageBytes));
             }
-            return null;
+
+            return null; // Return null if the value is not valid
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -23,4 +24,9 @@ namespace Dokumentationssystem.Converters
             throw new NotImplementedException();
         }
     }
+
+
+
 }
+
+

@@ -4,7 +4,7 @@ using System.Security.Claims;
 using System.Text.Json;
 using System.Text;
 using System.Net.Http.Headers;
-using Microsoft.Maui.Storage; // Import this for using Preferences
+using Microsoft.Maui.Storage;
 
 namespace Dokumentationssystem.Views
 {
@@ -18,8 +18,6 @@ namespace Dokumentationssystem.Views
             // Load the CreatedBy (username) value when the page loads
             LoadUserInfo();
         }
-
-        // Model to represent an inspection
 
         // Method to load the username from the JWT token
         private void LoadUserInfo()
@@ -54,45 +52,7 @@ namespace Dokumentationssystem.Views
             return userName;
         }
 
-        private List<FileResult> _selectedPhotos = new List<FileResult>();
-        private List<string> _photoPaths = new List<string>();
-
-        private async void OnPickPhotosClicked(object sender, EventArgs e)
-        {
-            try
-            {
-                var photo = await MediaPicker.PickPhotoAsync();
-
-                if (photo != null)
-                {
-                    using (var stream = await photo.OpenReadAsync())
-                    {
-                        // Convert the photo to a byte array
-                        using (var memoryStream = new MemoryStream())
-                        {
-                            await stream.CopyToAsync(memoryStream);
-                            var imageBytes = memoryStream.ToArray();
-
-                            // Convert the byte array to a Base64 string
-                            var base64String = Convert.ToBase64String(imageBytes);
-
-                            // Add the Base64 string to the list
-                            _photoPaths.Add(base64String);
-
-                            // Update the CollectionView with the new photo path
-                            PhotoCollectionView.ItemsSource = null; // Clear previous items
-                            PhotoCollectionView.ItemsSource = _photoPaths; // Set new items
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                await DisplayAlert("Error", $"An error occurred while picking photos: {ex.Message}", "OK");
-            }
-        }
-
-
+ 
 
         private async void OnCreateInspectionClicked(object sender, EventArgs e)
         {
@@ -126,12 +86,7 @@ namespace Dokumentationssystem.Views
                 formData.Add(new StringContent(inspectionDate.ToString("yyyy-MM-dd")), "Date");
                 formData.Add(new StringContent(createdBy), "CreatedBy");
 
-                // Add Base64-encoded photos to the form data
-                foreach (var base64Photo in _photoPaths)
-                {
-                    formData.Add(new StringContent(base64Photo), "photos");
-                }
-
+             
                 var response = await httpClient.PostAsync("https://localhost:7250/api/inspections/createinspection", formData);
 
                 if (response.IsSuccessStatusCode)
@@ -150,7 +105,6 @@ namespace Dokumentationssystem.Views
                 await DisplayAlert("Error", $"An error occurred: {ex.Message}", "OK");
             }
         }
-
 
     }
 }

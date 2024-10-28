@@ -30,7 +30,6 @@ namespace Dokumentationssystem
 
 
 
-
 #if DEBUG
             builder.Logging.AddDebug();
 #endif

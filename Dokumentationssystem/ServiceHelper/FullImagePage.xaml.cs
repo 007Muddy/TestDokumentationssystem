@@ -1,17 +1,25 @@
 using Microsoft.Maui.Controls;
+using System.IO;
 
 namespace Dokumentationssystem.Views
 {
     public partial class FullImagePage : ContentPage
     {
-        public string Base64Image { get; set; }
-
-        public FullImagePage(string base64Image)
+        public FullImagePage(byte[] imageData)
         {
             InitializeComponent();
 
-            Base64Image = base64Image;
-            BindingContext = this;
+            if (imageData != null && imageData.Length > 0)
+            {
+                // Set the Image Source directly from the byte array
+                FullImageView.Source = ImageSource.FromStream(() => new MemoryStream(imageData));
+            }
+            else
+            {
+                DisplayAlert("Error", "Image data is invalid or empty.", "OK");
+            }
         }
     }
 }
+
+

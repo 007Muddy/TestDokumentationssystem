@@ -229,10 +229,6 @@ namespace WebApplicationApi.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("PhotoPaths")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
                     b.HasKey("Id");
 
                     b.ToTable("Inspections");
@@ -255,6 +251,31 @@ namespace WebApplicationApi.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("LoginModels");
+                });
+
+            modelBuilder.Entity("WebApplicationApi.Model.Photo", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("InspectionId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<byte[]>("PhotoData")
+                        .HasColumnType("BLOB");
+
+                    b.Property<string>("PhotoName")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("InspectionId");
+
+                    b.ToTable("Photos");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -306,6 +327,22 @@ namespace WebApplicationApi.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("WebApplicationApi.Model.Photo", b =>
+                {
+                    b.HasOne("WebApplicationApi.Model.Inspection", "Inspection")
+                        .WithMany("Photos")
+                        .HasForeignKey("InspectionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Inspection");
+                });
+
+            modelBuilder.Entity("WebApplicationApi.Model.Inspection", b =>
+                {
+                    b.Navigation("Photos");
                 });
 #pragma warning restore 612, 618
         }

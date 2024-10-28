@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Dokumentationssystem.Views.EditPhotoPage"
+             Title="Edit Photo">
+
+    <StackLayout Padding="10">
+        <!-- Display the current photo -->
+        <Image x:Name="PhotoImage" HeightRequest="200" />
+
+        <!-- Edit photo name -->
+        <Entry x:Name="PhotoNameEntry" Placeholder="Enter new photo name" />
+
+        <!-- Edit description -->
+        <Editor x:Name="DescriptionEditor" Placeholder="Enter new description" />
+
+        <!-- Button to pick a new photo -->
+        <Button Text="Pick New Photo" Clicked="OnPickPhotoClicked" />
+
+        <!-- Button to save changes -->
+        <Button Text="Save Changes" Clicked="OnSaveClicked" />
+    </StackLayout>
+
+</ContentPage>

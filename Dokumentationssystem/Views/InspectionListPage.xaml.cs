@@ -1,4 +1,4 @@
-using Dokumentationssystem.Models.Dokumentationssystem.Models;
+using Dokumentationssystem.Models;
 using System.Net.Http.Headers;
 using System.Text.Json;
 
@@ -68,8 +68,12 @@ namespace Dokumentationssystem.Views
             {
                 // Navigate to the details page with the selected inspection
                 await Navigation.PushAsync(new InspectionDetailsPage(selectedInspection));
+
+                // Clear the selection to allow re-selection of the same item
+                InspectionsCollectionView.SelectedItem = null;
             }
         }
+
 
 
 

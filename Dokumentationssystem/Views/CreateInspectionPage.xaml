@@ -1,15 +1,9 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:local="clr-namespace:Dokumentationssystem.Converters"
              x:Class="Dokumentationssystem.Views.CreateInspectionPage"
              Title="Create Inspection">
-    <ContentPage.Resources>
-        <ResourceDictionary>
-            <local:Base64ToImageConverter x:Key="Base64ToImageConverter" />
-        </ResourceDictionary>
-    </ContentPage.Resources>
-
+ 
 
     <Grid Padding="30" BackgroundColor="#F0F0F0">
         <Grid.RowDefinitions>
@@ -17,6 +11,7 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
+        <!-- Page Title -->
         <Label Text="Create New Inspection" 
                FontSize="24" 
                FontAttributes="Bold" 
@@ -24,43 +19,28 @@
                VerticalOptions="Start"
                TextColor="#333"/>
 
-        <VerticalStackLayout Grid.Row="1" Spacing="15" Padding="10">
-            <Entry x:Name="CreatedByEntry" Placeholder="Created By" IsReadOnly="True" BackgroundColor="White" TextColor="Black" />
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Spacing="15" Padding="10">
+                <!-- Input Fields -->
+                <Entry x:Name="CreatedByEntry" Placeholder="Created By" IsReadOnly="True" BackgroundColor="White" TextColor="Black" />
 
-            <Entry x:Name="InspectionNameEntry" Placeholder="Inspection Name" BackgroundColor="White"  TextColor="Black"/>
+                <Entry x:Name="InspectionNameEntry" Placeholder="Inspection Name" BackgroundColor="White" TextColor="Black"/>
 
-            <Entry x:Name="AddressEntry" Placeholder="Address" BackgroundColor="White" TextColor="Black" />
+                <Entry x:Name="AddressEntry" Placeholder="Address" BackgroundColor="White" TextColor="Black" />
 
-            <DatePicker x:Name="InspectionDatePicker" Format="D" BackgroundColor="White" TextColor="Black" />
+                <DatePicker x:Name="InspectionDatePicker" Format="D" BackgroundColor="White" TextColor="Black" />
 
-            <!-- Add Button to Pick Photos -->
-            <Button Text="Pick Photos" 
-                    BackgroundColor="#4CAF50" 
-                    TextColor="White" 
-                    CornerRadius="8" 
-                    FontSize="18" 
-                    Clicked="OnPickPhotosClicked" />
+            
 
-            <!-- CollectionView to preview selected photos -->
-            <CollectionView x:Name="PhotoCollectionView" 
-                BackgroundColor="White"
-                HeightRequest="200">
-                <CollectionView.ItemTemplate>
-                    <DataTemplate>
-                        <Image Source="{Binding ., Converter={StaticResource Base64ToImageConverter}}" 
-                   HeightRequest="100" 
-                   WidthRequest="100"/>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
-
-
-            <Button Text="Create Inspection" 
-                    BackgroundColor="#007AFF" 
-                    TextColor="White" 
-                    CornerRadius="8"
-                    FontSize="18"
-                    Clicked="OnCreateInspectionClicked" />
-        </VerticalStackLayout>
+                <!-- Button to Create the Inspection -->
+                <Button Text="Create Inspection"
+                        BackgroundColor="Blue"
+                        TextColor="White"
+                        CornerRadius="8"
+                        FontSize="18"
+                        HeightRequest="50"
+                        Clicked="OnCreateInspectionClicked" />
+            </VerticalStackLayout>
+        </ScrollView>
     </Grid>
 </ContentPage>

@@ -6,15 +6,13 @@
              x:Class="Dokumentationssystem.Views.InspectionDetailsPage"
              Title="Inspection Details">
 
-    <!-- Page Resources -->
     <ContentPage.Resources>
         <ResourceDictionary>
-            <!-- Register the Base64 to Image converter -->
-            <converters:Base64ToImageConverter x:Key="Base64ToImageConverter"/>
+            <converters:ByteArrayToImageConverter x:Key="ByteArrayToImageConverter"/>
         </ResourceDictionary>
     </ContentPage.Resources>
 
-    <Grid Padding="20" BackgroundColor="#F0F0F0">
+    <Grid Padding="20" BackgroundColor="#EFEFEF">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
@@ -22,65 +20,69 @@
 
         <!-- Page Title -->
         <Label Text="Inspection Details" 
-               FontSize="28" 
+               FontSize="30" 
                FontAttributes="Bold" 
                HorizontalOptions="Center" 
                VerticalOptions="Start" 
-               TextColor="#333" 
-               Margin="10"/>
+               TextColor="#333333" 
+               Margin="10,10,10,20"/>
 
         <!-- Frame to display Inspection details -->
         <Frame Grid.Row="1" Padding="20" BackgroundColor="White" Margin="10" CornerRadius="12" HasShadow="True">
             <ScrollView>
                 <VerticalStackLayout Spacing="20">
+                    <!-- Display photos, names, and descriptions -->
+                    <Label Text="Photos" FontSize="22" FontAttributes="Bold" TextColor="#333333" HorizontalOptions="Center" />
 
-                    <Label Text="{Binding InspectionName, StringFormat='Inspection Name: {0}'}" 
-                           FontSize="20" 
-                           FontAttributes="Bold" 
-                           TextColor="Black" />
-
-                    <Label Text="{Binding CreatedBy, StringFormat='Created By: {0}'}" 
-                           FontSize="18" 
-                           TextColor="Black" />
-
-                    <Label Text="{Binding Address, StringFormat='Address: {0}'}" 
-                           FontSize="18" 
-                           TextColor="Black" />
-
-                    <Label Text="{Binding Date, StringFormat='Date: {0:dd MMM yyyy}'}" 
-                           FontSize="18" 
-                           TextColor="Black" />
-
-                    <Label Text="Photos" FontSize="20" FontAttributes="Bold" TextColor="Black"/>
-
-                    <CollectionView x:Name="PhotoCollectionView" 
-                BackgroundColor="White"
-                HeightRequest="350"
-                ItemsSource="{Binding PhotoPaths}">
+                    <!-- CollectionView to display Photos, Names, and Descriptions -->
+                    <CollectionView x:Name="PhotoCollectionView" ItemsSource="{Binding _photoData}">
                         <CollectionView.ItemsLayout>
-                            <GridItemsLayout Orientation="Vertical" 
-                         Span="3" 
-                         VerticalItemSpacing="5" 
-                         HorizontalItemSpacing="5" />
+                            <GridItemsLayout Orientation="Vertical" Span="2" />
                         </CollectionView.ItemsLayout>
                         <CollectionView.ItemTemplate>
                             <DataTemplate>
-                                <Frame BorderColor="Transparent" Padding="0" Margin="0" HasShadow="False" CornerRadius="0" BackgroundColor="White" WidthRequest="250" HeightRequest="250">
-                                    <Image Source="{Binding ., Converter={StaticResource Base64ToImageConverter}}" 
-                       HeightRequest="250" 
-                       WidthRequest="250" 
-                       Aspect="AspectFit">
-                                        <!-- Add TapGestureRecognizer to handle image click -->
-                                        <Image.GestureRecognizers>
-                                            <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type local:InspectionDetailsPage}}, Path=TapImageCommand}" CommandParameter="{Binding .}" />
-                                        </Image.GestureRecognizers>
-                                    </Image>
+                                <Frame BorderColor="Transparent" Padding="10" Margin="10" HasShadow="True" CornerRadius="15" BackgroundColor="#FFFFFF">
+                                    <VerticalStackLayout Spacing="10">
+                                        <!-- Display Photo -->
+                                        <Image Source="{Binding PhotoData, Converter={StaticResource ByteArrayToImageConverter}}" 
+                           HeightRequest="150" 
+                           WidthRequest="250" 
+                           Aspect="AspectFit"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center" />
+
+                                        <!-- Photo Name (Editable) -->
+                                        <Label Text="{Binding PhotoName}" TextColor="Black" FontSize="18" />
+
+                                        <!-- Photo Description (Editable) -->
+                                        <Label Text="{Binding Description}" TextColor="Gray" FontSize="14" />
+
+                                        <!-- Edit Button -->
+                                        <Button Text="Edit" 
+        Command="{Binding Source={x:Reference Name=PhotoCollectionView}, Path=BindingContext.EditPhotoCommand}"
+        CommandParameter="{Binding}" />
+
+                                    </VerticalStackLayout>
                                 </Frame>
                             </DataTemplate>
                         </CollectionView.ItemTemplate>
                     </CollectionView>
 
+                    <!-- Button to Add New Photo -->
+                    <Button Text="Add New Photo" 
+                            BackgroundColor="#4CAF50" 
+                            TextColor="White" 
+                            CornerRadius="8" 
+                            FontSize="18" 
+                            Clicked="OnPickPhotosClicked" />
 
+                    <!-- Save Button -->
+                    <Button Text="Save Photos" 
+                            BackgroundColor="#007AFF" 
+                            TextColor="White" 
+                            CornerRadius="8" 
+                            FontSize="18" 
+                            Clicked="OnSaveButtonClicked" />
                 </VerticalStackLayout>
             </ScrollView>
         </Frame>
