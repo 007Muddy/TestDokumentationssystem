@@ -324,6 +324,44 @@ namespace WebApplicationApi.Controllers
             return Ok(photoDtos);
         }
 
+        // DELETE: api/inspections/{inspectionId}/photos/{photoId} - Delete a specific photo from an inspection
+        [HttpDelete("{inspectionId}/photos/{photoId}")]
+        [Authorize]
+        public async Task<IActionResult> DeletePhoto(int inspectionId, int photoId)
+        {
+            var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized(new { message = "User is not authenticated." });
+            }
+
+            // Find the inspection by ID and ensure it belongs to the authenticated user
+            var inspection = await _context.Inspections
+                .Include(i => i.Photos)
+                .FirstOrDefaultAsync(i => i.Id == inspectionId && i.CreatedBy == userId);
+
+            if (inspection == null)
+            {
+                return NotFound(new { message = "Inspection not found or access denied." });
+            }
+
+            // Find the specific photo by ID
+            var photo = inspection.Photos.FirstOrDefault(p => p.Id == photoId);
+            if (photo == null)
+            {
+                return NotFound(new { message = "Photo not found." });
+            }
+
+            // Remove the photo from the inspection
+            inspection.Photos.Remove(photo);
+            _context.Photos.Remove(photo);
+
+            // Save changes to the database
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "Photo deleted successfully!" });
+        }
 
 
     }

@@ -5,21 +5,65 @@ namespace Dokumentationssystem.Views
 {
     public partial class FullImagePage : ContentPage
     {
-        public FullImagePage(byte[] imageData)
+        private double _currentScale = 1;
+        private double _startScale = 1;
+        private double _xOffset = 0;
+        private double _yOffset = 0;
+
+        public FullImagePage(byte[] photoData)
         {
             InitializeComponent();
 
-            if (imageData != null && imageData.Length > 0)
+            if (photoData != null && photoData.Length > 0)
             {
-                // Set the Image Source directly from the byte array
-                FullImageView.Source = ImageSource.FromStream(() => new MemoryStream(imageData));
+                PhotoImage.Source = ImageSource.FromStream(() => new MemoryStream(photoData));
             }
             else
             {
-                DisplayAlert("Error", "Image data is invalid or empty.", "OK");
+                DisplayAlert("Error", "Failed to load image.", "OK");
+            }
+        }
+
+        private void OnPinchUpdated(object sender, PinchGestureUpdatedEventArgs e)
+        {
+            if (e.Status == GestureStatus.Started)
+            {
+                _startScale = PhotoImage.Scale;
+                PhotoImage.AnchorX = 0;
+                PhotoImage.AnchorY = 0;
+            }
+            else if (e.Status == GestureStatus.Running)
+            {
+                // Calculate the scale factor to be applied.
+                _currentScale += (e.Scale - 1) * _startScale;
+                _currentScale = Math.Max(1, _currentScale); // Restrict to original size or larger
+
+                // Apply scale
+                PhotoImage.Scale = _currentScale;
+
+                // Translate image to stay centered during zoom
+                double renderedX = PhotoImage.X + _xOffset;
+                double deltaX = renderedX / Width;
+                double deltaWidth = Width / (PhotoImage.Width * _startScale);
+                double originX = (e.ScaleOrigin.X - deltaX) * deltaWidth;
+
+                double renderedY = PhotoImage.Y + _yOffset;
+                double deltaY = renderedY / Height;
+                double deltaHeight = Height / (PhotoImage.Height * _startScale);
+                double originY = (e.ScaleOrigin.Y - deltaY) * deltaHeight;
+
+                _xOffset = originX * (PhotoImage.Width * _currentScale - Width);
+                _yOffset = originY * (PhotoImage.Height * _currentScale - Height);
+
+                PhotoImage.TranslationX = _xOffset;
+                PhotoImage.TranslationY = _yOffset;
+            }
+            else if (e.Status == GestureStatus.Completed)
+            {
+                // Store the current translation applied during the zoom gesture
+                _xOffset = PhotoImage.TranslationX;
+                _yOffset = PhotoImage.TranslationY;
             }
         }
     }
 }
-
-

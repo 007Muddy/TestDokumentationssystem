@@ -2,23 +2,56 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Dokumentationssystem.Views.EditPhotoPage"
-             Title="Edit Photo">
+             Title="Edit Photo"
+             BackgroundColor="#F5F5F5">
 
-    <StackLayout Padding="10">
+    <StackLayout Padding="20" Spacing="15">
         <!-- Display the current photo -->
-        <Image x:Name="PhotoImage" HeightRequest="200" />
+        <Frame BorderColor="#DDD" CornerRadius="10" HasShadow="True" Padding="5" BackgroundColor="White">
+            <Image x:Name="PhotoImage" HeightRequest="200" Aspect="AspectFit" />
+        </Frame>
 
         <!-- Edit photo name -->
-        <Entry x:Name="PhotoNameEntry" Placeholder="Enter new photo name" />
+        <Frame BorderColor="#DDD" CornerRadius="10" Padding="10" BackgroundColor="White">
+            <Entry x:Name="PhotoNameEntry" Placeholder="Enter new photo name" FontSize="18" TextColor="Black" />
+        </Frame>
 
         <!-- Edit description -->
-        <Editor x:Name="DescriptionEditor" Placeholder="Enter new description" />
+        <Frame BorderColor="#DDD" CornerRadius="10" Padding="10" BackgroundColor="White">
+            <Editor x:Name="DescriptionEditor" Placeholder="Enter new description" FontSize="16" HeightRequest="100" TextColor="Black" />
+        </Frame>
 
         <!-- Button to pick a new photo -->
-        <Button Text="Pick New Photo" Clicked="OnPickPhotoClicked" />
+        <Button Text="Pick New Photo"
+            BackgroundColor="#4CAF50"
+            TextColor="White"
+            FontSize="18"
+            CornerRadius="8"
+            HeightRequest="50"
+            Clicked="OnPickPhotoClicked" />
 
-        <!-- Button to save changes -->
-        <Button Text="Save Changes" Clicked="OnSaveClicked" />
+        <!-- Buttons for save and delete actions -->
+        <StackLayout Orientation="Horizontal" Spacing="10">
+            <!-- Delete Button -->
+            <Button Text="Delete Photo"
+                BackgroundColor="#FF3B30"
+                TextColor="White"
+                FontSize="18"
+                CornerRadius="8"
+                HeightRequest="50"
+                HorizontalOptions="FillAndExpand"
+                Clicked="OnDeleteClicked" />
+
+            <!-- Save Button -->
+            <Button Text="Save Changes"
+                BackgroundColor="#007AFF"
+                TextColor="White"
+                FontSize="18"
+                CornerRadius="8"
+                HeightRequest="50"
+                HorizontalOptions="FillAndExpand"
+                Clicked="OnSaveClicked" />
+        </StackLayout>
     </StackLayout>
 
 </ContentPage>

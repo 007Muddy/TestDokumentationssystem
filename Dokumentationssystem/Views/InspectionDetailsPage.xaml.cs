@@ -62,7 +62,6 @@ namespace Dokumentationssystem.Views
                     _photoData.Clear();
                     foreach (var photo in photoList)
                     {
-                        Console.WriteLine($"Loaded Photo with ID: {photo.Id}");
                         photo.InspectionId = _inspectionId;
                         _photoData.Add(photo);
                     }
@@ -90,6 +89,7 @@ namespace Dokumentationssystem.Views
                 await Navigation.PushAsync(new FullImagePage(selectedPhoto.PhotoData));
             }
         }
+
 
         // Handle editing an existing photo
         private async void OnEditButtonClicked(Photo selectedPhoto)

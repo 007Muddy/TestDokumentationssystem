@@ -16,7 +16,6 @@ public partial class EditPhotoPage : ContentPage
         _selectedPhoto = selectedPhoto;
         _parentPage = parentPage;
 
-        Console.WriteLine($"Editing photo with ID: {_selectedPhoto.Id} and Inspection ID: {_selectedPhoto.InspectionId}");
 
         if (_selectedPhoto.PhotoData != null)
         {
@@ -42,6 +41,49 @@ public partial class EditPhotoPage : ContentPage
             }
         }
     }
+    private async void OnDeleteClicked(object sender, EventArgs e)
+{
+    var jwtToken = Preferences.Get("JwtToken", string.Empty);
+    if (string.IsNullOrEmpty(jwtToken))
+    {
+        await DisplayAlert("Error", "User is not authenticated. Please log in.", "OK");
+        return;
+    }
+
+    var confirm = await DisplayAlert("Confirm Delete", "Are you sure you want to delete this photo?", "Yes", "No");
+    if (!confirm)
+    {
+        return;
+    }
+
+    var httpClient = new HttpClient();
+    httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
+
+    try
+    {
+
+        var response = await httpClient.DeleteAsync($"https://localhost:7250/api/inspections/{_selectedPhoto.InspectionId}/photos/{_selectedPhoto.Id}");
+
+        if (response.IsSuccessStatusCode)
+        {
+            await DisplayAlert("Success", "Photo deleted successfully!", "OK");
+
+            // Refresh the photo list on the parent page
+            _parentPage.LoadExistingPhotos();
+
+            await Navigation.PopAsync();  // Return to the previous page
+        }
+        else
+        {
+            var errorMessage = await response.Content.ReadAsStringAsync();
+            await DisplayAlert("Error", $"Failed to delete photo: {errorMessage}", "OK");
+        }
+    }
+    catch (Exception ex)
+    {
+        await DisplayAlert("Error", $"An error occurred: {ex.Message}", "OK");
+    }
+}
 
     // Handle saving changes to the photo
     private async void OnSaveClicked(object sender, EventArgs e)
@@ -58,7 +100,6 @@ public partial class EditPhotoPage : ContentPage
 
         try
         {
-            Console.WriteLine($"Sending update for Photo ID: {_selectedPhoto.Id}, Inspection ID: {_selectedPhoto.InspectionId}");
 
             var updateData = new
             {
