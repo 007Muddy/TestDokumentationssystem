@@ -61,29 +61,35 @@
                                         </Image>
 
                                         <!-- Photo Details -->
-                                        <Label Text="{Binding PhotoName}" 
-                                               TextColor="#333333" 
-                                               FontSize="18" 
-                                               FontAttributes="Bold" 
-                                               HorizontalOptions="Center" />
-                                        <Label Text="{Binding Description}" 
+                                        <Label Text="{Binding PhotoName, StringFormat='Inspection name: {0}'}" 
                                                TextColor="#666666" 
-                                               FontSize="14" 
-                                               HorizontalOptions="Center" 
-                                               MaxLines="2" 
+                                               FontSize="14"  
+                                               HorizontalOptions="StartAndExpand"  
+                                               MaxLines="2"  
                                                LineBreakMode="TailTruncation" />
 
+                                        <Label Text="{Binding Rating, Converter={StaticResource RatingConverter},  StringFormat='Rating: {0}'}" 
+                                               TextColor="#666666" 
+                                               FontSize="14" 
+                                               HorizontalOptions="StartAndExpand" />
+                                        <Label Text="{Binding Description, StringFormat='Description: {0}'}" 
+                                               TextColor="#666666"                                              
+                                               FontSize="14" 
+                                               HorizontalOptions="StartAndExpand" 
+                                               MaxLines="2" 
+                                               LineBreakMode="TailTruncation" />
+                  
+                                       
+
+
+
                                         <!-- Edit Button -->
-                                        <Button Text="Edit" 
+                                        <Button ImageSource="C:\Users\NB\Downloads\edit.png "
                                                 Command="{Binding Source={x:Reference PhotoCollectionView}, Path=BindingContext.EditPhotoCommand}" 
                                                 CommandParameter="{Binding}"
-                                                FontSize="16" 
-                                                BackgroundColor="#007AFF" 
-                                                TextColor="White" 
-                                                CornerRadius="8" 
                                                 HeightRequest="40" 
-                                                Margin="0,10,0,0" 
-                                                HorizontalOptions="Center" />
+                                                BackgroundColor="Transparent"
+                                                HorizontalOptions="End" />
                                     </VerticalStackLayout>
                                 </Frame>
                             </DataTemplate>

@@ -99,10 +99,10 @@ namespace WebApplicationApi.Controllers
 
         // PUT: api/inspections/{id} - Update an existing inspection with optional photo uploads
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateInspection(int id, [FromForm] Inspection model, [FromForm] List<IFormFile> photos, [FromForm] List<string> photoNames, [FromForm] List<string> descriptions)
+        public async Task<IActionResult> UpdateInspection(int id, [FromForm] Inspection model, [FromForm] List<IFormFile> photos, [FromForm] List<string> photoNames, [FromForm] List<string> descriptions, [FromForm] List<int> ratings)
         {
             var existingInspection = await _context.Inspections
-                .Include(i => i.Photos)  // Include Photos in the query
+                .Include(i => i.Photos)
                 .FirstOrDefaultAsync(i => i.Id == id);
 
             if (existingInspection == null)
@@ -110,13 +110,11 @@ namespace WebApplicationApi.Controllers
                 return NotFound();
             }
 
-            // Update inspection properties
             existingInspection.InspectionName = model.InspectionName;
             existingInspection.Address = model.Address;
             existingInspection.Date = model.Date;
 
-            // Handle photo update or addition
-            if (photos != null && photos.Count > 0 && photoNames.Count == photos.Count && descriptions.Count == photos.Count)
+            if (photos != null && photos.Count > 0 && photoNames.Count == photos.Count && descriptions.Count == photos.Count && ratings.Count == photos.Count)
             {
                 for (int i = 0; i < photos.Count; i++)
                 {
@@ -126,25 +124,24 @@ namespace WebApplicationApi.Controllers
                         using (var memoryStream = new MemoryStream())
                         {
                             await photo.CopyToAsync(memoryStream);
-                            var photoBytes = memoryStream.ToArray();  // Convert file to byte[]
+                            var photoBytes = memoryStream.ToArray();
 
-                            // Check if the photo already exists by comparing photo name
                             var existingPhoto = existingInspection.Photos.FirstOrDefault(p => p.PhotoName == photoNames[i]);
 
                             if (existingPhoto != null)
                             {
-                                // If photo exists, update it
                                 existingPhoto.PhotoData = photoBytes;
                                 existingPhoto.Description = descriptions[i];
+                                existingPhoto.Rating = ratings[i];
                             }
                             else
                             {
-                                // If photo does not exist, add a new one
                                 existingInspection.Photos.Add(new Photo
                                 {
-                                    PhotoData = photoBytes,  // Save the photo as byte[]
+                                    PhotoData = photoBytes,
                                     PhotoName = photoNames[i],
-                                    Description = descriptions[i]
+                                    Description = descriptions[i],
+                                    Rating = ratings[i]
                                 });
                             }
                         }
@@ -176,10 +173,9 @@ namespace WebApplicationApi.Controllers
             return Ok();
         }
 
-        // POST: api/inspections/{id}/photos - Add photos with names and descriptions to an existing inspection
         [HttpPost("{id}/photos")]
         [Authorize]
-        public async Task<IActionResult> AddPhotosToInspection(int id, [FromForm] List<IFormFile> photos, [FromForm] List<string> photoNames, [FromForm] List<string> descriptions)
+        public async Task<IActionResult> AddPhotosToInspection(int id, [FromForm] List<IFormFile> photos, [FromForm] List<string> photoNames, [FromForm] List<string> descriptions, [FromForm] List<int> ratings)
         {
             var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
 
@@ -188,9 +184,8 @@ namespace WebApplicationApi.Controllers
                 return Unauthorized(new { message = "User is not authenticated." });
             }
 
-            // Find the inspection by ID
             var inspection = await _context.Inspections
-                .Include(i => i.Photos)  // Ensure Photos are included in the query
+                .Include(i => i.Photos)
                 .FirstOrDefaultAsync(i => i.Id == id && i.CreatedBy == userId);
 
             if (inspection == null)
@@ -198,12 +193,11 @@ namespace WebApplicationApi.Controllers
                 return NotFound(new { message = "Inspection not found or access denied." });
             }
 
-            // Ensure we have the correct number of photos, names, and descriptions
-            if (photos == null || photos.Count == 0 || photoNames.Count != photos.Count || descriptions.Count != photos.Count)
+            if (photos == null || photos.Count == 0 || photoNames.Count != photos.Count || descriptions.Count != photos.Count || ratings.Count != photos.Count)
             {
-                return BadRequest(new { message = "Photos, names, and descriptions are not properly aligned." });
+                return BadRequest(new { message = "Photos, names, descriptions, and ratings are not properly aligned." });
             }
-            // Add each photo to the inspection
+
             for (int i = 0; i < photos.Count; i++)
             {
                 var photo = photos[i];
@@ -214,12 +208,12 @@ namespace WebApplicationApi.Controllers
                         await photo.CopyToAsync(memoryStream);
                         var photoBytes = memoryStream.ToArray();
 
-                        // Add a new Photo object to the inspection
                         inspection.Photos.Add(new Photo
                         {
-                            PhotoData = photoBytes,  // Save the photo as byte[] in the database
+                            PhotoData = photoBytes,
                             PhotoName = photoNames[i],
-                            Description = descriptions[i]
+                            Description = descriptions[i],
+                            Rating = ratings[i]
                         });
                     }
                 }
@@ -229,6 +223,7 @@ namespace WebApplicationApi.Controllers
 
             return Ok(new { message = "Photos added successfully!" });
         }
+
 
         [HttpPut("{inspectionId}/photos/{photoId}")]
         [Authorize]
@@ -241,8 +236,6 @@ namespace WebApplicationApi.Controllers
                 return Unauthorized(new { message = "User is not authenticated." });
             }
 
-            Console.WriteLine($"Received request to update photo with ID {photoId} for inspection {inspectionId}");
-
             var inspection = await _context.Inspections
                 .Include(i => i.Photos)
                 .FirstOrDefaultAsync(i => i.Id == inspectionId && i.CreatedBy == userId);
@@ -252,12 +245,9 @@ namespace WebApplicationApi.Controllers
                 return NotFound(new { message = "Inspection not found or access denied." });
             }
 
-            Console.WriteLine($"Inspection found with {inspection.Photos.Count} photos.");
-
             var photo = inspection.Photos.FirstOrDefault(p => p.Id == photoId);
             if (photo == null)
             {
-                Console.WriteLine("Photo not found.");
                 return NotFound(new { message = "Photo not found." });
             }
 
@@ -276,6 +266,11 @@ namespace WebApplicationApi.Controllers
                 photo.PhotoData = updatedPhoto.PhotoData;
             }
 
+            if (updatedPhoto.Rating >= 1 && updatedPhoto.Rating <= 10)
+            {
+                photo.Rating = updatedPhoto.Rating;
+            }
+
             _context.Photos.Update(photo);
             await _context.SaveChangesAsync();
 
@@ -283,9 +278,8 @@ namespace WebApplicationApi.Controllers
         }
 
 
-
-        // GET: api/inspections/{id}/photos - Get photos with names and descriptions for a specific inspection
-        [HttpGet("{id}/photos")]
+// GET: api/inspections/{id}/photos - Get photos with names and descriptions for a specific inspection
+[HttpGet("{id}/photos")]
         [Authorize]
         public async Task<IActionResult> GetPhotosForInspection(int id)
         {
@@ -312,6 +306,7 @@ namespace WebApplicationApi.Controllers
                 p.Id,
                 p.PhotoName,
                 p.Description,
+                p.Rating,
                 PhotoData = Convert.ToBase64String(p.PhotoData) // Convert byte[] to Base64 string
             }).ToList();
 

@@ -25,16 +25,19 @@ namespace WebApplicationApi.Model
 
     public class Photo
     {
-        [Key] // Or use [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [Key]
         public int Id { get; set; }
-
         public byte[]? PhotoData { get; set; }
         public string? PhotoName { get; set; }
         public string? Description { get; set; }
         public int InspectionId { get; set; }
+        [Range(1, 10, ErrorMessage = "Rating must be between 1 and 10.")]
+        public int Rating { get; set; }
 
         [JsonIgnore]
         public Inspection? Inspection { get; set; }
+
+
     }
 
 

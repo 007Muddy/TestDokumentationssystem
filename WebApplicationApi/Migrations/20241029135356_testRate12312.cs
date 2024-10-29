@@ -5,7 +5,7 @@
 namespace WebApplicationApi.Migrations
 {
     /// <inheritdoc />
-    public partial class AddPhotoToInspection12dfdsasfdsafas : Migration
+    public partial class testRate12312 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

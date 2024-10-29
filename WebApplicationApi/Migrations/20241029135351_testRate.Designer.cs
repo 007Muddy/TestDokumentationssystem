@@ -11,8 +11,8 @@ using WebApplicationApi.Data;
 namespace WebApplicationApi.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241028153546_UpdatedModelWithKey")]
-    partial class UpdatedModelWithKey
+    [Migration("20241029135351_testRate")]
+    partial class testRate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -263,6 +263,7 @@ namespace WebApplicationApi.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Description")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<int>("InspectionId")
@@ -273,6 +274,9 @@ namespace WebApplicationApi.Migrations
 
                     b.Property<string>("PhotoName")
                         .HasColumnType("TEXT");
+
+                    b.Property<int>("Rating")
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 

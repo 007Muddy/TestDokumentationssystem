@@ -11,8 +11,8 @@ using WebApplicationApi.Data;
 namespace WebApplicationApi.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241028131622_UpdatedModel12233")]
-    partial class UpdatedModel12233
+    [Migration("20241029134455_ratingtest")]
+    partial class ratingtest
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

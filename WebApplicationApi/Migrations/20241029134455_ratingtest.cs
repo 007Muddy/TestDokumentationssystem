@@ -5,7 +5,7 @@
 namespace WebApplicationApi.Migrations
 {
     /// <inheritdoc />
-    public partial class ignoreinspetions : Migration
+    public partial class ratingtest : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

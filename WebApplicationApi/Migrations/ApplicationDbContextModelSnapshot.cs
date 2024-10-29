@@ -260,6 +260,7 @@ namespace WebApplicationApi.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Description")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<int>("InspectionId")
@@ -270,6 +271,9 @@ namespace WebApplicationApi.Migrations
 
                     b.Property<string>("PhotoName")
                         .HasColumnType("TEXT");
+
+                    b.Property<int>("Rating")
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 

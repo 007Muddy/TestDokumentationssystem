@@ -6,6 +6,7 @@ using System.IO;
 using System.Windows.Input;
 using System.Net.Http.Headers;
 using Newtonsoft.Json;
+using Microsoft.Maui.Layouts;
 
 namespace Dokumentationssystem.Views
 {
@@ -64,6 +65,8 @@ namespace Dokumentationssystem.Views
                     {
                         photo.InspectionId = _inspectionId;
                         _photoData.Add(photo);
+
+                        
                     }
 
                     PhotoCollectionView.ItemsSource = _photoData;
@@ -126,26 +129,24 @@ namespace Dokumentationssystem.Views
                             string newPhotoName = await DisplayPromptAsync("Photo Name", "Enter a name for the new photo:");
                             string newDescription = await DisplayPromptAsync("Description", "Enter a description for the new photo:");
 
-                            if (string.IsNullOrEmpty(newPhotoName))
+                            if (string.IsNullOrEmpty(newPhotoName) || string.IsNullOrEmpty(newDescription))
                             {
-                                await DisplayAlert("Error", "Photo name cannot be empty.", "OK");
+                                await DisplayAlert("Error", "Photo name and description cannot be empty.", "OK");
                                 return;
                             }
 
-                            if (string.IsNullOrEmpty(newDescription))
-                            {
-                                await DisplayAlert("Error", "Description cannot be empty.", "OK");
-                                return;
-                            }
+                            // Show a rating selection popup with circular buttons
+                            int rating = await ShowRatingSelectionPopup();
 
                             // Add a new photo model to the ObservableCollection
                             var photoModel = new Photo
                             {
-                                Id = 0,  // Mark as new photo with a temporary ID
-                                InspectionId = _inspectionId,  // Use current inspection ID
+                                Id = 0, // New photo ID set to 0
+                                InspectionId = _inspectionId,
                                 PhotoData = photoBytes,
-                                PhotoName = newPhotoName,  // Set the name from user input
-                                Description = newDescription  // Set the description from user input
+                                PhotoName = newPhotoName,
+                                Description = newDescription,
+                                Rating = rating
                             };
 
                             _photoData.Add(photoModel);  // Add to collection
@@ -168,6 +169,76 @@ namespace Dokumentationssystem.Views
             {
                 await DisplayAlert("Error", $"An error occurred while picking the photo: {ex.Message}", "OK");
             }
+        }
+
+        // Popup for rating selection
+        private async Task<int> ShowRatingSelectionPopup()
+        {
+            var tcs = new TaskCompletionSource<int>();
+            bool isResultSet = false; // Flag to prevent multiple calls to SetResult
+
+            var popupLayout = new StackLayout
+            {
+                Orientation = StackOrientation.Horizontal,
+                HorizontalOptions = LayoutOptions.Center,
+                VerticalOptions = LayoutOptions.Center,
+                Spacing = 10
+            };
+
+            // Add rating buttons from 1 to 10
+            for (int i = 1; i <= 10; i++)
+            {
+                var button = new Button
+                {
+                    Text = i.ToString(),
+                    BackgroundColor = i <= 3 ? Colors.Green : i <= 7 ? Colors.Orange : Colors.Red,
+                    TextColor = Colors.White,
+                    CornerRadius = 20,
+                    WidthRequest = 40,
+                    HeightRequest = 40,
+                    CommandParameter = i
+                };
+
+                // Define what happens when a button is clicked
+                button.Clicked += async (sender, e) =>
+                {
+                    if (!isResultSet) // Check if result has already been set
+                    {
+                        if (sender is Button selectedButton && int.TryParse(selectedButton.CommandParameter.ToString(), out int selectedRating))
+                        {
+                            isResultSet = true; // Set flag to true to prevent further calls
+                            tcs.SetResult(selectedRating);
+
+                            // Immediately remove the popup after selection
+                            if (Application.Current.MainPage.Navigation.ModalStack.Count > 0)
+                            {
+                                await Application.Current.MainPage.Navigation.PopModalAsync();
+                            }
+                        }
+                    }
+                };
+
+                popupLayout.Children.Add(button);
+            }
+
+            // Display the popup
+            var overlay = new AbsoluteLayout
+            {
+                BackgroundColor = Colors.Black.WithAlpha(0.5f) // Semi-transparent overlay
+            };
+            AbsoluteLayout.SetLayoutBounds(popupLayout, new Rect(0.5, 0.5, AbsoluteLayout.AutoSize, AbsoluteLayout.AutoSize));
+            AbsoluteLayout.SetLayoutFlags(popupLayout, AbsoluteLayoutFlags.PositionProportional);
+            overlay.Children.Add(popupLayout);
+
+            var modalPage = new ContentPage
+            {
+                Content = overlay,
+                BackgroundColor = Colors.Transparent
+            };
+
+            await Application.Current.MainPage.Navigation.PushModalAsync(modalPage);
+
+            return await tcs.Task;
         }
 
 
@@ -203,6 +274,7 @@ namespace Dokumentationssystem.Views
 
                     content.Add(new StringContent(_selectedPhoto.PhotoName), "photoNames");
                     content.Add(new StringContent(_selectedPhoto.Description), "descriptions");
+                    content.Add(new StringContent(_selectedPhoto.Rating.ToString()), "ratings"); // Include rating
 
                     var response = await httpClient.PostAsync($"https://localhost:7250/api/inspections/{_inspectionId}/photos", content);
 
@@ -217,35 +289,11 @@ namespace Dokumentationssystem.Views
                     }
                     else
                     {
-                        var errorMessage = await response.Content.ReadAsStringAsync();
+                        var errorMessage = await response.Content.ReadAsStringAsync();  
                         await DisplayAlert("Error", $"Failed to upload new photo: {errorMessage}", "OK");
                     }
                 }
-                else  // Existing photo (edit)
-                {
-                    // Editing existing photo (PUT request)
-                    var updateData = new
-                    {
-                        PhotoName = _selectedPhoto.PhotoName,
-                        Description = _selectedPhoto.Description
-                    };
-
-                    var jsonContent = new StringContent(JsonConvert.SerializeObject(updateData), System.Text.Encoding.UTF8, "application/json");
-
-                    // Send PUT request to update the photo metadata
-                    var response = await httpClient.PutAsync($"https://localhost:7250/api/inspections/{_inspectionId}/photos/{_selectedPhoto.Id}", jsonContent);
-
-                    if (response.IsSuccessStatusCode)
-                    {
-                        await DisplayAlert("Success", "Photo metadata updated successfully!", "OK");
-                        await Navigation.PopAsync();
-                    }
-                    else
-                    {
-                        var errorMessage = await response.Content.ReadAsStringAsync();
-                        await DisplayAlert("Error", $"Failed to update photo metadata: {errorMessage}", "OK");
-                    }
-                }
+             
             }
             catch (Exception ex)
             {

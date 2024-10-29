@@ -5,53 +5,69 @@
              Title="Edit Photo"
              BackgroundColor="#F5F5F5">
 
-    <StackLayout Padding="20" Spacing="15">
-        <!-- Display the current photo -->
-        <Frame BorderColor="#DDD" CornerRadius="10" HasShadow="True" Padding="5" BackgroundColor="White">
-            <Image x:Name="PhotoImage" HeightRequest="200" Aspect="AspectFit" />
-        </Frame>
+    <ScrollView>
+        <StackLayout Padding="20" Spacing="15">
+            <!-- Display the current photo -->
+            <Frame BorderColor="#DDD" CornerRadius="10" HasShadow="True" Padding="5" BackgroundColor="White">
+                <Image x:Name="PhotoImage" HeightRequest="200" Aspect="AspectFit" />
+            </Frame>
 
-        <!-- Edit photo name -->
-        <Frame BorderColor="#DDD" CornerRadius="10" Padding="10" BackgroundColor="White">
-            <Entry x:Name="PhotoNameEntry" Placeholder="Enter new photo name" FontSize="18" TextColor="Black" />
-        </Frame>
+            <!-- Edit photo name -->
+            <Frame BorderColor="#DDD" CornerRadius="10" Padding="10" BackgroundColor="White">
+                <Entry x:Name="PhotoNameEntry" Placeholder="Enter new photo title" FontSize="18" TextColor="Black" />
+            </Frame>
 
-        <!-- Edit description -->
-        <Frame BorderColor="#DDD" CornerRadius="10" Padding="10" BackgroundColor="White">
-            <Editor x:Name="DescriptionEditor" Placeholder="Enter new description" FontSize="16" HeightRequest="100" TextColor="Black" />
-        </Frame>
+            <!-- Rating selection as circular buttons -->
+            <Frame BorderColor="#DDD" CornerRadius="10" Padding="10" BackgroundColor="White">
+                <Label Text="Rating" FontSize="18" TextColor="Black" />
+                <StackLayout Orientation="Horizontal" HorizontalOptions="Center" Spacing="5">
+                    <!-- Add rating buttons from 1 to 10 with color coding -->
+                    <Button Text="1" BackgroundColor="Green" TextColor="White" WidthRequest="40" HeightRequest="40" CornerRadius="20" Clicked="OnRatingButtonClicked" CommandParameter="1"/>
+                    <Button Text="2" BackgroundColor="Green" TextColor="White" WidthRequest="40" HeightRequest="40" CornerRadius="20" Clicked="OnRatingButtonClicked" CommandParameter="2"/>
+                    <Button Text="3" BackgroundColor="Green" TextColor="White" WidthRequest="40" HeightRequest="40" CornerRadius="20" Clicked="OnRatingButtonClicked" CommandParameter="3"/>
+                    <Button Text="4" BackgroundColor="Orange" TextColor="White" WidthRequest="40" HeightRequest="40" CornerRadius="20" Clicked="OnRatingButtonClicked" CommandParameter="4"/>
+                    <Button Text="5" BackgroundColor="Orange" TextColor="White" WidthRequest="40" HeightRequest="40" CornerRadius="20" Clicked="OnRatingButtonClicked" CommandParameter="5"/>
+                    <Button Text="6" BackgroundColor="Orange" TextColor="White" WidthRequest="40" HeightRequest="40" CornerRadius="20" Clicked="OnRatingButtonClicked" CommandParameter="6"/>
+                    <Button Text="7" BackgroundColor="Orange" TextColor="White" WidthRequest="40" HeightRequest="40" CornerRadius="20" Clicked="OnRatingButtonClicked" CommandParameter="7"/>
+                    <Button Text="8" BackgroundColor="Red" TextColor="White" WidthRequest="40" HeightRequest="40" CornerRadius="20" Clicked="OnRatingButtonClicked" CommandParameter="8"/>
+                    <Button Text="9" BackgroundColor="Red" TextColor="White" WidthRequest="40" HeightRequest="40" CornerRadius="20" Clicked="OnRatingButtonClicked" CommandParameter="9"/>
+                    <Button Text="10" BackgroundColor="Red" TextColor="White" WidthRequest="40" HeightRequest="40" CornerRadius="20" Clicked="OnRatingButtonClicked" CommandParameter="10"/>
+                </StackLayout>
+            </Frame>
 
-        <!-- Button to pick a new photo -->
-        <Button Text="Pick New Photo"
-            BackgroundColor="#4CAF50"
-            TextColor="White"
-            FontSize="18"
-            CornerRadius="8"
-            HeightRequest="50"
-            Clicked="OnPickPhotoClicked" />
+            <!-- Edit description -->
+            <Frame BorderColor="#DDD" CornerRadius="10" Padding="10" BackgroundColor="White">
+                <Editor x:Name="DescriptionEditor" Placeholder="Enter new description" FontSize="16" HeightRequest="100" TextColor="Black" />
+            </Frame>
 
-        <!-- Buttons for save and delete actions -->
-        <StackLayout Orientation="Horizontal" Spacing="10">
-            <!-- Delete Button -->
-            <Button Text="Delete Photo"
-                BackgroundColor="#FF3B30"
-                TextColor="White"
-                FontSize="18"
-                CornerRadius="8"
-                HeightRequest="50"
-                HorizontalOptions="FillAndExpand"
-                Clicked="OnDeleteClicked" />
+            <!-- Button to pick a new photo -->
+            <Button Text="Pick New Photo"
+                    BackgroundColor="#4CAF50"
+                    TextColor="White"
+                    FontSize="18"
+                    CornerRadius="8"
+                    HeightRequest="50"
+                    Clicked="OnPickPhotoClicked" />
 
-            <!-- Save Button -->
-            <Button Text="Save Changes"
-                BackgroundColor="#007AFF"
-                TextColor="White"
-                FontSize="18"
-                CornerRadius="8"
-                HeightRequest="50"
-                HorizontalOptions="FillAndExpand"
-                Clicked="OnSaveClicked" />
+            <!-- Buttons for save and delete actions -->
+            <StackLayout Orientation="Horizontal" Spacing="10">
+                <!-- Delete Button -->
+                <Button ImageSource="C:\Users\NB\Downloads\bin.png"
+                        BackgroundColor="Transparent"                  
+                        HeightRequest="50"
+                        HorizontalOptions="FillAndExpand"
+                        Clicked="OnDeleteClicked" />
+
+                <!-- Save Button -->
+                <Button Text="Save Changes"
+                        BackgroundColor="#007AFF"
+                        TextColor="White"
+                        FontSize="18"
+                        CornerRadius="8"
+                        HeightRequest="50"
+                        HorizontalOptions="FillAndExpand"
+                        Clicked="OnSaveClicked" />
+            </StackLayout>
         </StackLayout>
-    </StackLayout>
-
+    </ScrollView>
 </ContentPage>

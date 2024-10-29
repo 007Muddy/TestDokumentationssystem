@@ -11,8 +11,8 @@ using WebApplicationApi.Data;
 namespace WebApplicationApi.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241025124030_AddPhotoToInspection12dfdsasfdsafassadf")]
-    partial class AddPhotoToInspection12dfdsasfdsafassadf
+    [Migration("20241029135356_testRate12312")]
+    partial class testRate12312
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -270,18 +270,19 @@ namespace WebApplicationApi.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<byte[]>("PhotoData")
-                        .IsRequired()
                         .HasColumnType("BLOB");
 
                     b.Property<string>("PhotoName")
-                        .IsRequired()
                         .HasColumnType("TEXT");
+
+                    b.Property<int>("Rating")
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
                     b.HasIndex("InspectionId");
 
-                    b.ToTable("Photo");
+                    b.ToTable("Photos");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
