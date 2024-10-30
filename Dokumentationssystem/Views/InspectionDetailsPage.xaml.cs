@@ -22,6 +22,7 @@ namespace Dokumentationssystem.Views
 
         public ICommand TapImageCommand { get; }
         public ICommand EditPhotoCommand { get; }
+        public ICommand DeletePhotoCommand { get; }
 
         public InspectionDetailsPage(Inspection selectedInspection)
         {
@@ -33,6 +34,7 @@ namespace Dokumentationssystem.Views
             // Initialize TapImageCommand for image tapping functionality
             TapImageCommand = new Command<Photo>(OnPhotoTapped);
             EditPhotoCommand = new Command<Photo>(OnEditButtonClicked);
+            DeletePhotoCommand = new Command<Photo>(OnDeletePhoto); // New Delete Command
 
             // Load existing photos from the server
             LoadExistingPhotos();
@@ -99,7 +101,7 @@ namespace Dokumentationssystem.Views
         {
             if (selectedPhoto == null || selectedPhoto.Id == 0)
             {
-                await DisplayAlert("Error", "Selected photo is invalid or missing an ID.", "OK");
+                await DisplayAlert("Error", "Selected photo is not saved yet, pleas save it.", "OK");
                 return;
             }
 
@@ -301,8 +303,68 @@ namespace Dokumentationssystem.Views
             }
         }
 
+        private async void OnDeletePhoto(Photo selectedPhoto)
+        {
+            if (selectedPhoto == null)
+            {
+                await DisplayAlert("Error", "No photo selected.", "OK");
+                return;
+            }
 
-      
+            var jwtToken = Preferences.Get("JwtToken", string.Empty);
+            if (string.IsNullOrEmpty(jwtToken))
+            {
+                await DisplayAlert("Error", "User is not authenticated. Please log in.", "OK");
+                return;
+            }
+
+            var confirm = await DisplayAlert("Confirm Delete", "Are you sure you want to delete this photo?", "Yes", "No");
+            if (!confirm)
+            {
+                return;
+            }
+
+            var httpClient = new HttpClient();
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
+
+            try
+            {
+                var response = await httpClient.DeleteAsync($"https://localhost:7250/api/inspections/{_inspectionId}/photos/{selectedPhoto.Id}");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    await DisplayAlert("Success", "Photo deleted successfully!", "OK");
+
+                    // Remove the photo from the collection and update the UI
+                    _photoData.Remove(selectedPhoto);
+                    PhotoCollectionView.ItemsSource = null;
+                    PhotoCollectionView.ItemsSource = _photoData;
+                }
+                else
+                {
+                    var errorMessage = await response.Content.ReadAsStringAsync();
+                    await DisplayAlert("Error", $"Failed to delete photo: {errorMessage}", "OK");
+                }
+            }
+            catch (Exception ex)
+            {
+                await DisplayAlert("Error", $"An error occurred: {ex.Message}", "OK");
+            }
+        }
+
+
+        private void OnDeleteButtonClicked(object sender, EventArgs e)
+        {
+            if (sender is Button button && button.CommandParameter is Photo selectedPhoto)
+            {
+                OnDeletePhoto(selectedPhoto);
+            }
+        }
+        private async void OnBackButtonClicked(object sender, EventArgs e)
+        {
+            await Navigation.PopAsync(); // Navigates back to the previous page in the navigation stack
+        }
+
 
 
     }

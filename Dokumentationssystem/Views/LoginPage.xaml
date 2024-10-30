@@ -1,17 +1,19 @@
 <?xml version="1.0" encoding="utf-8" ?>
-    
+
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Dokumentationssystem.Views.LoginPage"
-             Title="Login">
+             Title=""
+             BackgroundImageSource="test2.jpg">
 
-    <Grid Padding="30" BackgroundColor="#F0F0F0">
+    <Grid Padding="30">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
+        <!-- Page Title -->
         <Label Text="Login" 
                FontSize="24" 
                FontAttributes="Bold" 
@@ -19,11 +21,28 @@
                VerticalOptions="Start" 
                TextColor="#333"/>
 
+        <!-- Form Fields with Icons -->
         <VerticalStackLayout Grid.Row="1" Spacing="20" Padding="10">
-            <Entry x:Name="UsernameEntry" Placeholder="Enter Username" BackgroundColor="White"  TextColor="Black"/>
 
-            <Entry x:Name="PasswordEntry" Placeholder="Enter Password" IsPassword="True" BackgroundColor="White" TextColor="Black" />
+            <!-- Username Field with Icon -->
+            <Frame BackgroundColor="White" Padding="0" CornerRadius="8" HeightRequest="50">
+                <HorizontalStackLayout VerticalOptions="Center" Padding="10,0">
+                    <Image Source="user.png" WidthRequest="24" HeightRequest="24" VerticalOptions="Center" />
+                    <Entry x:Name="UsernameEntry" Placeholder="Enter Username" TextColor="Black" 
+                           BackgroundColor="Transparent" Margin="10,0,0,0" />
+                </HorizontalStackLayout>
+            </Frame>
 
+            <!-- Password Field with Icon -->
+            <Frame BackgroundColor="White" Padding="0" CornerRadius="8" HeightRequest="50">
+                <HorizontalStackLayout VerticalOptions="Center" Padding="10,0">
+                    <Image Source="padlock.png" WidthRequest="24" HeightRequest="24" VerticalOptions="Center" />
+                    <Entry x:Name="PasswordEntry" Placeholder="Enter Password" IsPassword="True" TextColor="Black" 
+                           BackgroundColor="Transparent" Margin="10,0,0,0" />
+                </HorizontalStackLayout>
+            </Frame>
+
+            <!-- Login Button -->
             <Button Text="Login" 
                     BackgroundColor="#007AFF" 
                     TextColor="White" 

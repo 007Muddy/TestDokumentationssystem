@@ -2,37 +2,42 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Dokumentationssystem.Views.StartPage"
-             Title="Start Page">
-
-    <Grid Padding="30" BackgroundColor="#F0F0F0" VerticalOptions="Center">
+             Title=""
+             BackgroundImageSource="test1.jpg">
+    <Grid Padding="30" VerticalOptions="Center">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <Label Text="Welcome! Please choose an option:" 
-               FontSize="24" 
-               FontAttributes="Bold" 
-               HorizontalOptions="Center" 
+        <!-- Title Label with Enhanced Font and Color -->
+        <Label Text="Welcome! Please choose an option:"
+               FontSize="28"
+               FontAttributes="Bold"
+               HorizontalOptions="Center"
                VerticalOptions="Start"
-               TextColor="#333"/>
+               TextColor="White"
+               Margin="0,0,0,30" />
 
         <VerticalStackLayout Grid.Row="1" Spacing="20" HorizontalOptions="Center" VerticalOptions="Center">
-            <Button Text="Login" 
-                    BackgroundColor="#007AFF" 
-                    TextColor="White" 
-                    CornerRadius="8"
-                    FontSize="18"
-                    WidthRequest="150"
-                    Clicked="OnLoginClicked"/>
+            <!-- Button with Frame for Depth Effect -->
+            <Frame BackgroundColor="#007AFF" CornerRadius="25" Padding="0" HasShadow="True" WidthRequest="160" HeightRequest="50">
+                <Button Text="Login"
+                        BackgroundColor="Transparent"
+                        TextColor="White"
+                        FontAttributes="Bold"
+                        CornerRadius="25"
+                        Clicked="OnLoginClicked" />
+            </Frame>
 
-            <Button Text="Register" 
-                    BackgroundColor="#34C759" 
-                    TextColor="White" 
-                    CornerRadius="8"
-                    FontSize="18"
-                    WidthRequest="150"
-                    Clicked="OnRegisterClicked"/>
+            <Frame BackgroundColor="#E74C3C" CornerRadius="25" Padding="0" HasShadow="True" WidthRequest="160" HeightRequest="50">
+                <Button Text="Register"
+                        BackgroundColor="Transparent"
+                        TextColor="White"
+                        FontAttributes="Bold"
+                        CornerRadius="25"
+                        Clicked="OnRegisterClicked" />
+            </Frame>
         </VerticalStackLayout>
     </Grid>
 </ContentPage>

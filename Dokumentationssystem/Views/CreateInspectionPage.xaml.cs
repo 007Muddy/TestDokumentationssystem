@@ -105,6 +105,11 @@ namespace Dokumentationssystem.Views
                 await DisplayAlert("Error", $"An error occurred: {ex.Message}", "OK");
             }
         }
+        private async void OnBackButtonClicked(object sender, EventArgs e)
+        {
+            await Navigation.PopAsync(); // Navigates back to the previous page in the navigation stack
+        }
+
 
     }
 }

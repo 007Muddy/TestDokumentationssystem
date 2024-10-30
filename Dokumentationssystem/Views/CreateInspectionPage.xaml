@@ -2,43 +2,71 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Dokumentationssystem.Views.CreateInspectionPage"
-             Title="Create Inspection">
- 
+             Title=" "
+             BackgroundImageSource="create.jpg">
 
-    <Grid Padding="30" BackgroundColor="#F0F0F0">
+    <!-- Semi-transparent overlay for readability -->
+    <Grid Padding="30" BackgroundColor="#80000000">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
+        <!-- Back Button -->
+        <Button Text="← Back" 
+                FontAttributes="Bold" 
+                BackgroundColor="#333333AA" 
+                TextColor="White" 
+                CornerRadius="20"
+                Padding="12"
+                FontSize="18"
+                Clicked="OnBackButtonClicked"
+                HorizontalOptions="Start" 
+                VerticalOptions="Start"
+                Margin="0,10,0,10" />
+
         <!-- Page Title -->
-        <Label Text="Create New Inspection" 
-               FontSize="24" 
+        <Label Grid.Row="1"
+               Text="Create New Inspection" 
+               FontSize="28" 
                FontAttributes="Bold" 
                HorizontalOptions="Center" 
                VerticalOptions="Start"
-               TextColor="#333"/>
+               TextColor="White"
+               Margin="0, 20, 0, 20"/>
 
-        <ScrollView Grid.Row="1">
-            <VerticalStackLayout Spacing="15" Padding="10">
-                <!-- Input Fields -->
-                <Entry x:Name="CreatedByEntry" Placeholder="Created By" IsReadOnly="True" BackgroundColor="White" TextColor="Black" />
+        <!-- Form Fields in ScrollView -->
+        <ScrollView Grid.Row="2">
+            <VerticalStackLayout Spacing="20" Padding="10" HorizontalOptions="Center">
 
-                <Entry x:Name="InspectionNameEntry" Placeholder="Inspection Name" BackgroundColor="White" TextColor="Black"/>
+                <!-- Input Fields with frame for a cleaner look -->
+                <Frame BackgroundColor="#FFFFFFDD" CornerRadius="10" Padding="10" HasShadow="True">
+                    <Entry x:Name="CreatedByEntry" Placeholder="Created By" IsReadOnly="True" BackgroundColor="Transparent" TextColor="Black" />
+                </Frame>
 
-                <Entry x:Name="AddressEntry" Placeholder="Address" BackgroundColor="White" TextColor="Black" />
+                <Frame BackgroundColor="#FFFFFFDD" CornerRadius="10" Padding="10" HasShadow="True">
+                    <Entry x:Name="InspectionNameEntry" Placeholder="Inspection Name" BackgroundColor="Transparent" TextColor="Black"/>
+                </Frame>
 
-                <DatePicker x:Name="InspectionDatePicker" Format="D" BackgroundColor="White" TextColor="Black" />
+                <Frame BackgroundColor="#FFFFFFDD" CornerRadius="10" Padding="10" HasShadow="True">
+                    <Entry x:Name="AddressEntry" Placeholder="Address" BackgroundColor="Transparent" TextColor="Black" />
+                </Frame>
 
-            
+                <!-- DatePicker with consistent background color -->
+                <Frame BackgroundColor="#FFFFFFDD" CornerRadius="10" Padding="10" HasShadow="True">
+                    <DatePicker x:Name="InspectionDatePicker" Format="D" BackgroundColor="Transparent" TextColor="Black" />
+                </Frame>
 
                 <!-- Button to Create the Inspection -->
                 <Button Text="Create Inspection"
-                        BackgroundColor="Blue"
+                        BackgroundColor="#007AFF"
                         TextColor="White"
-                        CornerRadius="8"
+                        CornerRadius="10"
                         FontSize="18"
                         HeightRequest="50"
+                        WidthRequest="250"
+                        HorizontalOptions="Center"
                         Clicked="OnCreateInspectionClicked" />
             </VerticalStackLayout>
         </ScrollView>

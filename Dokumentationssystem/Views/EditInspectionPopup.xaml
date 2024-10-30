@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<toolkit:Popup xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+               xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+               xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+               x:Class="Dokumentationssystem.Views.EditInspectionPopup">
+
+    <VerticalStackLayout Padding="20" BackgroundColor="White" Spacing="10" WidthRequest="300">
+        <Label Text="Edit Inspection" FontSize="18" FontAttributes="Bold" HorizontalOptions="Center" />
+
+        <Label Text="Inspection Name" FontSize="14" />
+        <Entry x:Name="InspectionNameEntry" Placeholder="Enter inspection name" />
+
+        <Label Text="Address" FontSize="14" />
+        <Entry x:Name="AddressEntry" Placeholder="Enter address" />
+
+        <Label Text="Date" FontSize="14" />
+        <DatePicker x:Name="DateEntry" />
+
+        <!-- Save button -->
+        <Button Text="Save" BackgroundColor="#007AFF" TextColor="White" Clicked="OnSaveClicked" />
+    </VerticalStackLayout>
+</toolkit:Popup>

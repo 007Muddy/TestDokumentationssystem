@@ -42,6 +42,7 @@ namespace WebApplicationApi.Controllers
             var inspectionDtos = inspections.Select(i => new
             {
                 i.Id,
+                i.CreatedBy,
                 i.InspectionName,
                 i.Address,
                 i.Date,
@@ -99,7 +100,7 @@ namespace WebApplicationApi.Controllers
 
         // PUT: api/inspections/{id} - Update an existing inspection with optional photo uploads
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateInspection(int id, [FromForm] Inspection model, [FromForm] List<IFormFile> photos, [FromForm] List<string> photoNames, [FromForm] List<string> descriptions, [FromForm] List<int> ratings)
+        public async Task<IActionResult> UpdateInspection(int id, [FromBody] Inspection model)
         {
             var existingInspection = await _context.Inspections
                 .Include(i => i.Photos)
@@ -114,46 +115,10 @@ namespace WebApplicationApi.Controllers
             existingInspection.Address = model.Address;
             existingInspection.Date = model.Date;
 
-            if (photos != null && photos.Count > 0 && photoNames.Count == photos.Count && descriptions.Count == photos.Count && ratings.Count == photos.Count)
-            {
-                for (int i = 0; i < photos.Count; i++)
-                {
-                    var photo = photos[i];
-                    if (photo.Length > 0)
-                    {
-                        using (var memoryStream = new MemoryStream())
-                        {
-                            await photo.CopyToAsync(memoryStream);
-                            var photoBytes = memoryStream.ToArray();
-
-                            var existingPhoto = existingInspection.Photos.FirstOrDefault(p => p.PhotoName == photoNames[i]);
-
-                            if (existingPhoto != null)
-                            {
-                                existingPhoto.PhotoData = photoBytes;
-                                existingPhoto.Description = descriptions[i];
-                                existingPhoto.Rating = ratings[i];
-                            }
-                            else
-                            {
-                                existingInspection.Photos.Add(new Photo
-                                {
-                                    PhotoData = photoBytes,
-                                    PhotoName = photoNames[i],
-                                    Description = descriptions[i],
-                                    Rating = ratings[i]
-                                });
-                            }
-                        }
-                    }
-                }
-            }
-
             await _context.SaveChangesAsync();
 
             return Ok(existingInspection);
         }
-
 
 
 

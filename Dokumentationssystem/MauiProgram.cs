@@ -1,4 +1,5 @@
-﻿using Dokumentationssystem.Views;
+﻿using CommunityToolkit.Maui;
+using Dokumentationssystem.Views;
 using Microsoft.Extensions.Logging;
 
 namespace Dokumentationssystem
@@ -10,6 +11,7 @@ namespace Dokumentationssystem
             var builder = MauiApp.CreateBuilder();
             builder
                 .UseMauiApp<App>()
+                 .UseMauiCommunityToolkit() 
                 .ConfigureFonts(fonts =>
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
