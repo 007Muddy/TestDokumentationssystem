@@ -1,12 +1,17 @@
 using System.Text.Json;
 using System.Text;
 using Microsoft.Maui.Storage;
-using System.Text.Json.Serialization; // For using Preferences to store the JWT token
+using System.Text.Json.Serialization;
 
 namespace Dokumentationssystem.Views
 {
     public partial class LoginPage : ContentPage
     {
+        // Define base address based on platform
+        public static string BaseAddress =
+            DeviceInfo.Platform == DevicePlatform.Android ? "http://10.0.2.2:5119" : "http://localhost:5119";
+        public static string LoginUrl = $"{BaseAddress}/api/auth/login";
+
         public LoginPage()
         {
             InitializeComponent(); // This links the XAML elements to the code-behind
@@ -36,16 +41,14 @@ namespace Dokumentationssystem.Views
 
             try
             {
-                // API URL must match your actual server endpoint
-                var response = await httpClient.PostAsync("https://localhost:7250/api/auth/login", content);
+                // Use the platform-specific LoginUrl for the API call
+                var response = await httpClient.PostAsync(LoginUrl, content);
 
                 // After successful login
                 if (response.IsSuccessStatusCode)
                 {
                     // Read the response content
                     var resultJson = await response.Content.ReadAsStringAsync();
-
-         
 
                     // Deserialize the response to extract the token
                     var result = JsonSerializer.Deserialize<LoginResponse>(resultJson);

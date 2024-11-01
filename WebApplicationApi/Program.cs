@@ -65,7 +65,7 @@ else
         .AllowAnyHeader());
 }
 
-// Configure the HTTP request pipeline.
+//// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -77,7 +77,6 @@ else
     app.UseHttpsRedirection();
 }
 
-app.UseHttpsRedirection();
 
 // Add Authentication and Authorization middleware in the correct order
 app.UseAuthentication();  // This should come before UseAuthorization

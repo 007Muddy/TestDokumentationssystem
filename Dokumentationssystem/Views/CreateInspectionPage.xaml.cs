@@ -1,58 +1,48 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
-using System.Text.Json;
 using System.Text;
 using System.Net.Http.Headers;
 using Microsoft.Maui.Storage;
+using System.Text.Json;
 
 namespace Dokumentationssystem.Views
 {
     public partial class CreateInspectionPage : ContentPage
     {
+        // Define base address and endpoint URL for creating inspection
+        public static string BaseAddress =
+            DeviceInfo.Platform == DevicePlatform.Android ? "http://10.0.2.2:5119" : "http://localhost:5119";
+        public static string CreateInspectionUrl = $"{BaseAddress}/api/inspections/createinspection";
 
         public CreateInspectionPage()
         {
             InitializeComponent();
-
-            // Load the CreatedBy (username) value when the page loads
-            LoadUserInfo();
+            LoadUserInfo(); // Load the CreatedBy (username) value when the page loads
         }
 
         // Method to load the username from the JWT token
         private void LoadUserInfo()
         {
-            // Get the JWT token from Preferences
             var jwtToken = Preferences.Get("JwtToken", string.Empty);
-
-            // Extract username from the JWT token
             var userInfo = GetUserNameFromToken(jwtToken);
-
-            // Set the CreatedBy field to the extracted username
             CreatedByEntry.Text = userInfo ?? "Unknown User";
         }
 
         // Decoding the JWT token to extract the username
         private string GetUserNameFromToken(string jwtToken)
         {
-            // Check if the token is not empty
             if (string.IsNullOrEmpty(jwtToken))
             {
                 return null;
             }
 
-            // Decode the JWT token
             var handler = new JwtSecurityTokenHandler();
             var jsonToken = handler.ReadToken(jwtToken) as JwtSecurityToken;
-
-            // Extract the claim (UserName)
             var userName = jsonToken?.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Sub)?.Value;
 
-            // Return the username
             return userName;
         }
-
- 
 
         private async void OnCreateInspectionClicked(object sender, EventArgs e)
         {
@@ -86,8 +76,8 @@ namespace Dokumentationssystem.Views
                 formData.Add(new StringContent(inspectionDate.ToString("yyyy-MM-dd")), "Date");
                 formData.Add(new StringContent(createdBy), "CreatedBy");
 
-             
-                var response = await httpClient.PostAsync("https://localhost:7250/api/inspections/createinspection", formData);
+                // Use the platform-specific CreateInspectionUrl for the API call
+                var response = await httpClient.PostAsync(CreateInspectionUrl, formData);
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -105,11 +95,10 @@ namespace Dokumentationssystem.Views
                 await DisplayAlert("Error", $"An error occurred: {ex.Message}", "OK");
             }
         }
+
         private async void OnBackButtonClicked(object sender, EventArgs e)
         {
-            await Navigation.PopAsync(); // Navigates back to the previous page in the navigation stack
+            await Navigation.PopAsync();
         }
-
-
     }
 }

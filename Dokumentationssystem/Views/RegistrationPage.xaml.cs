@@ -7,6 +7,11 @@ namespace Dokumentationssystem.Views
 {
     public partial class RegistrationPage : ContentPage
     {
+        // Define the base address and registration URL based on the platform
+        public static string BaseAddress =
+            DeviceInfo.Platform == DevicePlatform.Android ? "http://10.0.2.2:5119" : "http://localhost:5119";
+        public static string RegisterUrl = $"{BaseAddress}/api/auth/register";
+
         public RegistrationPage()
         {
             InitializeComponent();
@@ -44,15 +49,14 @@ namespace Dokumentationssystem.Views
 
             try
             {
-                // Call your API endpoint (replace the URL with your actual API URL)
-                var response = await httpClient.PostAsync("https://localhost:7250/api/auth/register", content);
+                // Use the platform-specific RegisterUrl for the API call
+                var response = await httpClient.PostAsync(RegisterUrl, content);
 
                 if (response.IsSuccessStatusCode)
                 {
                     // Display success message
                     await DisplayAlert("Success", "User registered successfully!", "OK");
                     await Navigation.PushAsync(new LoginPage());
-
                 }
                 else
                 {

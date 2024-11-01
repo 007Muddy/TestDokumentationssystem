@@ -77,10 +77,10 @@
                             <HorizontalStackLayout HorizontalOptions="End" Spacing="12">
                                 <!-- Edit Button -->
                                 <ImageButton Source="edit.png"
-                                             HeightRequest="22"
-                                             WidthRequest="22"
-                                             BackgroundColor="Transparent"
-                                             Padding="8"
+                                           HeightRequest="22"
+ WidthRequest="22"
+ BackgroundColor="Transparent"
+ Padding="1"
                                              Command="{Binding Source={x:Reference InspectionsCollectionView}, Path=BindingContext.EditInspectionCommand}"
                                              CommandParameter="{Binding}"
                                              Aspect="AspectFit" />
@@ -90,21 +90,22 @@
                                              HeightRequest="22"
                                              WidthRequest="22"
                                              BackgroundColor="Transparent"
-                                             Padding="8"
+                                             Padding="1"
                                              Command="{Binding Source={x:Reference InspectionsCollectionView}, Path=BindingContext.DownloadInspectionCommand}"
                                              CommandParameter="{Binding}"
                                              Aspect="AspectFit" />
 
                                 <!-- Delete Button -->
                                 <ImageButton Source="bin.png" 
-                                             HeightRequest="22"
-                                             WidthRequest="22"
-                                             BackgroundColor="Transparent"
-                                             Padding="8"
+                                         HeightRequest="22"
+ WidthRequest="22"
+ BackgroundColor="Transparent"
+ Padding="1"
                                              Command="{Binding Source={x:Reference InspectionsCollectionView}, Path=BindingContext.DeleteInspectionCommand}" 
                                              CommandParameter="{Binding}"
                                              Aspect="AspectFit" />
                             </HorizontalStackLayout>
+                        
 
                         </VerticalStackLayout>
                     </Frame>

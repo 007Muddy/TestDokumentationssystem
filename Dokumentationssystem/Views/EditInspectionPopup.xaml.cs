@@ -1,11 +1,17 @@
 using Dokumentationssystem.Models;
 using System.Net.Http.Headers;
 using Newtonsoft.Json;
+using Microsoft.Maui.Storage;
 
 namespace Dokumentationssystem.Views
 {
     public partial class EditInspectionPopup : CommunityToolkit.Maui.Views.Popup
     {
+        // Define base address and URL for updating inspections based on the platform
+        public static string BaseAddress =
+            DeviceInfo.Platform == DevicePlatform.Android ? "http://10.0.2.2:5119" : "http://localhost:5119";
+        public static string UpdateInspectionUrl(int inspectionId) => $"{BaseAddress}/api/inspections/{inspectionId}";
+
         private Inspection _inspection;
         private readonly Action _refreshInspections;
 
@@ -53,7 +59,7 @@ namespace Dokumentationssystem.Views
 
                 try
                 {
-                    var response = await httpClient.PutAsync($"https://localhost:7250/api/inspections/{_inspection.Id}", jsonContent);
+                    var response = await httpClient.PutAsync(UpdateInspectionUrl(_inspection.Id), jsonContent);
 
                     if (response.IsSuccessStatusCode)
                     {
@@ -73,7 +79,5 @@ namespace Dokumentationssystem.Views
                 }
             }
         }
-
     }
 }
-

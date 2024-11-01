@@ -7,17 +7,23 @@ using System.Windows.Input;
 using System.Net.Http.Headers;
 using Newtonsoft.Json;
 using Microsoft.Maui.Layouts;
+using Microsoft.Maui.Storage;
 
 namespace Dokumentationssystem.Views
 {
     public partial class InspectionDetailsPage : ContentPage
     {
-        // ObservableCollection to store photos and bind to CollectionView
-        private ObservableCollection<Photo> _photoData = new ObservableCollection<Photo>();
-        private List<Photo> _initialPhotoData = new List<Photo>(); // Track photos loaded from server
-        private readonly int _inspectionId;  // Store the inspection ID
+        // Define base address and API URLs based on platform
+        public static string BaseAddress =
+            DeviceInfo.Platform == DevicePlatform.Android ? "http://10.0.2.2:5119" : "http://localhost:5119";
+        public static string PhotosUrl(int inspectionId) => $"{BaseAddress}/api/inspections/{inspectionId}/photos";
+        public static string DeletePhotoUrl(int inspectionId, int photoId) => $"{BaseAddress}/api/inspections/{inspectionId}/photos/{photoId}";
+        public static string AddPhotoUrl(int inspectionId) => $"{BaseAddress}/api/inspections/{inspectionId}/photos";
 
-        // Add a selectedPhoto for storing the currently selected photo for edit
+        private List<Photo> _initialPhotoData = new List<Photo>(); // Track photos loaded from server
+
+        private ObservableCollection<Photo> _photoData = new ObservableCollection<Photo>();
+        private readonly int _inspectionId;
         private Photo _selectedPhoto;
 
         public ICommand TapImageCommand { get; }
@@ -28,19 +34,16 @@ namespace Dokumentationssystem.Views
         {
             InitializeComponent();
 
-            _inspectionId = selectedInspection.Id;  // Assign the inspection ID
-            BindingContext = this;  // Ensure the BindingContext is set to the current page
+            _inspectionId = selectedInspection.Id;
+            BindingContext = this;
 
-            // Initialize TapImageCommand for image tapping functionality
             TapImageCommand = new Command<Photo>(OnPhotoTapped);
             EditPhotoCommand = new Command<Photo>(OnEditButtonClicked);
-            DeletePhotoCommand = new Command<Photo>(OnDeletePhoto); // New Delete Command
+            DeletePhotoCommand = new Command<Photo>(OnDeletePhoto);
 
-            // Load existing photos from the server
             LoadExistingPhotos();
         }
 
-        // Load existing photos from the server
         public async void LoadExistingPhotos()
         {
             var jwtToken = Preferences.Get("JwtToken", string.Empty);
@@ -55,7 +58,7 @@ namespace Dokumentationssystem.Views
 
             try
             {
-                var response = await httpClient.GetAsync($"https://localhost:7250/api/inspections/{_inspectionId}/photos");
+                var response = await httpClient.GetAsync(PhotosUrl(_inspectionId));
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -67,8 +70,6 @@ namespace Dokumentationssystem.Views
                     {
                         photo.InspectionId = _inspectionId;
                         _photoData.Add(photo);
-
-                        
                     }
 
                     PhotoCollectionView.ItemsSource = _photoData;
@@ -85,8 +86,6 @@ namespace Dokumentationssystem.Views
             }
         }
 
-
-        // Handle photo selection for tapping on a photo to view details
         private async void OnPhotoTapped(Photo selectedPhoto)
         {
             if (selectedPhoto?.PhotoData != null)
@@ -95,23 +94,17 @@ namespace Dokumentationssystem.Views
             }
         }
 
-
-        // Handle editing an existing photo
         private async void OnEditButtonClicked(Photo selectedPhoto)
         {
             if (selectedPhoto == null || selectedPhoto.Id == 0)
             {
-                await DisplayAlert("Error", "Selected photo is not saved yet, pleas save it.", "OK");
+                await DisplayAlert("Error", "Selected photo is not saved yet. Please save it first.", "OK");
                 return;
             }
 
             await Navigation.PushAsync(new EditPhotoPage(selectedPhoto, this));
         }
 
-
-
-
-        // Handle photo picking for adding a new photo
         private async void OnPickPhotosClicked(object sender, EventArgs e)
         {
             try
@@ -127,7 +120,6 @@ namespace Dokumentationssystem.Views
 
                         if (photoBytes != null && photoBytes.Length > 0)
                         {
-                            // Prompt user for name and description
                             string newPhotoName = await DisplayPromptAsync("Photo Name", "Enter a name for the new photo:");
                             string newDescription = await DisplayPromptAsync("Description", "Enter a description for the new photo:");
 
@@ -137,13 +129,11 @@ namespace Dokumentationssystem.Views
                                 return;
                             }
 
-                            // Show a rating selection popup with circular buttons
                             int rating = await ShowRatingSelectionPopup();
 
-                            // Add a new photo model to the ObservableCollection
                             var photoModel = new Photo
                             {
-                                Id = 0, // New photo ID set to 0
+                                Id = 0,
                                 InspectionId = _inspectionId,
                                 PhotoData = photoBytes,
                                 PhotoName = newPhotoName,
@@ -151,12 +141,9 @@ namespace Dokumentationssystem.Views
                                 Rating = rating
                             };
 
-                            _photoData.Add(photoModel);  // Add to collection
-
-                            // Set the new photo as the selected photo
+                            _photoData.Add(photoModel);
                             _selectedPhoto = photoModel;
 
-                            // Refresh CollectionView after adding new photo
                             PhotoCollectionView.ItemsSource = null;
                             PhotoCollectionView.ItemsSource = _photoData;
                         }
@@ -173,7 +160,6 @@ namespace Dokumentationssystem.Views
             }
         }
 
-        // Popup for rating selection
         private async Task<int> ShowRatingSelectionPopup()
         {
             var tcs = new TaskCompletionSource<int>();
@@ -242,10 +228,8 @@ namespace Dokumentationssystem.Views
 
             return await tcs.Task;
         }
+   
 
-
-
-        // Handle the Save button click for saving metadata of the edited photo
         private async void OnSaveButtonClicked(object sender, EventArgs e)
         {
             if (_selectedPhoto == null)
@@ -266,9 +250,8 @@ namespace Dokumentationssystem.Views
 
             try
             {
-                if (_selectedPhoto.Id == 0)  // New photo (Id is 0 or null)
+                if (_selectedPhoto.Id == 0)
                 {
-                    // New photo logic (POST request)
                     var content = new MultipartFormDataContent();
                     var photoContent = new ByteArrayContent(_selectedPhoto.PhotoData);
                     photoContent.Headers.ContentType = MediaTypeHeaderValue.Parse("image/jpeg");
@@ -276,9 +259,9 @@ namespace Dokumentationssystem.Views
 
                     content.Add(new StringContent(_selectedPhoto.PhotoName), "photoNames");
                     content.Add(new StringContent(_selectedPhoto.Description), "descriptions");
-                    content.Add(new StringContent(_selectedPhoto.Rating.ToString()), "ratings"); // Include rating
+                    content.Add(new StringContent(_selectedPhoto.Rating.ToString()), "ratings");
 
-                    var response = await httpClient.PostAsync($"https://localhost:7250/api/inspections/{_inspectionId}/photos", content);
+                    var response = await httpClient.PostAsync(AddPhotoUrl(_inspectionId), content);
 
                     if (response.IsSuccessStatusCode)
                     {
@@ -291,11 +274,10 @@ namespace Dokumentationssystem.Views
                     }
                     else
                     {
-                        var errorMessage = await response.Content.ReadAsStringAsync();  
+                        var errorMessage = await response.Content.ReadAsStringAsync();
                         await DisplayAlert("Error", $"Failed to upload new photo: {errorMessage}", "OK");
                     }
                 }
-             
             }
             catch (Exception ex)
             {
@@ -329,13 +311,12 @@ namespace Dokumentationssystem.Views
 
             try
             {
-                var response = await httpClient.DeleteAsync($"https://localhost:7250/api/inspections/{_inspectionId}/photos/{selectedPhoto.Id}");
+                var response = await httpClient.DeleteAsync(DeletePhotoUrl(_inspectionId, selectedPhoto.Id));
 
                 if (response.IsSuccessStatusCode)
                 {
                     await DisplayAlert("Success", "Photo deleted successfully!", "OK");
 
-                    // Remove the photo from the collection and update the UI
                     _photoData.Remove(selectedPhoto);
                     PhotoCollectionView.ItemsSource = null;
                     PhotoCollectionView.ItemsSource = _photoData;
@@ -352,7 +333,6 @@ namespace Dokumentationssystem.Views
             }
         }
 
-
         private void OnDeleteButtonClicked(object sender, EventArgs e)
         {
             if (sender is Button button && button.CommandParameter is Photo selectedPhoto)
@@ -360,12 +340,10 @@ namespace Dokumentationssystem.Views
                 OnDeletePhoto(selectedPhoto);
             }
         }
+
         private async void OnBackButtonClicked(object sender, EventArgs e)
         {
-            await Navigation.PopAsync(); // Navigates back to the previous page in the navigation stack
+            await Navigation.PopAsync();
         }
-
-
-
     }
 }

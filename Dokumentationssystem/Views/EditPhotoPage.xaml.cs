@@ -1,11 +1,18 @@
 using Dokumentationssystem.Models;
 using Newtonsoft.Json;
 using System.Net.Http.Headers;
+using Microsoft.Maui.Storage;
 
 namespace Dokumentationssystem.Views;
 
 public partial class EditPhotoPage : ContentPage
 {
+    // Define base address and endpoint URLs based on the platform
+    public static string BaseAddress =
+        DeviceInfo.Platform == DevicePlatform.Android ? "http://10.0.2.2:5119" : "http://localhost:5119";
+    public static string DeletePhotoUrl(int inspectionId, int photoId) => $"{BaseAddress}/api/inspections/{inspectionId}/photos/{photoId}";
+    public static string UpdatePhotoUrl(int inspectionId, int photoId) => $"{BaseAddress}/api/inspections/{inspectionId}/photos/{photoId}";
+
     private Photo _selectedPhoto;
     private byte[] _newPhotoData;
     private InspectionDetailsPage _parentPage;
@@ -27,7 +34,6 @@ public partial class EditPhotoPage : ContentPage
         _selectedRating = _selectedPhoto.Rating;
     }
 
-    // Handle rating button click
     private void OnRatingButtonClicked(object sender, EventArgs e)
     {
         if (sender is Button button && int.TryParse(button.CommandParameter.ToString(), out int rating))
@@ -37,7 +43,6 @@ public partial class EditPhotoPage : ContentPage
         }
     }
 
-    // Handle selecting a new photo
     private async void OnPickPhotoClicked(object sender, EventArgs e)
     {
         var photo = await MediaPicker.PickPhotoAsync();
@@ -52,7 +57,8 @@ public partial class EditPhotoPage : ContentPage
                 PhotoImage.Source = ImageSource.FromStream(() => new MemoryStream(_newPhotoData));
             }
         }
-    } 
+    }
+
     private async void OnDeleteClicked(object sender, EventArgs e)
     {
         var jwtToken = Preferences.Get("JwtToken", string.Empty);
@@ -73,8 +79,7 @@ public partial class EditPhotoPage : ContentPage
 
         try
         {
-
-            var response = await httpClient.DeleteAsync($"https://localhost:7250/api/inspections/{_selectedPhoto.InspectionId}/photos/{_selectedPhoto.Id}");
+            var response = await httpClient.DeleteAsync(DeletePhotoUrl(_selectedPhoto.InspectionId, _selectedPhoto.Id));
 
             if (response.IsSuccessStatusCode)
             {
@@ -83,7 +88,7 @@ public partial class EditPhotoPage : ContentPage
                 // Refresh the photo list on the parent page
                 _parentPage.LoadExistingPhotos();
 
-                await Navigation.PopAsync();  // Return to the previous page
+                await Navigation.PopAsync();
             }
             else
             {
@@ -97,8 +102,6 @@ public partial class EditPhotoPage : ContentPage
         }
     }
 
-
-    // Handle saving changes to the photo
     private async void OnSaveClicked(object sender, EventArgs e)
     {
         var jwtToken = Preferences.Get("JwtToken", string.Empty);
@@ -123,7 +126,7 @@ public partial class EditPhotoPage : ContentPage
 
             var jsonContent = new StringContent(JsonConvert.SerializeObject(updateData), System.Text.Encoding.UTF8, "application/json");
 
-            var response = await httpClient.PutAsync($"https://localhost:7250/api/inspections/{_selectedPhoto.InspectionId}/photos/{_selectedPhoto.Id}", jsonContent);
+            var response = await httpClient.PutAsync(UpdatePhotoUrl(_selectedPhoto.InspectionId, _selectedPhoto.Id), jsonContent);
 
             if (response.IsSuccessStatusCode)
             {
@@ -132,7 +135,7 @@ public partial class EditPhotoPage : ContentPage
                 // Refresh the photo list on the parent page
                 _parentPage.LoadExistingPhotos();
 
-                await Navigation.PopAsync();  // Return to the previous page
+                await Navigation.PopAsync();
             }
             else
             {
@@ -144,11 +147,10 @@ public partial class EditPhotoPage : ContentPage
         {
             await DisplayAlert("Error", $"An error occurred: {ex.Message}", "OK");
         }
-
     }
+
     private async void OnBackButtonClicked(object sender, EventArgs e)
     {
-        await Navigation.PopAsync(); // Navigates back to the previous page in the navigation stack
+        await Navigation.PopAsync();
     }
-
 }
