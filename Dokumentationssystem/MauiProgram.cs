@@ -28,8 +28,9 @@ namespace Dokumentationssystem
             builder.Services.AddSingleton<FullImagePage>();
 
 
+            builder.UseMauiApp<App>().UseMauiCommunityToolkit();
 
-     
+
 
 
 #if DEBUG

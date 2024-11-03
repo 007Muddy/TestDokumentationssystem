@@ -1,6 +1,7 @@
 using System.Text.Json;
 using System.Text;
 using System.Net.Http;
+using System.Text.RegularExpressions;
 using Microsoft.Maui.Controls;
 
 namespace Dokumentationssystem.Views
@@ -32,6 +33,13 @@ namespace Dokumentationssystem.Views
                 return;
             }
 
+            // Validate email format
+            if (!IsValidEmail(email))
+            {
+                await DisplayAlert("Error", "Please enter a valid email address", "OK");
+                return;
+            }
+
             // Prepare the data to send to the API
             var registerModel = new
             {
@@ -43,33 +51,35 @@ namespace Dokumentationssystem.Views
             // Create a new HttpClient to make the request
             var httpClient = new HttpClient();
 
-            // Serialize the model into JSON format
             var json = JsonSerializer.Serialize(registerModel);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
 
             try
             {
-                // Use the platform-specific RegisterUrl for the API call
                 var response = await httpClient.PostAsync(RegisterUrl, content);
 
                 if (response.IsSuccessStatusCode)
                 {
-                    // Display success message
                     await DisplayAlert("Success", "User registered successfully!", "OK");
                     await Navigation.PushAsync(new LoginPage());
                 }
                 else
                 {
-                    // Handle errors (show the error message returned from the API)
                     var errorMessage = await response.Content.ReadAsStringAsync();
                     await DisplayAlert("Error", $"Registration failed: {errorMessage}", "OK");
                 }
             }
             catch (Exception ex)
             {
-                // Handle exceptions (like network issues)
                 await DisplayAlert("Error", $"An error occurred: {ex.Message}", "OK");
             }
+        }
+
+        // Helper method to validate email format
+        private bool IsValidEmail(string email)
+        {
+            var emailRegex = @"^[^@\s]+@[^@\s]+\.[^@\s]+$";
+            return Regex.IsMatch(email, emailRegex);
         }
     }
 }

@@ -121,23 +121,27 @@
                     <!-- Buttons for Adding New Photo and Saving Changes -->
                     <HorizontalStackLayout HorizontalOptions="Center" Spacing="10" Margin="0,20,0,0">
                         <Button Text="Add New Photo" 
-                                BackgroundColor="#4CAF50" 
-                                TextColor="White" 
-                                FontSize="18" 
-                                CornerRadius="8" 
-                                HeightRequest="50"
-                                WidthRequest="160"
-                                Clicked="OnPickPhotosClicked" />
+            BackgroundColor="#4CAF50" 
+            TextColor="White" 
+            FontSize="Medium" 
+            CornerRadius="8" 
+            HorizontalOptions="FillAndExpand"
+            VerticalOptions="Center"
+            Clicked="OnPickPhotosClicked" />
 
                         <Button Text="Save Photos" 
-                                BackgroundColor="#007AFF" 
-                                TextColor="White" 
-                                FontSize="18" 
-                                CornerRadius="8" 
-                                HeightRequest="50"
-                                WidthRequest="160"
-                                Clicked="OnSaveButtonClicked" />
+            BackgroundColor="#007AFF" 
+            TextColor="White" 
+            FontSize="Medium" 
+            CornerRadius="8" 
+            HorizontalOptions="FillAndExpand"
+            VerticalOptions="Center"
+            Clicked="OnSaveButtonClicked" />
                     </HorizontalStackLayout>
+
+
+
+
                 </VerticalStackLayout>
             </ScrollView>
         </Frame>

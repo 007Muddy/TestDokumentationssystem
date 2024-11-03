@@ -34,21 +34,22 @@
                 <!-- Rating selection with circular buttons and color coding -->
                 <Frame BorderColor="#DDDDDD" CornerRadius="10" Padding="10" BackgroundColor="White">
                     <Label Text="Rating" FontSize="18" TextColor="#444444" />
-                    <StackLayout Orientation="Horizontal" HorizontalOptions="Center" Spacing="5">
-                        <!-- Rating buttons from 1 to 10 with softer color coding -->
-                        <Button Text="1" BackgroundColor="#4CAF50" TextColor="White" WidthRequest="40" HeightRequest="40" CornerRadius="20" Clicked="OnRatingButtonClicked" CommandParameter="1"/>
-                        <Button Text="2" BackgroundColor="#4CAF50" TextColor="White" WidthRequest="40" HeightRequest="40" CornerRadius="20" Clicked="OnRatingButtonClicked" CommandParameter="2"/>
-                        <Button Text="3" BackgroundColor="#4CAF50" TextColor="White" WidthRequest="40" HeightRequest="40" CornerRadius="20" Clicked="OnRatingButtonClicked" CommandParameter="3"/>
-                        <Button Text="4" BackgroundColor="#FFB74D" TextColor="White" WidthRequest="40" HeightRequest="40" CornerRadius="20" Clicked="OnRatingButtonClicked" CommandParameter="4"/>
-                        <Button Text="5" BackgroundColor="#FFB74D" TextColor="White" WidthRequest="40" HeightRequest="40" CornerRadius="20" Clicked="OnRatingButtonClicked" CommandParameter="5"/>
-                        <Button Text="6" BackgroundColor="#FFB74D" TextColor="White" WidthRequest="40" HeightRequest="40" CornerRadius="20" Clicked="OnRatingButtonClicked" CommandParameter="6"/>
-                        <Button Text="7" BackgroundColor="#FF7043" TextColor="White" WidthRequest="40" HeightRequest="40" CornerRadius="20" Clicked="OnRatingButtonClicked" CommandParameter="7"/>
-                        <Button Text="8" BackgroundColor="#F44336" TextColor="White" WidthRequest="40" HeightRequest="40" CornerRadius="20" Clicked="OnRatingButtonClicked" CommandParameter="8"/>
-                        <Button Text="9" BackgroundColor="#F44336" TextColor="White" WidthRequest="40" HeightRequest="40" CornerRadius="20" Clicked="OnRatingButtonClicked" CommandParameter="9"/>
-                        <Button Text="10" BackgroundColor="#D32F2F" TextColor="White" WidthRequest="40" HeightRequest="40" CornerRadius="20" Clicked="OnRatingButtonClicked" CommandParameter="10"/>
-                    </StackLayout>
+                    <ScrollView Orientation="Horizontal">
+                        <StackLayout Orientation="Horizontal" HorizontalOptions="Center" Spacing="5">
+                            <!-- Rating buttons from 1 to 10 with softer color coding -->
+                            <Button Text="1" BackgroundColor="#4CAF50" TextColor="White" WidthRequest="40" HeightRequest="40" CornerRadius="20" Clicked="OnRatingButtonClicked" CommandParameter="1"/>
+                            <Button Text="2" BackgroundColor="#4CAF50" TextColor="White" WidthRequest="40" HeightRequest="40" CornerRadius="20" Clicked="OnRatingButtonClicked" CommandParameter="2"/>
+                            <Button Text="3" BackgroundColor="#4CAF50" TextColor="White" WidthRequest="40" HeightRequest="40" CornerRadius="20" Clicked="OnRatingButtonClicked" CommandParameter="3"/>
+                            <Button Text="4" BackgroundColor="#FFB74D" TextColor="White" WidthRequest="40" HeightRequest="40" CornerRadius="20" Clicked="OnRatingButtonClicked" CommandParameter="4"/>
+                            <Button Text="5" BackgroundColor="#FFB74D" TextColor="White" WidthRequest="40" HeightRequest="40" CornerRadius="20" Clicked="OnRatingButtonClicked" CommandParameter="5"/>
+                            <Button Text="6" BackgroundColor="#FFB74D" TextColor="White" WidthRequest="40" HeightRequest="40" CornerRadius="20" Clicked="OnRatingButtonClicked" CommandParameter="6"/>
+                            <Button Text="7" BackgroundColor="#FF7043" TextColor="White" WidthRequest="40" HeightRequest="40" CornerRadius="20" Clicked="OnRatingButtonClicked" CommandParameter="7"/>
+                            <Button Text="8" BackgroundColor="#F44336" TextColor="White" WidthRequest="40" HeightRequest="40" CornerRadius="20" Clicked="OnRatingButtonClicked" CommandParameter="8"/>
+                            <Button Text="9" BackgroundColor="#F44336" TextColor="White" WidthRequest="40" HeightRequest="40" CornerRadius="20" Clicked="OnRatingButtonClicked" CommandParameter="9"/>
+                            <Button Text="10" BackgroundColor="#D32F2F" TextColor="White" WidthRequest="45" HeightRequest="40" CornerRadius="20" Clicked="OnRatingButtonClicked" CommandParameter="10"/>
+                        </StackLayout>
+                    </ScrollView>
                 </Frame>
-
                 <!-- Description editor with consistent styling -->
                 <Frame BorderColor="#DDDDDD" CornerRadius="10" Padding="10" BackgroundColor="White">
                     <Editor x:Name="DescriptionEditor" Placeholder="Enter new description" FontSize="16" HeightRequest="100" TextColor="Black" />
@@ -65,14 +66,7 @@
 
                 <!-- Save and Delete buttons with improved alignment and spacing -->
                 <HorizontalStackLayout Spacing="10" HorizontalOptions="Center">
-                    <!-- Delete Button with icon -->
-                    <ImageButton Source="bin.png"
-                                 Padding="12"
-                                 WidthRequest="24"
-                                 HeightRequest="24"
-                                 BackgroundColor="Transparent"
-                                 Clicked="OnDeleteClicked" />
-
+               
                     <!-- Save Button -->
                     <Button Text="Save Changes"
                             BackgroundColor="#2196F3"

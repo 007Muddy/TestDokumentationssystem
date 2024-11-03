@@ -109,7 +109,19 @@ namespace Dokumentationssystem.Views
         {
             try
             {
-                var photo = await MediaPicker.PickPhotoAsync();
+                string action = await DisplayActionSheet("Upload Photo", "Cancel", null, "Choose from Gallery", "Take a Photo");
+
+                FileResult photo = null;
+
+                if (action == "Choose from Gallery")
+                {
+                    photo = await MediaPicker.PickPhotoAsync();
+                }
+                else if (action == "Take a Photo")
+                {
+                    photo = await MediaPicker.CapturePhotoAsync();
+                }
+
                 if (photo != null)
                 {
                     using (var stream = await photo.OpenReadAsync())
@@ -163,14 +175,14 @@ namespace Dokumentationssystem.Views
         private async Task<int> ShowRatingSelectionPopup()
         {
             var tcs = new TaskCompletionSource<int>();
-            bool isResultSet = false; // Flag to prevent multiple calls to SetResult
+            bool isResultSet = false;
 
             var popupLayout = new StackLayout
             {
-                Orientation = StackOrientation.Horizontal,
+                Orientation = StackOrientation.Vertical,
                 HorizontalOptions = LayoutOptions.Center,
                 VerticalOptions = LayoutOptions.Center,
-                Spacing = 10
+                Spacing =2
             };
 
             // Add rating buttons from 1 to 10
@@ -182,22 +194,20 @@ namespace Dokumentationssystem.Views
                     BackgroundColor = i <= 3 ? Colors.Green : i <= 7 ? Colors.Orange : Colors.Red,
                     TextColor = Colors.White,
                     CornerRadius = 20,
-                    WidthRequest = 40,
+                    WidthRequest = 45,
                     HeightRequest = 40,
                     CommandParameter = i
                 };
 
-                // Define what happens when a button is clicked
                 button.Clicked += async (sender, e) =>
                 {
-                    if (!isResultSet) // Check if result has already been set
+                    if (!isResultSet)
                     {
                         if (sender is Button selectedButton && int.TryParse(selectedButton.CommandParameter.ToString(), out int selectedRating))
                         {
-                            isResultSet = true; // Set flag to true to prevent further calls
+                            isResultSet = true;
                             tcs.SetResult(selectedRating);
 
-                            // Immediately remove the popup after selection
                             if (Application.Current.MainPage.Navigation.ModalStack.Count > 0)
                             {
                                 await Application.Current.MainPage.Navigation.PopModalAsync();
@@ -209,14 +219,21 @@ namespace Dokumentationssystem.Views
                 popupLayout.Children.Add(button);
             }
 
-            // Display the popup
+            // Wrap the popupLayout in a horizontal ScrollView
+            var scrollView = new ScrollView
+            {
+                Orientation = ScrollOrientation.Horizontal,
+                Content = popupLayout
+            };
+
+            // Display the popup with scrolling
             var overlay = new AbsoluteLayout
             {
-                BackgroundColor = Colors.Black.WithAlpha(0.5f) // Semi-transparent overlay
+                BackgroundColor = Colors.Black.WithAlpha(0.5f)
             };
-            AbsoluteLayout.SetLayoutBounds(popupLayout, new Rect(0.5, 0.5, AbsoluteLayout.AutoSize, AbsoluteLayout.AutoSize));
-            AbsoluteLayout.SetLayoutFlags(popupLayout, AbsoluteLayoutFlags.PositionProportional);
-            overlay.Children.Add(popupLayout);
+            AbsoluteLayout.SetLayoutBounds(scrollView, new Rect(0.5, 0.5, AbsoluteLayout.AutoSize, AbsoluteLayout.AutoSize));
+            AbsoluteLayout.SetLayoutFlags(scrollView, AbsoluteLayoutFlags.PositionProportional);
+            overlay.Children.Add(scrollView);
 
             var modalPage = new ContentPage
             {
@@ -228,7 +245,7 @@ namespace Dokumentationssystem.Views
 
             return await tcs.Task;
         }
-   
+
 
         private async void OnSaveButtonClicked(object sender, EventArgs e)
         {

@@ -19,10 +19,13 @@ namespace Dokumentationssystem.Views
         public static string InspectionsUrl = $"{BaseAddress}/api/inspections";
         public static string DeleteInspectionUrl = $"{InspectionsUrl}/"; // Inspection ID will be appended dynamically
         public static string PhotosUrl = $"{InspectionsUrl}/"; // Use with inspection ID: /{inspection.Id}/photos
+        private List<Inspection> allInspections = new List<Inspection>();
 
         public ICommand DeleteInspectionCommand { get; }
         public ICommand DownloadInspectionCommand { get; }
         public ICommand EditInspectionCommand { get; }
+        public ICommand InspectionSelectedCommand { get; }
+
 
         public InspectionListPage()
         {
@@ -32,6 +35,22 @@ namespace Dokumentationssystem.Views
             DownloadInspectionCommand = new Command<Inspection>(async (inspection) => await DownloadInspection(inspection));
             EditInspectionCommand = new Command<Inspection>(async (inspection) => await ShowEditInspectionPopup(inspection));
             DeleteInspectionCommand = new Command<Inspection>(async (inspection) => await DeleteInspection(inspection));
+            InspectionSelectedCommand = new Command<Inspection>(async (inspection) => await OpenInspectionDetails(inspection));
+
+
+        }
+      
+        private void OnSearchBarTextChanged(object sender, TextChangedEventArgs e)
+        {
+            var searchText = e.NewTextValue?.ToLower() ?? string.Empty;
+
+            // Filter the inspections based on the search text
+            var filteredInspections = string.IsNullOrWhiteSpace(searchText)
+                ? allInspections
+                : allInspections.Where(i => i.InspectionName.ToLower().Contains(searchText)).ToList();
+
+            // Update the collection view with the filtered inspections
+            InspectionsCollectionView.ItemsSource = filteredInspections;
         }
 
         private async Task ShowEditInspectionPopup(Inspection inspection)
@@ -173,12 +192,12 @@ namespace Dokumentationssystem.Views
                 if (response.IsSuccessStatusCode)
                 {
                     var json = await response.Content.ReadAsStringAsync();
-                    var inspections = JsonSerializer.Deserialize<List<Inspection>>(json, new JsonSerializerOptions
+                    allInspections = JsonSerializer.Deserialize<List<Inspection>>(json, new JsonSerializerOptions
                     {
                         PropertyNameCaseInsensitive = true
                     });
 
-                    foreach (var inspection in inspections)
+                    foreach (var inspection in allInspections)
                     {
                         if (inspection.Date == DateTime.MinValue)
                         {
@@ -186,7 +205,7 @@ namespace Dokumentationssystem.Views
                         }
                     }
 
-                    InspectionsCollectionView.ItemsSource = inspections;
+                    InspectionsCollectionView.ItemsSource = allInspections;
                 }
                 else
                 {
@@ -199,13 +218,12 @@ namespace Dokumentationssystem.Views
             }
         }
 
-        private async void OnInspectionSelected(object sender, SelectionChangedEventArgs e)
+
+        private async Task OpenInspectionDetails(Inspection inspection)
         {
-            var selectedInspection = (Inspection)e.CurrentSelection.FirstOrDefault();
-            if (selectedInspection != null)
+            if (inspection != null)
             {
-                await Navigation.PushAsync(new InspectionDetailsPage(selectedInspection));
-                InspectionsCollectionView.SelectedItem = null;
+                await Navigation.PushAsync(new InspectionDetailsPage(inspection));
             }
         }
 

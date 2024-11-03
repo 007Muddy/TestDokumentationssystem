@@ -12,7 +12,7 @@ namespace Dokumentationssystem.Views
             DeviceInfo.Platform == DevicePlatform.Android ? "http://10.0.2.2:5119" : "http://localhost:5119";
         public static string LoginUrl = $"{BaseAddress}/api/auth/login";
 
-        public LoginPage()
+        public LoginPage()      
         {
             InitializeComponent(); // This links the XAML elements to the code-behind
         }
@@ -74,7 +74,7 @@ namespace Dokumentationssystem.Views
                 {
                     // Capture and display the API error message
                     var errorMessage = await response.Content.ReadAsStringAsync();
-                    await DisplayAlert("Error", $"Login failed: {errorMessage}", "OK");
+                    await DisplayAlert("Error", $"Login failed: username or password is incorrect", "OK");
                 }
             }
             catch (Exception ex)

@@ -19,7 +19,7 @@ namespace Dokumentationssystem.Models
         public string Address { get; set; }
         public DateTime Date { get; set; }
 
-  
+
         public string? CreatedBy { get; set; } 
         public ObservableCollection<Photo> Photos { get; set; } = new ObservableCollection<Photo>();
 
@@ -40,6 +40,15 @@ namespace Dokumentationssystem.Models
         public Inspection? Inspection { get; set; }
 
    
+    }
+    public class AddressData
+    {
+        public string Tekst { get; set; }
+    }
+
+    public class AddressResult
+    {
+        public AddressData Data { get; set; }
     }
 
 

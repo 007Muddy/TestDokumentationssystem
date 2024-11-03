@@ -6,7 +6,9 @@
 
     <!-- Semi-transparent overlay grid for better readability -->
     <Grid Padding="20" BackgroundColor="#80000000">
+        
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
@@ -18,12 +20,12 @@
                 BackgroundColor="#FFFFFFE6" 
                 TextColor="Black" 
                 CornerRadius="8"
-  Padding="10"
+                Padding="10"
                 FontSize="18"
                 Clicked="OnBackButtonClicked"
                 HorizontalOptions="Start" 
                 VerticalOptions="Start"
-                Margin="0,10,0,20" />
+                Margin="0,10,0,10" />
 
         <!-- Page Title styled similarly to the Login and Registration pages -->
         <Label Grid.Row="1"
@@ -33,13 +35,20 @@
                HorizontalOptions="Center" 
                VerticalOptions="Start" 
                TextColor="White"
-               Margin="0, 20, 0, 30"/>
+               Margin="0, 10, 0, 10"/>
 
-        <!-- CollectionView to display list of inspections, styled to match form inputs -->
-        <CollectionView Grid.Row="2"
+        <!-- Search Bar directly under the title -->
+        <SearchBar Grid.Row="2" Background="Beige"
+                   TextColor="Black"
+                   Placeholder="Search by inspection name" 
+                   TextChanged="OnSearchBarTextChanged"
+                   Margin="20, 10, 20, 20"
+                   VerticalOptions="Start"/>
+
+        <!-- CollectionView to display list of inspections -->
+        <CollectionView Grid.Row="3"
                         x:Name="InspectionsCollectionView"
-                        SelectionMode="Single"
-                        SelectionChanged="OnInspectionSelected"
+                        SelectionMode="None"
                         VerticalOptions="FillAndExpand"
                         HorizontalOptions="FillAndExpand"
                         BackgroundColor="Transparent"
@@ -53,39 +62,42 @@
                            Margin="15,5" 
                            HasShadow="True" 
                            BackgroundColor="#FFFFFFE6">
+                        
+                        <!-- TapGestureRecognizer added to the Frame -->
+                        <Frame.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding Source={x:Reference InspectionsCollectionView}, Path=BindingContext.InspectionSelectedCommand}"
+                                                  CommandParameter="{Binding}" />
+                        </Frame.GestureRecognizers>
+
                         <VerticalStackLayout Spacing="8">
-
-                            <!-- Styled labels for better readability -->
-                            <Label Text="{Binding CreatedBy, StringFormat='Created By: {0}'}"
-                                   FontSize="14"
-                                   TextColor="#555555" />
-
-                            <Label Text="{Binding InspectionName, StringFormat='Inspection Name: {0}'}" 
-                                   FontSize="16" 
-                                   TextColor="#222222" 
-                                   FontAttributes="Bold" />
-
-                            <Label Text="{Binding Address, StringFormat='Address: {0}'}" 
-                                   FontSize="14" 
-                                   TextColor="#555555" />
-
-                            <Label Text="{Binding Date, StringFormat='Date: {0:dd MMM yyyy}'}" 
-                                   FontSize="14" 
-                                   TextColor="#555555"/>
-
-                            <!-- Aligned action buttons with consistent styling -->
+                            <HorizontalStackLayout>
+                               
+                                <VerticalStackLayout>
+                                    <Label Text="{Binding CreatedBy, StringFormat='Created By: {0}'}"
+                                           FontSize="14"
+                                           TextColor="#555555" />
+                                    <Label Text="{Binding InspectionName, StringFormat='Inspection Name: {0}'}" 
+                                           FontSize="16" 
+                                           TextColor="#222222" 
+                                           FontAttributes="Bold" />
+                                    <Label Text="{Binding Address, StringFormat='Address: {0}'}" 
+                                           FontSize="14" 
+                                           TextColor="#555555" />
+                                    <Label Text="{Binding Date, StringFormat='Date: {0:dd MMM yyyy}'}" 
+                                           FontSize="14" 
+                                           TextColor="#555555"/>
+                                </VerticalStackLayout>
+                            </HorizontalStackLayout>
+                            
                             <HorizontalStackLayout HorizontalOptions="End" Spacing="12">
-                                <!-- Edit Button -->
                                 <ImageButton Source="edit.png"
-                                           HeightRequest="22"
- WidthRequest="22"
- BackgroundColor="Transparent"
- Padding="1"
+                                             HeightRequest="22"
+                                             WidthRequest="22"
+                                             BackgroundColor="Transparent"
+                                             Padding="1"
                                              Command="{Binding Source={x:Reference InspectionsCollectionView}, Path=BindingContext.EditInspectionCommand}"
                                              CommandParameter="{Binding}"
                                              Aspect="AspectFit" />
-
-                                <!-- Download Button -->
                                 <ImageButton Source="downloads.png" 
                                              HeightRequest="22"
                                              WidthRequest="22"
@@ -94,24 +106,23 @@
                                              Command="{Binding Source={x:Reference InspectionsCollectionView}, Path=BindingContext.DownloadInspectionCommand}"
                                              CommandParameter="{Binding}"
                                              Aspect="AspectFit" />
-
-                                <!-- Delete Button -->
                                 <ImageButton Source="bin.png" 
-                                         HeightRequest="22"
- WidthRequest="22"
- BackgroundColor="Transparent"
- Padding="1"
+                                             HeightRequest="22"
+                                             WidthRequest="22"
+                                             BackgroundColor="Transparent"
+                                             Padding="1"
                                              Command="{Binding Source={x:Reference InspectionsCollectionView}, Path=BindingContext.DeleteInspectionCommand}" 
                                              CommandParameter="{Binding}"
                                              Aspect="AspectFit" />
                             </HorizontalStackLayout>
-                        
-
                         </VerticalStackLayout>
                     </Frame>
+                    
                 </DataTemplate>
+                
             </CollectionView.ItemTemplate>
+            
         </CollectionView>
-
+        
     </Grid>
 </ContentPage>

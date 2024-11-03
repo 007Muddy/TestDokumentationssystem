@@ -2,10 +2,9 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Dokumentationssystem.Views.CreateInspectionPage"
-             Title=" "
+             Title=""
              BackgroundImageSource="create.jpg">
 
-    <!-- Semi-transparent overlay for readability -->
     <Grid Padding="30" BackgroundColor="#80000000">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -13,7 +12,6 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!-- Back Button -->
         <Button Text="← Back" 
                 FontAttributes="Bold" 
                 BackgroundColor="#333333AA" 
@@ -26,7 +24,6 @@
                 VerticalOptions="Start"
                 Margin="0,10,0,10" />
 
-        <!-- Page Title -->
         <Label Grid.Row="1"
                Text="Create New Inspection" 
                FontSize="28" 
@@ -36,11 +33,9 @@
                TextColor="White"
                Margin="0, 20, 0, 20"/>
 
-        <!-- Form Fields in ScrollView -->
         <ScrollView Grid.Row="2">
             <VerticalStackLayout Spacing="20" Padding="10" HorizontalOptions="Center">
 
-                <!-- Input Fields with frame for a cleaner look -->
                 <Frame BackgroundColor="#FFFFFFDD" CornerRadius="10" Padding="10" HasShadow="True">
                     <Entry x:Name="CreatedByEntry" Placeholder="Created By" IsReadOnly="True" BackgroundColor="Transparent" TextColor="Black" />
                 </Frame>
@@ -50,15 +45,21 @@
                 </Frame>
 
                 <Frame BackgroundColor="#FFFFFFDD" CornerRadius="10" Padding="10" HasShadow="True">
-                    <Entry x:Name="AddressEntry" Placeholder="Address" BackgroundColor="Transparent" TextColor="Black" />
+                    <Entry x:Name="AddressEntry" Placeholder="Address" TextChanged="OnAddressTextChanged" BackgroundColor="Transparent" TextColor="Black" />
                 </Frame>
 
-                <!-- DatePicker with consistent background color -->
+                <ListView x:Name="AddressSuggestionsList" IsVisible="False" ItemSelected="OnAddressSuggestionSelected">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <TextCell Text="{Binding .}" />
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+
                 <Frame BackgroundColor="#FFFFFFDD" CornerRadius="10" Padding="10" HasShadow="True">
                     <DatePicker x:Name="InspectionDatePicker" Format="D" BackgroundColor="Transparent" TextColor="Black" />
                 </Frame>
 
-                <!-- Button to Create the Inspection -->
                 <Button Text="Create Inspection"
                         BackgroundColor="#007AFF"
                         TextColor="White"

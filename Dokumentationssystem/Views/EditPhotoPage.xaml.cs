@@ -59,49 +59,7 @@ public partial class EditPhotoPage : ContentPage
         }
     }
 
-    private async void OnDeleteClicked(object sender, EventArgs e)
-    {
-        var jwtToken = Preferences.Get("JwtToken", string.Empty);
-        if (string.IsNullOrEmpty(jwtToken))
-        {
-            await DisplayAlert("Error", "User is not authenticated. Please log in.", "OK");
-            return;
-        }
-
-        var confirm = await DisplayAlert("Confirm Delete", "Are you sure you want to delete this photo?", "Yes", "No");
-        if (!confirm)
-        {
-            return;
-        }
-
-        var httpClient = new HttpClient();
-        httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
-
-        try
-        {
-            var response = await httpClient.DeleteAsync(DeletePhotoUrl(_selectedPhoto.InspectionId, _selectedPhoto.Id));
-
-            if (response.IsSuccessStatusCode)
-            {
-                await DisplayAlert("Success", "Photo deleted successfully!", "OK");
-
-                // Refresh the photo list on the parent page
-                _parentPage.LoadExistingPhotos();
-
-                await Navigation.PopAsync();
-            }
-            else
-            {
-                var errorMessage = await response.Content.ReadAsStringAsync();
-                await DisplayAlert("Error", $"Failed to delete photo: {errorMessage}", "OK");
-            }
-        }
-        catch (Exception ex)
-        {
-            await DisplayAlert("Error", $"An error occurred: {ex.Message}", "OK");
-        }
-    }
-
+  
     private async void OnSaveClicked(object sender, EventArgs e)
     {
         var jwtToken = Preferences.Get("JwtToken", string.Empty);
