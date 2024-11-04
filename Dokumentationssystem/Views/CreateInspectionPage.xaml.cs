@@ -108,7 +108,7 @@ namespace Dokumentationssystem.Views
 
         private void ClearAddressSuggestions()
         {
-            AddressEntry.Text = string.Empty;
+  
             AddressSuggestionsList.ItemsSource = null;
             AddressSuggestionsList.IsVisible = false;
         }
