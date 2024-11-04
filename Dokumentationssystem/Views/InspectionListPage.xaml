@@ -1,12 +1,13 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Dokumentationssystem.Views.InspectionListPage"
-             Title=""
              BackgroundImageSource="listinspition.jpg">
-
+    <Shell.BackButtonBehavior>
+        <BackButtonBehavior IsVisible="False" />
+    </Shell.BackButtonBehavior>
     <!-- Semi-transparent overlay grid for better readability -->
     <Grid Padding="20" BackgroundColor="#80000000">
-        
+
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -26,6 +27,18 @@
                 HorizontalOptions="Start" 
                 VerticalOptions="Start"
                 Margin="0,10,0,10" />
+
+        <Button Text="Actions ▼"
+                FontAttributes="Bold"
+                BackgroundColor="#FFFFFFE6"
+                TextColor="Black"
+                CornerRadius="8"
+                Padding="10"
+                FontSize="18"
+                Clicked="OnSelectOptionsClicked"
+                HorizontalOptions="End"
+                VerticalOptions="Start"
+                Margin="0, 10, 0, 10" />
 
         <!-- Page Title styled similarly to the Login and Registration pages -->
         <Label Grid.Row="1"
@@ -62,7 +75,7 @@
                            Margin="15,5" 
                            HasShadow="True" 
                            BackgroundColor="#FFFFFFE6">
-                        
+
                         <!-- TapGestureRecognizer added to the Frame -->
                         <Frame.GestureRecognizers>
                             <TapGestureRecognizer Command="{Binding Source={x:Reference InspectionsCollectionView}, Path=BindingContext.InspectionSelectedCommand}"
@@ -71,7 +84,13 @@
 
                         <VerticalStackLayout Spacing="8">
                             <HorizontalStackLayout>
-                               
+
+                                <!-- Checkbox for selection -->
+                                <CheckBox IsChecked="{Binding IsSelected}"
+                                          IsVisible="{Binding Source={x:Reference InspectionsCollectionView}, Path=BindingContext.AreCheckboxesVisible}"
+                                          VerticalOptions="Center"
+                                          Background="Beige"/>
+
                                 <VerticalStackLayout>
                                     <Label Text="{Binding CreatedBy, StringFormat='Created By: {0}'}"
                                            FontSize="14"
@@ -88,7 +107,7 @@
                                            TextColor="#555555"/>
                                 </VerticalStackLayout>
                             </HorizontalStackLayout>
-                            
+
                             <HorizontalStackLayout HorizontalOptions="End" Spacing="12">
                                 <ImageButton Source="edit.png"
                                              HeightRequest="22"
@@ -117,12 +136,8 @@
                             </HorizontalStackLayout>
                         </VerticalStackLayout>
                     </Frame>
-                    
                 </DataTemplate>
-                
             </CollectionView.ItemTemplate>
-            
         </CollectionView>
-        
     </Grid>
 </ContentPage>

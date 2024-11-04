@@ -19,7 +19,7 @@ namespace Dokumentationssystem.Models
         public string Address { get; set; }
         public DateTime Date { get; set; }
 
-
+        public bool IsSelected { get; set; } 
         public string? CreatedBy { get; set; } 
         public ObservableCollection<Photo> Photos { get; set; } = new ObservableCollection<Photo>();
 

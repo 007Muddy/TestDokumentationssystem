@@ -6,7 +6,11 @@ namespace Dokumentationssystem.Views
         {
             InitializeComponent();
         }
-
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+            Shell.SetBackButtonBehavior(this, new BackButtonBehavior { IsVisible = false });
+        }
         private async void OnInspectoinListClicked(object sender, EventArgs e)
         {
             await Navigation.PushAsync(new InspectionListPage());

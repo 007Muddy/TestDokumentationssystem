@@ -2,9 +2,10 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Dokumentationssystem.Views.CreateInspectionPage"
-             Title=""
              BackgroundImageSource="create.jpg">
-
+    <Shell.BackButtonBehavior>
+        <BackButtonBehavior IsVisible="False" />
+    </Shell.BackButtonBehavior>
     <Grid Padding="30" BackgroundColor="#80000000">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -14,7 +15,7 @@
 
         <Button Text="← Back" 
                 FontAttributes="Bold" 
-                BackgroundColor="#333333AA" 
+                BackgroundColor="#007AFF" 
                 TextColor="White" 
                 CornerRadius="20"
                 Padding="12"
@@ -48,10 +49,12 @@
                     <Entry x:Name="AddressEntry" Placeholder="Address" TextChanged="OnAddressTextChanged" BackgroundColor="Transparent" TextColor="Black" />
                 </Frame>
 
-                <ListView x:Name="AddressSuggestionsList" IsVisible="False" ItemSelected="OnAddressSuggestionSelected">
+
+                <ListView x:Name="AddressSuggestionsList" IsVisible="False" ItemSelected="OnAddressSuggestionSelected"
+                          BackgroundColor="#FFFFFFDD" SeparatorColor="#CCCCCC">
                     <ListView.ItemTemplate>
                         <DataTemplate>
-                            <TextCell Text="{Binding .}" />
+                            <TextCell Text="{Binding .}" TextColor="#333333" />
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </ListView>

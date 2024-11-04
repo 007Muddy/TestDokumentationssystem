@@ -33,7 +33,11 @@ public partial class EditPhotoPage : ContentPage
         DescriptionEditor.Text = _selectedPhoto.Description;
         _selectedRating = _selectedPhoto.Rating;
     }
-
+    protected override void OnAppearing()
+    {
+        base.OnAppearing();
+        Shell.SetBackButtonBehavior(this, new BackButtonBehavior { IsVisible = false });
+    }
     private void OnRatingButtonClicked(object sender, EventArgs e)
     {
         if (sender is Button button && int.TryParse(button.CommandParameter.ToString(), out int rating))

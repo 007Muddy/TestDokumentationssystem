@@ -12,7 +12,11 @@ namespace Dokumentationssystem.Views
         public static string BaseAddress =
             DeviceInfo.Platform == DevicePlatform.Android ? "http://10.0.2.2:5119" : "http://localhost:5119";
         public static string RegisterUrl = $"{BaseAddress}/api/auth/register";
-
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+            Shell.SetBackButtonBehavior(this, new BackButtonBehavior { IsVisible = false });
+        }
         public RegistrationPage()
         {
             InitializeComponent();

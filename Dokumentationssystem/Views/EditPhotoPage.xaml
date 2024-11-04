@@ -4,7 +4,9 @@
              x:Class="Dokumentationssystem.Views.EditPhotoPage"
              Title=""
              BackgroundImageSource="editphoto.jpg">
-
+    <Shell.BackButtonBehavior>
+        <BackButtonBehavior IsVisible="False" />
+    </Shell.BackButtonBehavior>
     <!-- Semi-transparent overlay for readability over the background image -->
     <Grid BackgroundColor="#CC000000" Padding="20">
         <ScrollView>

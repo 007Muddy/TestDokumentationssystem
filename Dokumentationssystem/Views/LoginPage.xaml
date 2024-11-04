@@ -6,6 +6,9 @@
              x:Class="Dokumentationssystem.Views.LoginPage"
              Title=""
              BackgroundImageSource="test2.jpg">
+    <Shell.BackButtonBehavior>
+        <BackButtonBehavior IsVisible="False" />
+    </Shell.BackButtonBehavior>
 
     <Grid Padding="30">
         <Grid.RowDefinitions>

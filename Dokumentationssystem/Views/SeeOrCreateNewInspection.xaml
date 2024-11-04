@@ -3,7 +3,9 @@
              x:Class="Dokumentationssystem.Views.SeeOrCreateNewInspection"
              Title=""
              BackgroundImageSource="seeorupdate.jpg">
-
+    <Shell.BackButtonBehavior>
+        <BackButtonBehavior IsVisible="False" />
+    </Shell.BackButtonBehavior>
     <!-- Semi-transparent overlay grid for readability -->
     <Grid Padding="30" BackgroundColor="#80000000" VerticalOptions="CenterAndExpand">
         <Grid.RowDefinitions>

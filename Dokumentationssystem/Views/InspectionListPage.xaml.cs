@@ -25,8 +25,26 @@ namespace Dokumentationssystem.Views
         public ICommand DownloadInspectionCommand { get; }
         public ICommand EditInspectionCommand { get; }
         public ICommand InspectionSelectedCommand { get; }
+        public ICommand SelectAllCommand { get; }
+        public ICommand DeselectAllCommand { get; }
+        public ICommand DeleteSelectedCommand { get; }
+        public ICommand DownloadSelectedCommand { get; }
 
-
+        private bool _areCheckboxesVisible = false;
+        public bool AreCheckboxesVisible
+        {
+            get => _areCheckboxesVisible;
+            set
+            {
+                _areCheckboxesVisible = value;
+                OnPropertyChanged(nameof(AreCheckboxesVisible));
+            }
+        }
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+            Shell.SetBackButtonBehavior(this, new BackButtonBehavior { IsVisible = false });
+        }
         public InspectionListPage()
         {
             InitializeComponent();
@@ -36,10 +54,82 @@ namespace Dokumentationssystem.Views
             EditInspectionCommand = new Command<Inspection>(async (inspection) => await ShowEditInspectionPopup(inspection));
             DeleteInspectionCommand = new Command<Inspection>(async (inspection) => await DeleteInspection(inspection));
             InspectionSelectedCommand = new Command<Inspection>(async (inspection) => await OpenInspectionDetails(inspection));
-
+            DeselectAllCommand = new Command(DeselectAllInspections);
+            DeleteSelectedCommand = new Command(async () => await DeleteSelectedInspections());
+            DownloadSelectedCommand = new Command(async () => await DownloadSelectedInspections());
+            AreCheckboxesVisible = false; 
 
         }
-      
+
+        private void SelectAllInspections()
+        {
+            foreach (var inspection in allInspections)
+            {
+                inspection.IsSelected = true;
+            }
+            InspectionsCollectionView.ItemsSource = null;
+            InspectionsCollectionView.ItemsSource = allInspections;
+        }
+
+        private void DeselectAllInspections()
+        {
+            foreach (var inspection in allInspections)
+            {
+                inspection.IsSelected = false;
+            }
+            InspectionsCollectionView.ItemsSource = null;
+            InspectionsCollectionView.ItemsSource = allInspections;
+        }
+
+
+        private async void OnSelectOptionsClicked(object sender, EventArgs e)
+        {
+            string action = await DisplayActionSheet("Select Options", "Cancel", null, "Select", "Select All", "Deselect All", "Delete Selected", "Download Selected");
+
+            switch (action)
+            {
+                case "Select":
+                    AreCheckboxesVisible = true; 
+                    break;
+                case "Select All":
+                    AreCheckboxesVisible = true;
+                    SelectAllInspections();
+                    break;
+                case "Deselect All":
+                    AreCheckboxesVisible = true;
+                    DeselectAllInspections();
+                    break;
+                case "Delete Selected":
+                    await DeleteSelectedInspections();
+                    break;
+                case "Download Selected":
+                    await DownloadSelectedInspections();
+                    break;
+                case "Cancel":
+                    AreCheckboxesVisible = false;
+                    break;
+            }
+        }
+
+        // Delete selected inspections
+        private async Task DeleteSelectedInspections()
+        {
+            var selectedInspections = allInspections.Where(i => i.IsSelected).ToList();
+            foreach (var inspection in selectedInspections)
+            {
+                await DeleteInspection(inspection);
+            }
+        }
+
+        private async Task DownloadSelectedInspections()
+        {
+            var selectedInspections = allInspections.Where(i => i.IsSelected).ToList();
+            foreach (var inspection in selectedInspections)
+            {
+                await DownloadInspection(inspection);
+            }
+        }
+
         private void OnSearchBarTextChanged(object sender, TextChangedEventArgs e)
         {
             var searchText = e.NewTextValue?.ToLower() ?? string.Empty;

@@ -24,6 +24,14 @@ namespace Dokumentationssystem.Views
             InitializeComponent();
             LoadUserInfo(); 
         }
+        private async Task AnimateButton(Button button)
+        {
+            // Move the button down slightly
+            await button.TranslateTo(0, 10, 100, Easing.CubicInOut);
+
+            // Move the button back to its original position
+            await button.TranslateTo(0, 0, 100, Easing.CubicInOut);
+        }
 
         private void LoadUserInfo()
         {
@@ -48,6 +56,9 @@ namespace Dokumentationssystem.Views
 
         private async void OnAddressTextChanged(object sender, TextChangedEventArgs e)
         {
+            AddressSuggestionsList.IsVisible = false; // Hide suggestions at the start
+            AddressSuggestionsList.ItemsSource = null; // Clear previous suggestions
+
             var query = e.NewTextValue;
             if (!string.IsNullOrWhiteSpace(query))
             {
@@ -55,42 +66,52 @@ namespace Dokumentationssystem.Views
             }
         }
 
+
         private async Task FetchAddressSuggestions(string input)
         {
-            var httpClient = new HttpClient();
-            var url = $"{GooglePlacesApiUrl}&input={input}&key={GooglePlacesApiKey}";
-
-            try
+            using (var httpClient = new HttpClient()) // Using a new instance of HttpClient
             {
-                var response = await httpClient.GetAsync(url);
-                if (response.IsSuccessStatusCode)
-                {
-                    var jsonResponse = await response.Content.ReadAsStringAsync();
-                    var places = JsonSerializer.Deserialize<GooglePlacesResponse>(jsonResponse, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                var url = $"{GooglePlacesApiUrl}&input={input}&key={GooglePlacesApiKey}";
 
-                    if (places?.Predictions != null && places.Predictions.Any())
+                try
+                {
+                    var response = await httpClient.GetAsync(url);
+                    if (response.IsSuccessStatusCode)
                     {
-                        var suggestions = places.Predictions.Select(p => p.Description).ToList();
-                        AddressSuggestionsList.ItemsSource = suggestions;
-                        AddressSuggestionsList.IsVisible = true;
+                        var jsonResponse = await response.Content.ReadAsStringAsync();
+                        var places = JsonSerializer.Deserialize<GooglePlacesResponse>(jsonResponse, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                        if (places?.Predictions != null && places.Predictions.Any())
+                        {
+                            var suggestions = places.Predictions.Select(p => p.Description).ToList();
+                            AddressSuggestionsList.ItemsSource = suggestions;
+                            AddressSuggestionsList.IsVisible = true;
+                        }
+                        else
+                        {
+                            AddressSuggestionsList.ItemsSource = null;
+                            AddressSuggestionsList.IsVisible = false;
+                        }
                     }
                     else
                     {
-                        AddressSuggestionsList.ItemsSource = null;
-                        AddressSuggestionsList.IsVisible = false;
+                        await DisplayAlert("Error", $"Failed to fetch address suggestions: {response.ReasonPhrase}", "OK");
                     }
                 }
-                else
+                catch (Exception ex)
                 {
-                    await DisplayAlert("Error", $"Failed to fetch address suggestions: {response.ReasonPhrase}", "OK");
+                    await DisplayAlert("Error", $"An error occurred: {ex.Message}", "OK");
                 }
-            }
-            catch (Exception ex)
-            {
-                await DisplayAlert("Error", $"An error occurred: {ex.Message}", "OK");
             }
         }
 
+
+        private void ClearAddressSuggestions()
+        {
+            AddressEntry.Text = string.Empty;
+            AddressSuggestionsList.ItemsSource = null;
+            AddressSuggestionsList.IsVisible = false;
+        }
 
         private void OnAddressSuggestionSelected(object sender, SelectedItemChangedEventArgs e)
         {
@@ -104,6 +125,11 @@ namespace Dokumentationssystem.Views
 
         private async void OnCreateInspectionClicked(object sender, EventArgs e)
         {
+            // Animate the button
+            await AnimateButton((Button)sender);
+
+            ClearAddressSuggestions();
+
             var inspectionName = InspectionNameEntry.Text;
             var address = AddressEntry.Text;
             var inspectionDate = InspectionDatePicker.Date;
@@ -155,11 +181,25 @@ namespace Dokumentationssystem.Views
 
         private async void OnBackButtonClicked(object sender, EventArgs e)
         {
+            // Animate the button
+            await AnimateButton((Button)sender);
+
+            // Navigate back
             await Navigation.PopAsync();
         }
+
+        //remove back from top bar
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+            Shell.SetBackButtonBehavior(this, new BackButtonBehavior { IsVisible = false });
+            ClearAddressSuggestions(); // Clear previous address suggestions on page load
+        }
+
     }
 
-    
+
+
     public class GooglePlacesResponse
     {
         public List<Prediction> Predictions { get; set; }

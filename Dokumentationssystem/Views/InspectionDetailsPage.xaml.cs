@@ -43,7 +43,11 @@ namespace Dokumentationssystem.Views
 
             LoadExistingPhotos();
         }
-
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+            Shell.SetBackButtonBehavior(this, new BackButtonBehavior { IsVisible = false });
+        }
         public async void LoadExistingPhotos()
         {
             var jwtToken = Preferences.Get("JwtToken", string.Empty);

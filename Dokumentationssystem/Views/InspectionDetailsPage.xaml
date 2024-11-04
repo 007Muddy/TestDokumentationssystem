@@ -6,7 +6,9 @@
              x:Class="Dokumentationssystem.Views.InspectionDetailsPage"
              Title=""
              BackgroundImageSource="edit1.jpg">
-
+    <Shell.BackButtonBehavior>
+        <BackButtonBehavior IsVisible="False" />
+    </Shell.BackButtonBehavior>
     <ContentPage.Resources>
         <ResourceDictionary>
             <converters:ByteArrayToImageConverter x:Key="ByteArrayToImageConverter"/>
@@ -98,7 +100,7 @@
 
                                         <!-- Edit and Delete Buttons -->
                                         <HorizontalStackLayout HorizontalOptions="End" Spacing="10">
-                                            <ImageButton Source="edit.png"
+                                            <ImageButton Source="edit.png" 
                                                          Command="{Binding Source={x:Reference PhotoCollectionView}, Path=BindingContext.EditPhotoCommand}" 
                                                          CommandParameter="{Binding}"
                                                          HeightRequest="20" 
@@ -117,13 +119,12 @@
                             </DataTemplate>
                         </CollectionView.ItemTemplate>
                     </CollectionView>
-
                     <!-- Buttons for Adding New Photo and Saving Changes -->
-                    <HorizontalStackLayout HorizontalOptions="Center" Spacing="10" Margin="0,20,0,0">
+                    <HorizontalStackLayout HorizontalOptions="Center" Spacing="5" Margin="0,20,0,0">
                         <Button Text="Add New Photo" 
             BackgroundColor="#4CAF50" 
             TextColor="White" 
-            FontSize="Medium" 
+            FontSize="Small" 
             CornerRadius="8" 
             HorizontalOptions="FillAndExpand"
             VerticalOptions="Center"
@@ -132,16 +133,12 @@
                         <Button Text="Save Photos" 
             BackgroundColor="#007AFF" 
             TextColor="White" 
-            FontSize="Medium" 
+            FontSize="Small" 
             CornerRadius="8" 
             HorizontalOptions="FillAndExpand"
             VerticalOptions="Center"
             Clicked="OnSaveButtonClicked" />
                     </HorizontalStackLayout>
-
-
-
-
                 </VerticalStackLayout>
             </ScrollView>
         </Frame>

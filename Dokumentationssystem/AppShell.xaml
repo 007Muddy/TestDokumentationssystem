@@ -4,6 +4,11 @@
        xmlns:views="clr-namespace:Dokumentationssystem.Views"
        x:Class="Dokumentationssystem.AppShell">
 
+    <!-- Define a global back button behavior -->
+    <Shell.BackButtonBehavior>
+        <BackButtonBehavior IsEnabled="False" />
+    </Shell.BackButtonBehavior>
+
     <!-- Register the RegistrationPage -->
     <ShellContent Title="Registration" ContentTemplate="{DataTemplate views:StartPage}" />
 

@@ -15,6 +15,12 @@ namespace Dokumentationssystem.Views
         public LoginPage()      
         {
             InitializeComponent(); // This links the XAML elements to the code-behind
+
+        }
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+            Shell.SetBackButtonBehavior(this, new BackButtonBehavior { IsVisible = false });
         }
 
         private async void OnLoginClicked(object sender, EventArgs e)
