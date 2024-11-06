@@ -21,6 +21,22 @@ namespace Dokumentationssystem.Views
         {
             InitializeComponent();
         }
+        private async void OnBackButtonClicked(object sender, EventArgs e)
+        {
+            // Animate the button
+            await AnimateButton((Button)sender);
+
+            // Navigate back
+            await Navigation.PopAsync();
+        }
+        private async Task AnimateButton(Button button)
+        {
+            // Move the button down slightly
+            await button.TranslateTo(0, 10, 100, Easing.CubicInOut);
+
+            // Move the button back to its original position
+            await button.TranslateTo(0, 0, 100, Easing.CubicInOut);
+        }
 
         // This method will be triggered when the user clicks the Register button
         private async void OnRegisterClicked(object sender, EventArgs e)

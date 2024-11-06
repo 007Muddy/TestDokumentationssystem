@@ -52,6 +52,12 @@
                     CornerRadius="8"
                     FontSize="18"
                     Clicked="OnLoginClicked" />
+            <Button Text="Back" 
+          BackgroundColor="#E74C3C" 
+          TextColor="White" 
+          CornerRadius="8"
+          FontSize="18"
+          Clicked="OnBackButtonClicked" />
         </VerticalStackLayout>
     </Grid>
 </ContentPage>

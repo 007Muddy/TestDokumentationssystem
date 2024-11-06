@@ -17,6 +17,14 @@ public partial class EditPhotoPage : ContentPage
     private byte[] _newPhotoData;
     private InspectionDetailsPage _parentPage;
     private int _selectedRating;
+    private async Task AnimateButton(Button button)
+    {
+        // Move the button down slightly
+        await button.TranslateTo(0, 10, 100, Easing.CubicInOut);
+
+        // Move the button back to its original position
+        await button.TranslateTo(0, 0, 100, Easing.CubicInOut);
+    }
 
     public EditPhotoPage(Photo selectedPhoto, InspectionDetailsPage parentPage)
     {
@@ -40,6 +48,7 @@ public partial class EditPhotoPage : ContentPage
     }
     private void OnRatingButtonClicked(object sender, EventArgs e)
     {
+
         if (sender is Button button && int.TryParse(button.CommandParameter.ToString(), out int rating))
         {
             _selectedRating = rating;
@@ -49,6 +58,8 @@ public partial class EditPhotoPage : ContentPage
 
     private async void OnPickPhotoClicked(object sender, EventArgs e)
     {
+        await AnimateButton((Button)sender);
+
         var photo = await MediaPicker.PickPhotoAsync();
         if (photo != null)
         {
@@ -66,6 +77,8 @@ public partial class EditPhotoPage : ContentPage
   
     private async void OnSaveClicked(object sender, EventArgs e)
     {
+        await AnimateButton((Button)sender);
+
         var jwtToken = Preferences.Get("JwtToken", string.Empty);
         if (string.IsNullOrEmpty(jwtToken))
         {
@@ -113,6 +126,8 @@ public partial class EditPhotoPage : ContentPage
 
     private async void OnBackButtonClicked(object sender, EventArgs e)
     {
+        await AnimateButton((Button)sender);
+
         await Navigation.PopAsync();
     }
 }

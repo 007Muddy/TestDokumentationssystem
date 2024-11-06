@@ -111,6 +111,8 @@ namespace Dokumentationssystem.Views
 
         private async void OnPickPhotosClicked(object sender, EventArgs e)
         {
+            await AnimateButton((Button)sender);
+
             try
             {
                 string action = await DisplayActionSheet("Upload Photo", "Cancel", null, "Choose from Gallery", "Take a Photo");
@@ -253,6 +255,8 @@ namespace Dokumentationssystem.Views
 
         private async void OnSaveButtonClicked(object sender, EventArgs e)
         {
+            await AnimateButton((Button)sender);
+
             if (_selectedPhoto == null)
             {
                 await DisplayAlert("Error", "No photo selected.", "OK");
@@ -354,13 +358,15 @@ namespace Dokumentationssystem.Views
             }
         }
 
-        private void OnDeleteButtonClicked(object sender, EventArgs e)
+        private async Task AnimateButton(Button button)
         {
-            if (sender is Button button && button.CommandParameter is Photo selectedPhoto)
-            {
-                OnDeletePhoto(selectedPhoto);
-            }
+            // Move the button down slightly
+            await button.TranslateTo(0, 10, 100, Easing.CubicInOut);
+
+            // Move the button back to its original position
+            await button.TranslateTo(0, 0, 100, Easing.CubicInOut);
         }
+
 
         private async void OnBackButtonClicked(object sender, EventArgs e)
         {

@@ -24,7 +24,10 @@ namespace Dokumentationssystem.Views
         }
 
         private async void OnLoginClicked(object sender, EventArgs e)
+
         {
+            await AnimateButton((Button)sender);
+
             var username = UsernameEntry.Text; // UsernameEntry from XAML
             var password = PasswordEntry.Text; // PasswordEntry from XAML
 
@@ -88,6 +91,22 @@ namespace Dokumentationssystem.Views
                 // Log any exceptions and show an error message
                 await DisplayAlert("Error", $"An error occurred: {ex.Message}", "OK");
             }
+        }
+        private async Task AnimateButton(Button button)
+        {
+            // Move the button down slightly
+            await button.TranslateTo(0, 10, 100, Easing.CubicInOut);
+
+            // Move the button back to its original position
+            await button.TranslateTo(0, 0, 100, Easing.CubicInOut);
+        }
+        private async void OnBackButtonClicked(object sender, EventArgs e)
+        {
+            // Animate the button
+            await AnimateButton((Button)sender);
+
+            // Navigate back
+            await Navigation.PopAsync();
         }
     }
 

@@ -84,6 +84,8 @@ namespace Dokumentationssystem.Views
 
         private async void OnSelectOptionsClicked(object sender, EventArgs e)
         {
+            await AnimateButton((Button)sender);
+
             string action = await DisplayActionSheet("Select Options", "Cancel", null, "Select", "Select All", "Deselect All", "Delete Selected", "Download Selected");
 
             switch (action)
@@ -120,9 +122,17 @@ namespace Dokumentationssystem.Views
                 await DeleteInspection(inspection);
             }
         }
+        private async Task AnimateButton(Button button)
+        {
+            // Move the button down slightly
+            await button.TranslateTo(0, 10, 100, Easing.CubicInOut);
 
+            // Move the button back to its original position
+            await button.TranslateTo(0, 0, 100, Easing.CubicInOut);
+        }
         private async Task DownloadSelectedInspections()
         {
+
             var selectedInspections = allInspections.Where(i => i.IsSelected).ToList();
             foreach (var inspection in selectedInspections)
             {
@@ -151,6 +161,7 @@ namespace Dokumentationssystem.Views
 
         private async Task DownloadInspection(Inspection inspection)
         {
+
             try
             {
                 var jwtToken = Preferences.Get("JwtToken", string.Empty);
@@ -319,6 +330,8 @@ namespace Dokumentationssystem.Views
 
         private async void OnBackButtonClicked(object sender, EventArgs e)
         {
+            await AnimateButton((Button)sender);
+
             await Navigation.PopAsync();
         }
     }

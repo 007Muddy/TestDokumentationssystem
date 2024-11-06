@@ -26,9 +26,19 @@ namespace Dokumentationssystem.Views
             AddressEntry.Text = _inspection.Address;
             DateEntry.Date = _inspection.Date;
         }
+        private async Task AnimateButton(Button button)
+        {
+            // Move the button down slightly
+            await button.TranslateTo(0, 10, 100, Easing.CubicInOut);
+
+            // Move the button back to its original position
+            await button.TranslateTo(0, 0, 100, Easing.CubicInOut);
+        }
 
         private async void OnSaveClicked(object sender, EventArgs e)
         {
+            await AnimateButton((Button)sender);
+
             _inspection.InspectionName = InspectionNameEntry.Text?.Trim();
             _inspection.Address = AddressEntry.Text?.Trim();
             _inspection.Date = DateEntry.Date;
