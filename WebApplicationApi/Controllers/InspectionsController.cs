@@ -1,7 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Security.Claims;
 using WebApplicationApi.Data;
 using WebApplicationApi.Model;
 using System.IO;
@@ -21,20 +19,12 @@ namespace WebApplicationApi.Controllers
             _environment = environment;
         }
 
-        // GET: api/inspections - Fetch all inspections for the logged-in user
+        // GET: api/inspections - Fetch all inspections
         [HttpGet]
         public async Task<IActionResult> GetInspections()
         {
-            var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-
-            if (string.IsNullOrEmpty(userId))
-            {
-                return Unauthorized(new { message = "User is not authenticated." });
-            }
-
             var inspections = await _context.Inspections
                 .Include(i => i.Photos) // Ensure photos are included in the response
-                .Where(i => i.CreatedBy == userId)
                 .ToListAsync();
 
             // Transform the inspections to include Base64 encoded photos
@@ -57,7 +47,6 @@ namespace WebApplicationApi.Controllers
             return Ok(inspectionDtos);
         }
 
-
         // GET: api/inspections/{id} - Fetch a specific inspection by ID
         [HttpGet("{id}")]
         public async Task<IActionResult> GetInspection(int id)
@@ -71,30 +60,15 @@ namespace WebApplicationApi.Controllers
             return Ok(inspection);
         }
 
-
         // POST: api/inspections/createinspection - Create a new inspection with photo upload
         [HttpPost("createinspection")]
         public async Task<IActionResult> CreateInspection([FromForm] Inspection model)
         {
-            var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-
-            if (string.IsNullOrEmpty(userId))
-            {
-                return Unauthorized(new { message = "User is not authenticated." });
-            }
-
-
-        
-
-            model.CreatedBy = userId;
             _context.Inspections.Add(model);
             await _context.SaveChangesAsync();
 
             return Ok(model);
         }
-
-
-
 
         // PUT: api/inspections/{id} - Update an existing inspection with optional photo uploads
         [HttpPut("{id}")]
@@ -118,8 +92,6 @@ namespace WebApplicationApi.Controllers
             return Ok(existingInspection);
         }
 
-
-
         // DELETE: api/inspections/{id} - Delete an inspection
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteInspection(int id)
@@ -136,24 +108,17 @@ namespace WebApplicationApi.Controllers
             return Ok();
         }
 
+        // POST: api/inspections/{id}/photos - Add photos to an inspection
         [HttpPost("{id}/photos")]
-        [Authorize]
         public async Task<IActionResult> AddPhotosToInspection(int id, [FromForm] List<IFormFile> photos, [FromForm] List<string> photoNames, [FromForm] List<string> descriptions, [FromForm] List<int> ratings)
         {
-            var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-
-            if (string.IsNullOrEmpty(userId))
-            {
-                return Unauthorized(new { message = "User is not authenticated." });
-            }
-
             var inspection = await _context.Inspections
                 .Include(i => i.Photos)
-                .FirstOrDefaultAsync(i => i.Id == id && i.CreatedBy == userId);
+                .FirstOrDefaultAsync(i => i.Id == id);
 
             if (inspection == null)
             {
-                return NotFound(new { message = "Inspection not found or access denied." });
+                return NotFound(new { message = "Inspection not found." });
             }
 
             if (photos == null || photos.Count == 0 || photoNames.Count != photos.Count || descriptions.Count != photos.Count || ratings.Count != photos.Count)
@@ -187,25 +152,17 @@ namespace WebApplicationApi.Controllers
             return Ok(new { message = "Photos added successfully!" });
         }
 
-
+        // PUT: api/inspections/{inspectionId}/photos/{photoId} - Update a specific photo
         [HttpPut("{inspectionId}/photos/{photoId}")]
-        [Authorize]
         public async Task<IActionResult> UpdatePhoto(int inspectionId, int photoId, [FromBody] Photo updatedPhoto)
         {
-            var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-
-            if (string.IsNullOrEmpty(userId))
-            {
-                return Unauthorized(new { message = "User is not authenticated." });
-            }
-
             var inspection = await _context.Inspections
                 .Include(i => i.Photos)
-                .FirstOrDefaultAsync(i => i.Id == inspectionId && i.CreatedBy == userId);
+                .FirstOrDefaultAsync(i => i.Id == inspectionId);
 
             if (inspection == null)
             {
-                return NotFound(new { message = "Inspection not found or access denied." });
+                return NotFound(new { message = "Inspection not found." });
             }
 
             var photo = inspection.Photos.FirstOrDefault(p => p.Id == photoId);
@@ -240,87 +197,56 @@ namespace WebApplicationApi.Controllers
             return Ok(new { message = "Photo updated successfully!" });
         }
 
-
-// GET: api/inspections/{id}/photos - Get photos with names and descriptions for a specific inspection
-[HttpGet("{id}/photos")]
-        [Authorize]
+        // GET: api/inspections/{id}/photos - Get photos for a specific inspection
+        [HttpGet("{id}/photos")]
         public async Task<IActionResult> GetPhotosForInspection(int id)
         {
-            var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-
-            if (string.IsNullOrEmpty(userId))
-            {
-                return Unauthorized(new { message = "User is not authenticated." });
-            }
-
-            // Find the inspection by ID
             var inspection = await _context.Inspections
-                .Include(i => i.Photos)  // Ensure Photos are included in the query
-                .FirstOrDefaultAsync(i => i.Id == id && i.CreatedBy == userId);
+                .Include(i => i.Photos)
+                .FirstOrDefaultAsync(i => i.Id == id);
 
             if (inspection == null)
             {
-                return NotFound(new { message = "Inspection not found or access denied." });
+                return NotFound(new { message = "Inspection not found." });
             }
 
-            // Prepare photo data to return (Base64-encoded photos, names, and descriptions)
             var photoDtos = inspection.Photos.Select(p => new
             {
                 p.Id,
                 p.PhotoName,
                 p.Description,
                 p.Rating,
-                PhotoData = Convert.ToBase64String(p.PhotoData) // Convert byte[] to Base64 string
+                PhotoData = Convert.ToBase64String(p.PhotoData)
             }).ToList();
-
-            // Log the photo IDs to verify they're being sent correctly
-            foreach (var photo in photoDtos)
-            {
-                Console.WriteLine($"Photo ID sent to client: {photo.Id}");
-            }
 
             return Ok(photoDtos);
         }
 
-        // DELETE: api/inspections/{inspectionId}/photos/{photoId} - Delete a specific photo from an inspection
+        // DELETE: api/inspections/{inspectionId}/photos/{photoId} - Delete a specific photo
         [HttpDelete("{inspectionId}/photos/{photoId}")]
-        [Authorize]
         public async Task<IActionResult> DeletePhoto(int inspectionId, int photoId)
         {
-            var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-
-            if (string.IsNullOrEmpty(userId))
-            {
-                return Unauthorized(new { message = "User is not authenticated." });
-            }
-
-            // Find the inspection by ID and ensure it belongs to the authenticated user
             var inspection = await _context.Inspections
                 .Include(i => i.Photos)
-                .FirstOrDefaultAsync(i => i.Id == inspectionId && i.CreatedBy == userId);
+                .FirstOrDefaultAsync(i => i.Id == inspectionId);
 
             if (inspection == null)
             {
-                return NotFound(new { message = "Inspection not found or access denied." });
+                return NotFound(new { message = "Inspection not found." });
             }
 
-            // Find the specific photo by ID
             var photo = inspection.Photos.FirstOrDefault(p => p.Id == photoId);
             if (photo == null)
             {
                 return NotFound(new { message = "Photo not found." });
             }
 
-            // Remove the photo from the inspection
             inspection.Photos.Remove(photo);
             _context.Photos.Remove(photo);
 
-            // Save changes to the database
             await _context.SaveChangesAsync();
 
             return Ok(new { message = "Photo deleted successfully!" });
         }
-
-
     }
 }

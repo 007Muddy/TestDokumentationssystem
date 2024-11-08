@@ -10,7 +10,7 @@ namespace Dokumentationssystem.Views
     {
         // Define the base address and registration URL based on the platform
         public static string BaseAddress =
-            DeviceInfo.Platform == DevicePlatform.Android ? "http://10.0.2.2:5119" : "http://localhost:5119";
+            DeviceInfo.Platform == DevicePlatform.Android ? "http://10.0.2.2:5119" : "https://mnbstrcut.onrender.com";
         public static string RegisterUrl = $"{BaseAddress}/api/auth/register";
         protected override void OnAppearing()
         {
