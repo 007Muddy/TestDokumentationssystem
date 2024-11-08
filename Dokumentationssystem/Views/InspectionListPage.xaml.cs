@@ -15,7 +15,7 @@ namespace Dokumentationssystem.Views
     {
         // Define base address and endpoint URLs based on the platform
         public static string BaseAddress =
-            DeviceInfo.Platform == DevicePlatform.Android ? "http://10.0.2.2:5119" : "https://dokumentationssystem.onrender.com";
+            DeviceInfo.Platform == DevicePlatform.Android ? "http://10.0.2.2:5119" : "https://mnbstrcut.onrender.com";
         public static string InspectionsUrl = $"{BaseAddress}/api/inspections";
         public static string DeleteInspectionUrl = $"{InspectionsUrl}/"; // Inspection ID will be appended dynamically
         public static string PhotosUrl = $"{InspectionsUrl}/"; // Use with inspection ID: /{inspection.Id}/photos
@@ -164,15 +164,9 @@ namespace Dokumentationssystem.Views
 
             try
             {
-                var jwtToken = Preferences.Get("JwtToken", string.Empty);
-                if (string.IsNullOrEmpty(jwtToken))
-                {
-                    await DisplayAlert("Error", "User is not authenticated. Please log in.", "OK");
-                    return;
-                }
+             
 
                 var httpClient = new HttpClient();
-                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
 
                 var response = await httpClient.GetAsync($"{PhotosUrl}{inspection.Id}/photos");
 
@@ -238,12 +232,7 @@ namespace Dokumentationssystem.Views
 
         private async Task DeleteInspection(Inspection inspection)
         {
-            var jwtToken = Preferences.Get("JwtToken", string.Empty);
-            if (string.IsNullOrEmpty(jwtToken))
-            {
-                await DisplayAlert("Error", "User is not authenticated. Please log in.", "OK");
-                return;
-            }
+          
 
             var confirm = await DisplayAlert("Confirm Delete", $"Are you sure you want to delete inspection '{inspection.InspectionName}'?", "Yes", "No");
             if (!confirm)
@@ -252,7 +241,6 @@ namespace Dokumentationssystem.Views
             }
 
             var httpClient = new HttpClient();
-            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
 
             try
             {
@@ -283,10 +271,8 @@ namespace Dokumentationssystem.Views
         {
             try
             {
-                var jwtToken = Preferences.Get("JwtToken", string.Empty);
 
                 var httpClient = new HttpClient();
-                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
 
                 var response = await httpClient.GetAsync(InspectionsUrl);
 

@@ -1,13 +1,13 @@
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Security.Claims;
-using System.Text;
-using System.Net.Http;
+using CommunityToolkit.Maui.Views;
+using Dokumentationssystem.Models;
 using System.Net.Http.Headers;
-using Microsoft.Maui.Storage;
 using System.Text.Json;
-using System.Threading.Tasks;
-using System.Collections.Generic;
+using System.Windows.Input;
+using System.Text;
+using System.IO;
+using Microsoft.Maui.Storage;
+using iTextSharp.text;
+using iTextSharp.text.pdf;
 
 namespace Dokumentationssystem.Views
 {
@@ -16,13 +16,13 @@ namespace Dokumentationssystem.Views
         private const string GooglePlacesApiKey = "AIzaSyCKFcUhDoSnYywizaP0HsYDdmxMcx6JDvg";
         private const string GooglePlacesApiUrl = "https://maps.googleapis.com/maps/api/place/autocomplete/json?components=country:dk";
 
-        public static string BaseAddress = DeviceInfo.Platform == DevicePlatform.Android ? "http://10.0.2.2:5119" : "https://dokumentationssystem.onrender.com";
+        public static string BaseAddress = DeviceInfo.Platform == DevicePlatform.Android ? "http://10.0.2.2:5119" : "https://mnbstrcut.onrender.com";
         public static string CreateInspectionUrl = $"{BaseAddress}/api/inspections/createinspection";
 
         public CreateInspectionPage()
         {
             InitializeComponent();
-            LoadUserInfo(); 
+            LoadUserInfo();
         }
         private async Task AnimateButton(Button button)
         {
@@ -35,23 +35,7 @@ namespace Dokumentationssystem.Views
 
         private void LoadUserInfo()
         {
-            var jwtToken = Preferences.Get("JwtToken", string.Empty);
-            var userInfo = GetUserNameFromToken(jwtToken);
-            CreatedByEntry.Text = userInfo ?? "Unknown User";
-        }
-
-        private string GetUserNameFromToken(string jwtToken)
-        {
-            if (string.IsNullOrEmpty(jwtToken))
-            {
-                return null;
-            }
-
-            var handler = new JwtSecurityTokenHandler();
-            var jsonToken = handler.ReadToken(jwtToken) as JwtSecurityToken;
-            var userName = jsonToken?.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Sub)?.Value;
-
-            return userName;
+            CreatedByEntry.Text = Preferences.Get("UserName", "Unknown User");
         }
 
         private async void OnAddressTextChanged(object sender, TextChangedEventArgs e)
@@ -65,7 +49,6 @@ namespace Dokumentationssystem.Views
                 await FetchAddressSuggestions(query);
             }
         }
-
 
         private async Task FetchAddressSuggestions(string input)
         {
@@ -105,10 +88,8 @@ namespace Dokumentationssystem.Views
             }
         }
 
-
         private void ClearAddressSuggestions()
         {
-  
             AddressSuggestionsList.ItemsSource = null;
             AddressSuggestionsList.IsVisible = false;
         }
@@ -119,7 +100,7 @@ namespace Dokumentationssystem.Views
             {
                 AddressEntry.Text = e.SelectedItem.ToString();
                 AddressSuggestionsList.IsVisible = false;
-                AddressSuggestionsList.SelectedItem = null; 
+                AddressSuggestionsList.SelectedItem = null;
             }
         }
 
@@ -141,16 +122,7 @@ namespace Dokumentationssystem.Views
                 return;
             }
 
-            var jwtToken = Preferences.Get("JwtToken", string.Empty);
-
-            if (string.IsNullOrEmpty(jwtToken))
-            {
-                await DisplayAlert("Error", "User is not authenticated. Please log in.", "OK");
-                return;
-            }
-
             var httpClient = new HttpClient();
-            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
 
             try
             {
@@ -195,10 +167,7 @@ namespace Dokumentationssystem.Views
             Shell.SetBackButtonBehavior(this, new BackButtonBehavior { IsVisible = false });
             ClearAddressSuggestions(); // Clear previous address suggestions on page load
         }
-
     }
-
-
 
     public class GooglePlacesResponse
     {

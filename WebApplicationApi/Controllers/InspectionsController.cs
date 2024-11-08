@@ -28,10 +28,7 @@ namespace WebApplicationApi.Controllers
         {
             var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
 
-            if (string.IsNullOrEmpty(userId))
-            {
-                return Unauthorized(new { message = "User is not authenticated." });
-            }
+           
 
             var inspections = await _context.Inspections
                 .Include(i => i.Photos)
@@ -77,10 +74,7 @@ namespace WebApplicationApi.Controllers
         {
             var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
 
-            if (string.IsNullOrEmpty(userId))
-            {
-                return Unauthorized(new { message = "User is not authenticated." });
-            }
+           
 
             model.CreatedBy = userId;
             _context.Inspections.Add(model);
