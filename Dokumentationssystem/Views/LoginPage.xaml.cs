@@ -8,7 +8,7 @@ namespace Dokumentationssystem.Views
     {
         // Define base address based on platform
         public static string BaseAddress =
-            DeviceInfo.Platform == DevicePlatform.Android ? "http://10.0.2.2:5119" : "https://mnbstrcut.onrender.com";
+            DeviceInfo.Platform == DevicePlatform.Android ? "http://10.0.2.2:5119" : "https://dokumentationssystem.onrender.com";
         public static string LoginUrl = $"{BaseAddress}/api/auth/login";
 
         public LoginPage()
