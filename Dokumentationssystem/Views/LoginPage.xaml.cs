@@ -1,7 +1,6 @@
 using System.Text.Json;
 using System.Text;
 using Microsoft.Maui.Storage;
-using System.Text.Json.Serialization;
 
 namespace Dokumentationssystem.Views
 {
@@ -12,11 +11,11 @@ namespace Dokumentationssystem.Views
             DeviceInfo.Platform == DevicePlatform.Android ? "http://10.0.2.2:5119" : "http://localhost:5119";
         public static string LoginUrl = $"{BaseAddress}/api/auth/login";
 
-        public LoginPage()      
+        public LoginPage()
         {
             InitializeComponent(); // This links the XAML elements to the code-behind
-
         }
+
         protected override void OnAppearing()
         {
             base.OnAppearing();
@@ -24,7 +23,6 @@ namespace Dokumentationssystem.Views
         }
 
         private async void OnLoginClicked(object sender, EventArgs e)
-
         {
             await AnimateButton((Button)sender);
 
@@ -56,34 +54,16 @@ namespace Dokumentationssystem.Views
                 // After successful login
                 if (response.IsSuccessStatusCode)
                 {
-                    // Read the response content
-                    var resultJson = await response.Content.ReadAsStringAsync();
+                    // Show success message
+                    await DisplayAlert("Success", "Login successful! Welcome to our system", "OK");
 
-                    // Deserialize the response to extract the token
-                    var result = JsonSerializer.Deserialize<LoginResponse>(resultJson);
-
-                    // Check if the token was received
-                    if (result != null && !string.IsNullOrEmpty(result.Token))
-                    {
-                        // Save the JWT token
-                        Preferences.Set("JwtToken", result.Token);
-
-                        // Show success message
-                        await DisplayAlert("Success", "Login successful! welcome to our system", "OK");
-
-                        // Redirect to the CreateInspectionPage after successful login
-                        await Navigation.PushAsync(new SeeOrCreateNewInspection());
-                    }
-                    else
-                    {
-                        await DisplayAlert("Error", "Login failed: No token received.", "OK");
-                    }
+                    // Redirect to the CreateInspectionPage after successful login
+                    await Navigation.PushAsync(new SeeOrCreateNewInspection());
                 }
                 else
                 {
                     // Capture and display the API error message
-                    var errorMessage = await response.Content.ReadAsStringAsync();
-                    await DisplayAlert("Error", $"Login failed: username or password is incorrect", "OK");
+                    await DisplayAlert("Error", "Login failed: username or password is incorrect", "OK");
                 }
             }
             catch (Exception ex)
@@ -92,6 +72,7 @@ namespace Dokumentationssystem.Views
                 await DisplayAlert("Error", $"An error occurred: {ex.Message}", "OK");
             }
         }
+
         private async Task AnimateButton(Button button)
         {
             // Move the button down slightly
@@ -100,6 +81,7 @@ namespace Dokumentationssystem.Views
             // Move the button back to its original position
             await button.TranslateTo(0, 0, 100, Easing.CubicInOut);
         }
+
         private async void OnBackButtonClicked(object sender, EventArgs e)
         {
             // Animate the button
@@ -108,12 +90,5 @@ namespace Dokumentationssystem.Views
             // Navigate back
             await Navigation.PopAsync();
         }
-    }
-
-    // Class to map the login response (ensure this matches your API response)
-    public class LoginResponse
-    {
-        [JsonPropertyName("token")]  // Match the JSON field name to the property
-        public string Token { get; set; }  // The token field returned by the API
     }
 }
