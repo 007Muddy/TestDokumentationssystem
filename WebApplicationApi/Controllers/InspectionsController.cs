@@ -23,7 +23,6 @@ namespace WebApplicationApi.Controllers
 
         // GET: api/inspections - Fetch all inspections for the logged-in user
         [HttpGet]
-        [Authorize]
         public async Task<IActionResult> GetInspections()
         {
             var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
@@ -75,7 +74,6 @@ namespace WebApplicationApi.Controllers
 
         // POST: api/inspections/createinspection - Create a new inspection with photo upload
         [HttpPost("createinspection")]
-        [Authorize]
         public async Task<IActionResult> CreateInspection([FromForm] Inspection model)
         {
             var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
