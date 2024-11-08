@@ -242,7 +242,6 @@ namespace WebApplicationApi.Controllers
             }
 
 
-
             if (updatedPhoto.Rating >= 1 && updatedPhoto.Rating <= 10)
             {
                 photo.Rating = updatedPhoto.Rating;

@@ -24,6 +24,7 @@ namespace Dokumentationssystem.Views
             InitializeComponent();
             LoadUserInfo();
         }
+
         private async Task AnimateButton(Button button)
         {
             // Move the button down slightly
@@ -35,7 +36,8 @@ namespace Dokumentationssystem.Views
 
         private void LoadUserInfo()
         {
-            CreatedByEntry.Text = Preferences.Get("UserName", "Unknown User");
+            // Load the user ID securely (example approach, adjust as needed)
+            CreatedByEntry.Text = Preferences.Get("UserId", "Unknown User");
         }
 
         private async void OnAddressTextChanged(object sender, TextChangedEventArgs e)
@@ -116,7 +118,7 @@ namespace Dokumentationssystem.Views
             var inspectionDate = InspectionDatePicker.Date;
             var createdBy = CreatedByEntry.Text;
 
-            if (string.IsNullOrEmpty(inspectionName) || string.IsNullOrEmpty(address))
+            if (string.IsNullOrEmpty(inspectionName) || string.IsNullOrEmpty(address) || string.IsNullOrEmpty(createdBy))
             {
                 await DisplayAlert("Error", "Please fill in all fields", "OK");
                 return;

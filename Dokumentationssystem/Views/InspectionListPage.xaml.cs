@@ -232,7 +232,12 @@ namespace Dokumentationssystem.Views
 
         private async Task DeleteInspection(Inspection inspection)
         {
-          
+            var userId = Preferences.Get("UserId", string.Empty);
+            if (string.IsNullOrEmpty(userId))
+            {
+                await DisplayAlert("Error", "User not authenticated. Please log in again.", "OK");
+                return;
+            }
 
             var confirm = await DisplayAlert("Confirm Delete", $"Are you sure you want to delete inspection '{inspection.InspectionName}'?", "Yes", "No");
             if (!confirm)
@@ -244,16 +249,14 @@ namespace Dokumentationssystem.Views
 
             try
             {
-                var response = await httpClient.DeleteAsync($"{DeleteInspectionUrl}{inspection.Id}");
+                var response = await httpClient.DeleteAsync($"{DeleteInspectionUrl}{inspection.Id}?userId={userId}");
 
                 if (response.IsSuccessStatusCode)
                 {
                     await DisplayAlert("Success", "Inspection deleted successfully!", "OK");
-
-                    var inspections = (List<Inspection>)InspectionsCollectionView.ItemsSource;
-                    inspections.Remove(inspection);
+                    allInspections.Remove(inspection);
                     InspectionsCollectionView.ItemsSource = null;
-                    InspectionsCollectionView.ItemsSource = inspections;
+                    InspectionsCollectionView.ItemsSource = allInspections;
                 }
                 else
                 {
@@ -266,15 +269,19 @@ namespace Dokumentationssystem.Views
                 await DisplayAlert("Error", $"An error occurred: {ex.Message}", "OK");
             }
         }
-
         private async void LoadInspections()
         {
+            var userId = Preferences.Get("UserId", string.Empty);
+            if (string.IsNullOrEmpty(userId))
+            {
+                await DisplayAlert("Error", "User not authenticated. Please log in again.", "OK");
+                return;
+            }
+
             try
             {
-
                 var httpClient = new HttpClient();
-
-                var response = await httpClient.GetAsync(InspectionsUrl);
+                var response = await httpClient.GetAsync($"{InspectionsUrl}?userId={userId}");
 
                 if (response.IsSuccessStatusCode)
                 {
