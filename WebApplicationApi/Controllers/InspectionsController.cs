@@ -1,5 +1,4 @@
-﻿
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
@@ -28,7 +27,10 @@ namespace WebApplicationApi.Controllers
         {
             var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
 
-           
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized(new { message = "User is not authenticated." });
+            }
 
             var inspections = await _context.Inspections
                 .Include(i => i.Photos)
@@ -59,10 +61,19 @@ namespace WebApplicationApi.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetInspection(int id)
         {
-            var inspection = await _context.Inspections.FindAsync(id);
+            var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized(new { message = "User is not authenticated." });
+            }
+
+            var inspection = await _context.Inspections
+                .FirstOrDefaultAsync(i => i.Id == id && i.CreatedBy == userId);
+
             if (inspection == null)
             {
-                return NotFound();
+                return NotFound(new { message = "Inspection not found or access denied." });
             }
 
             return Ok(inspection);
@@ -74,9 +85,12 @@ namespace WebApplicationApi.Controllers
         {
             var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
 
-           
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized(new { message = "User is not authenticated." });
+            }
 
-            model.CreatedBy = userId;
+            model.CreatedBy = userId; // Assign the creator's ID
             _context.Inspections.Add(model);
             await _context.SaveChangesAsync();
 
@@ -87,13 +101,20 @@ namespace WebApplicationApi.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateInspection(int id, [FromBody] Inspection model)
         {
+            var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized(new { message = "User is not authenticated." });
+            }
+
             var existingInspection = await _context.Inspections
                 .Include(i => i.Photos)
-                .FirstOrDefaultAsync(i => i.Id == id);
+                .FirstOrDefaultAsync(i => i.Id == id && i.CreatedBy == userId);
 
             if (existingInspection == null)
             {
-                return NotFound();
+                return NotFound(new { message = "Inspection not found or access denied." });
             }
 
             existingInspection.InspectionName = model.InspectionName;
@@ -109,16 +130,25 @@ namespace WebApplicationApi.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteInspection(int id)
         {
-            var inspection = await _context.Inspections.FindAsync(id);
+            var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized(new { message = "User is not authenticated." });
+            }
+
+            var inspection = await _context.Inspections
+                .FirstOrDefaultAsync(i => i.Id == id && i.CreatedBy == userId);
+
             if (inspection == null)
             {
-                return NotFound();
+                return NotFound(new { message = "Inspection not found or access denied." });
             }
 
             _context.Inspections.Remove(inspection);
             await _context.SaveChangesAsync();
 
-            return Ok();
+            return Ok(new { message = "Inspection deleted successfully!" });
         }
 
         [HttpPost("{id}/photos")]
@@ -210,6 +240,8 @@ namespace WebApplicationApi.Controllers
             {
                 photo.PhotoData = updatedPhoto.PhotoData;
             }
+
+
 
             if (updatedPhoto.Rating >= 1 && updatedPhoto.Rating <= 10)
             {
