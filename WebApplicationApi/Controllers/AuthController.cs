@@ -65,9 +65,7 @@ namespace WebApplicationApi.Controllers
         }
 
 
-        // Log in user and check for valid token
-        // Log in user and check for valid credentials
-        [HttpPost("login")]
+        //[HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginModel model)
         {
             if (ModelState.IsValid)
@@ -77,13 +75,13 @@ namespace WebApplicationApi.Controllers
                 if (result.Succeeded)
                 {
                     var user = await _userManager.FindByNameAsync(model.Username);
+                    var token = GenerateJwtToken(user);
 
-                    // Return a success response
-                    return Ok(new { Message = "Login successful!" });
+                    _logger.LogInformation("User {Username} logged in successfully.", model.Username);
+                    return Ok(new { Message = "Login successful!", Token = token });
                 }
                 else
                 {
-                    // Log the failure reason for troubleshooting
                     if (result.IsLockedOut)
                     {
                         _logger.LogWarning("Login attempt failed for user {Username}: User is locked out.", model.Username);
@@ -102,15 +100,39 @@ namespace WebApplicationApi.Controllers
                 }
             }
 
+            _logger.LogWarning("Login attempt failed due to invalid request.");
             return BadRequest(new { Message = "Invalid request. Please check your input and try again." });
+        }
+
+        private string GenerateJwtToken(IdentityUser user)
+        {
+            var claims = new[]
+            {
+        new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
+        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+        new Claim(ClaimTypes.NameIdentifier, user.Id)
+    };
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+            var token = new JwtSecurityToken(
+                issuer: _configuration["Jwt:Issuer"],
+                audience: _configuration["Jwt:Issuer"],
+                claims: claims,
+                expires: DateTime.Now.AddHours(1),
+                signingCredentials: creds
+            );
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
 
 
 
 
-       
-       
+
+
 
     }
 }
