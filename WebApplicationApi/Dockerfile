@@ -12,4 +12,5 @@ RUN dotnet publish "WebApplicationApi.csproj" -c Release -o /app/publish
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+COPY ["DokumentationssystemDB.db3", "/app/"]
 ENTRYPOINT ["dotnet", "WebApplicationApi.dll"]

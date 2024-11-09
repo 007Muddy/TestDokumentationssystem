@@ -9,7 +9,7 @@ namespace Dokumentationssystem.Views
     {
         // Define base address based on platform
         public static string BaseAddress =
-            DeviceInfo.Platform == DevicePlatform.Android ? "http://10.0.2.2:5119" : "http://localhost:5119";
+            DeviceInfo.Platform == DevicePlatform.Android ? "http://10.0.2.2:5119" : "https://struct.onrender.com";
         public static string LoginUrl = $"{BaseAddress}/api/auth/login";
 
         public LoginPage()      

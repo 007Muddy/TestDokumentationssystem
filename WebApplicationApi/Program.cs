@@ -10,9 +10,10 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllers();
 
-// Add SQLite database context
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlite($"Data Source={Path.Combine(AppContext.BaseDirectory, "DokumentationssystemDB.db3")}")
+);
+
 
 // Add Identity services
 builder.Services.AddIdentity<IdentityUser, IdentityRole>()
