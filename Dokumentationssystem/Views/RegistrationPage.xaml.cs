@@ -10,7 +10,7 @@ namespace Dokumentationssystem.Views
     {
         // Define the base address and registration URL based on the platform
         public static string BaseAddress =
-            DeviceInfo.Platform == DevicePlatform.Android ? "http://10.0.2.2:5119" : "https://struct.onrender.com";
+            DeviceInfo.Platform == DevicePlatform.Android ? "https://struct.onrender.com" : "https://struct.onrender.com";
         public static string RegisterUrl = $"{BaseAddress}/api/auth/register";
         protected override void OnAppearing()
         {
@@ -93,7 +93,7 @@ namespace Dokumentationssystem.Views
             {
                 await DisplayAlert("Error", $"An error occurred: {ex.Message}", "OK");
             }
-        }
+      }
 
         // Helper method to validate email format
         private bool IsValidEmail(string email)

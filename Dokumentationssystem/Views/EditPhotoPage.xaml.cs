@@ -9,7 +9,7 @@ public partial class EditPhotoPage : ContentPage
 {
     // Define base address and endpoint URLs based on the platform
     public static string BaseAddress =
-        DeviceInfo.Platform == DevicePlatform.Android ? "http://10.0.2.2:5119" : "http://localhost:5119";
+        DeviceInfo.Platform == DevicePlatform.Android ? "https://struct.onrender.com" : "https://struct.onrender.com";
     public static string DeletePhotoUrl(int inspectionId, int photoId) => $"{BaseAddress}/api/inspections/{inspectionId}/photos/{photoId}";
     public static string UpdatePhotoUrl(int inspectionId, int photoId) => $"{BaseAddress}/api/inspections/{inspectionId}/photos/{photoId}";
 

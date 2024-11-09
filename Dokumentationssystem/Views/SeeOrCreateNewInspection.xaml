@@ -47,7 +47,7 @@
                     TextColor="White" 
                     CornerRadius="12"
                     FontSize="18"
-                    WidthRequest="200"
+                    WidthRequest="220"
                     HeightRequest="50"
                     Clicked="OnCreateNewInspectionClicked"/>
         </VerticalStackLayout>

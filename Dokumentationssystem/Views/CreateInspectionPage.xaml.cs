@@ -16,7 +16,7 @@ namespace Dokumentationssystem.Views
         private const string GooglePlacesApiKey = "AIzaSyCKFcUhDoSnYywizaP0HsYDdmxMcx6JDvg";
         private const string GooglePlacesApiUrl = "https://maps.googleapis.com/maps/api/place/autocomplete/json?components=country:dk";
 
-        public static string BaseAddress = DeviceInfo.Platform == DevicePlatform.Android ? "http://10.0.2.2:5119" : "http://localhost:5119";
+        public static string BaseAddress = DeviceInfo.Platform == DevicePlatform.Android ? "https://struct.onrender.com" : "https://struct.onrender.com";
         public static string CreateInspectionUrl = $"{BaseAddress}/api/inspections/createinspection";
 
         public CreateInspectionPage()

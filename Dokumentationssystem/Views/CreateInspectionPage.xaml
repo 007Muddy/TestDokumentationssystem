@@ -46,7 +46,7 @@
                 </Frame>
 
                 <Frame BackgroundColor="#FFFFFFDD" CornerRadius="10" Padding="10" HasShadow="True">
-                    <Entry x:Name="AddressEntry" Placeholder="Enter address" TextChanged="OnAddressTextChanged"/>
+                    <Entry x:Name="AddressEntry" Placeholder="Enter address" TextChanged="OnAddressTextChanged" TextColor="black"/>
                 </Frame>
 
 

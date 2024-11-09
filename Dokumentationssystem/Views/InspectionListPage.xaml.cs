@@ -15,7 +15,7 @@ namespace Dokumentationssystem.Views
     {
         // Define base address and endpoint URLs based on the platform
         public static string BaseAddress =
-            DeviceInfo.Platform == DevicePlatform.Android ? "http://10.0.2.2:5119" : "http://localhost:5119";
+            DeviceInfo.Platform == DevicePlatform.Android ? "https://struct.onrender.com" : "https://struct.onrender.com";
         public static string InspectionsUrl = $"{BaseAddress}/api/inspections";
         public static string DeleteInspectionUrl = $"{InspectionsUrl}/"; // Inspection ID will be appended dynamically
         public static string PhotosUrl = $"{InspectionsUrl}/"; // Use with inspection ID: /{inspection.Id}/photos
