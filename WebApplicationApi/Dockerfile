@@ -12,5 +12,11 @@ RUN dotnet publish "WebApplicationApi.csproj" -c Release -o /app/publish
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-COPY ["WebApplicationApi/DokumentationssystemDB.db3", "/app/"]
+
+# Use the persistent volume path for the database
+COPY ["WebApplicationApi/DokumentationssystemDB.db3", "/data/DokumentationssystemDB.db3"]
+
+# Set the connection string to point to the new path in your application
+ENV DATABASE_PATH="/data/DokumentationssystemDB.db3"
+
 ENTRYPOINT ["dotnet", "WebApplicationApi.dll"]
