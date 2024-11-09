@@ -35,7 +35,8 @@ builder.Services.AddAuthentication(options =>
         ValidateIssuerSigningKey = true,
         ValidIssuer = builder.Configuration["Jwt:Issuer"],
         ValidAudience = builder.Configuration["Jwt:Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
+        ClockSkew = TimeSpan.Zero // Disable clock skew for testing, adjust as needed for production
     };
 });
 
@@ -75,6 +76,9 @@ else
     // Ensure HTTPS redirection in production
     app.UseHttpsRedirection();
 }
+
+// Use static files
+app.UseStaticFiles();
 
 // Add Authentication and Authorization middleware in the correct order
 app.UseAuthentication();  // This should come before UseAuthorization

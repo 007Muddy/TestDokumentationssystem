@@ -44,24 +44,31 @@ namespace WebApplicationApi.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterModel model)
         {
+            _logger.LogInformation("Starting user registration process...");
+
             if (ModelState.IsValid)
             {
+                _logger.LogInformation("Model state is valid.");
+
                 var user = new IdentityUser { UserName = model.Username, Email = model.Email };
                 var result = await _userManager.CreateAsync(user, model.Password);
 
                 if (result.Succeeded)
                 {
-                    var token = GenerateJwtToken(user);
-                    return Ok(new { Token = token, Result = "User registered successfully!" });
+                    _logger.LogInformation("User {Username} registered successfully.", model.Username);
+                    return Ok(new { Result = "User registered successfully!" });
                 }
                 else
                 {
+                    _logger.LogError("User registration failed: {Errors}", string.Join(", ", result.Errors.Select(e => e.Description)));
                     return BadRequest(result.Errors);
                 }
             }
 
+            _logger.LogWarning("Model state is invalid.");
             return BadRequest(ModelState);
         }
+
 
         // Login method with JWT token generation
         [HttpPost("login")]
