@@ -74,6 +74,8 @@ namespace WebApplicationApi.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginModel model)
         {
+            _logger.LogInformation("Starting login process for user {Username}", model.Username);
+
             if (ModelState.IsValid)
             {
                 var result = await _signInManager.PasswordSignInAsync(model.Username, model.Password, false, false);
@@ -81,6 +83,12 @@ namespace WebApplicationApi.Controllers
                 if (result.Succeeded)
                 {
                     var user = await _userManager.FindByNameAsync(model.Username);
+                    if (user == null)
+                    {
+                        _logger.LogWarning("User not found after successful sign-in for username {Username}", model.Username);
+                        return Unauthorized(new { Message = "Invalid username or password." });
+                    }
+
                     var token = GenerateJwtToken(user);
 
                     _logger.LogInformation("User {Username} logged in successfully.", model.Username);
@@ -106,7 +114,7 @@ namespace WebApplicationApi.Controllers
                 }
             }
 
-            _logger.LogWarning("Login attempt failed due to invalid request.");
+            _logger.LogWarning("Login attempt failed due to invalid request for user {Username}.", model.Username);
             return BadRequest(new { Message = "Invalid request. Please check your input and try again." });
         }
 

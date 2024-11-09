@@ -54,11 +54,27 @@ namespace Dokumentationssystem.Views
                 // After successful login
                 if (response.IsSuccessStatusCode)
                 {
-                    // Show success message
-                    await DisplayAlert("Success", "Login successful! Welcome to our system", "OK");
+                    var responseContent = await response.Content.ReadAsStringAsync();
+                    var responseData = JsonSerializer.Deserialize<LoginResponseModel>(responseContent, new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    });
 
-                    // Redirect to the CreateInspectionPage after successful login
-                    await Navigation.PushAsync(new SeeOrCreateNewInspection());
+                    // Store the JWT token securely for future requests
+                    if (responseData != null && !string.IsNullOrEmpty(responseData.Token))
+                    {
+                        Preferences.Set("JwtToken", responseData.Token);
+
+                        // Show success message
+                        await DisplayAlert("Success", "Login successful! Welcome to our system", "OK");
+
+                        // Redirect to the CreateInspectionPage after successful login
+                        await Navigation.PushAsync(new SeeOrCreateNewInspection());
+                    }
+                    else
+                    {
+                        await DisplayAlert("Error", "Failed to retrieve login token.", "OK");
+                    }
                 }
                 else
                 {
@@ -71,6 +87,12 @@ namespace Dokumentationssystem.Views
                 // Log any exceptions and show an error message
                 await DisplayAlert("Error", $"An error occurred: {ex.Message}", "OK");
             }
+        }
+
+        public class LoginResponseModel
+        {
+            public string Token { get; set; }
+            public string Message { get; set; }
         }
 
         private async Task AnimateButton(Button button)
@@ -90,5 +112,10 @@ namespace Dokumentationssystem.Views
             // Navigate back
             await Navigation.PopAsync();
         }
+    }
+    public class LoginResponseModel
+    {
+        public string Token { get; set; }
+        public string Message { get; set; }
     }
 }
