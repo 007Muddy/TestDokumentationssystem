@@ -22,7 +22,7 @@ WORKDIR /app
 # Copy published files
 COPY --from=publish /app/publish .
 
-# Create the data directory for the database and set correct permissions
+# Create the data directory and set permissions
 RUN mkdir -p /data && chmod -R 777 /data
 
 # Set the connection string to point to the new path in your application

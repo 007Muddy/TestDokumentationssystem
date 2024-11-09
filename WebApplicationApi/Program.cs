@@ -12,8 +12,9 @@ builder.Services.AddControllers();
 
 // Update: Set up SQLite database to use the /data directory
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlite($"Data Source=/data/DokumentationssystemDB.db3")
+    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
+
 
 // Add Identity services
 builder.Services.AddIdentity<IdentityUser, IdentityRole>()
