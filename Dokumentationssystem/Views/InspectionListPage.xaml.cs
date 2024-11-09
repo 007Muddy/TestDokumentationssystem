@@ -161,13 +161,17 @@ namespace Dokumentationssystem.Views
 
         private async Task DownloadInspection(Inspection inspection)
         {
+            var jwtToken = Preferences.Get("JwtToken", string.Empty);
+            if (string.IsNullOrEmpty(jwtToken))
+            {
+                await DisplayAlert("Error", "User not authenticated. Please log in again.", "OK");
+                return;
+            }
 
             try
             {
-             
-
                 var httpClient = new HttpClient();
-
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
                 var response = await httpClient.GetAsync($"{PhotosUrl}{inspection.Id}/photos");
 
                 if (!response.IsSuccessStatusCode)
@@ -230,10 +234,11 @@ namespace Dokumentationssystem.Views
             }
         }
 
+
         private async Task DeleteInspection(Inspection inspection)
         {
-            var userId = Preferences.Get("UserId", string.Empty);
-            if (string.IsNullOrEmpty(userId))
+            var jwtToken = Preferences.Get("JwtToken", string.Empty);
+            if (string.IsNullOrEmpty(jwtToken))
             {
                 await DisplayAlert("Error", "User not authenticated. Please log in again.", "OK");
                 return;
@@ -246,10 +251,11 @@ namespace Dokumentationssystem.Views
             }
 
             var httpClient = new HttpClient();
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
 
             try
             {
-                var response = await httpClient.DeleteAsync($"{DeleteInspectionUrl}{inspection.Id}?userId={userId}");
+                var response = await httpClient.DeleteAsync($"{DeleteInspectionUrl}{inspection.Id}");
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -269,10 +275,11 @@ namespace Dokumentationssystem.Views
                 await DisplayAlert("Error", $"An error occurred: {ex.Message}", "OK");
             }
         }
+
         private async void LoadInspections()
         {
-            var userId = Preferences.Get("UserId", string.Empty);
-            if (string.IsNullOrEmpty(userId))
+            var jwtToken = Preferences.Get("JwtToken", string.Empty);
+            if (string.IsNullOrEmpty(jwtToken))
             {
                 await DisplayAlert("Error", "User not authenticated. Please log in again.", "OK");
                 return;
@@ -281,7 +288,8 @@ namespace Dokumentationssystem.Views
             try
             {
                 var httpClient = new HttpClient();
-                var response = await httpClient.GetAsync($"{InspectionsUrl}?userId={userId}");
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
+                var response = await httpClient.GetAsync(InspectionsUrl);
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -311,7 +319,6 @@ namespace Dokumentationssystem.Views
                 await DisplayAlert("Error", $"An error occurred: {ex.Message}", "OK");
             }
         }
-
 
         private async Task OpenInspectionDetails(Inspection inspection)
         {

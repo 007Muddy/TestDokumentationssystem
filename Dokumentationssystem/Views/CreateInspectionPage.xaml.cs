@@ -128,12 +128,24 @@ namespace Dokumentationssystem.Views
 
             try
             {
+                // Set Authorization header with JWT token
+                var jwtToken = Preferences.Get("JwtToken", string.Empty);
+                if (string.IsNullOrEmpty(jwtToken))
+                {
+                    await DisplayAlert("Error", "User is not authenticated. Please log in again.", "OK");
+                    return;
+                }
+
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
+
+                // Prepare form data
                 var formData = new MultipartFormDataContent();
                 formData.Add(new StringContent(inspectionName), "InspectionName");
                 formData.Add(new StringContent(address), "Address");
                 formData.Add(new StringContent(inspectionDate.ToString("yyyy-MM-dd")), "Date");
                 formData.Add(new StringContent(createdBy), "CreatedBy");
 
+                // Send request to create inspection
                 var response = await httpClient.PostAsync(CreateInspectionUrl, formData);
 
                 if (response.IsSuccessStatusCode)
@@ -152,6 +164,7 @@ namespace Dokumentationssystem.Views
                 await DisplayAlert("Error", $"An error occurred: {ex.Message}", "OK");
             }
         }
+
 
         private async void OnBackButtonClicked(object sender, EventArgs e)
         {

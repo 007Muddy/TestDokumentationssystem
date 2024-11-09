@@ -1,5 +1,4 @@
-﻿
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
@@ -52,8 +51,8 @@ namespace WebApplicationApi.Controllers
 
                 if (result.Succeeded)
                 {
-                    // Return a success message without generating a JWT token
-                    return Ok(new { Result = "User registered successfully!" });
+                    var token = GenerateJwtToken(user);
+                    return Ok(new { Token = token, Result = "User registered successfully!" });
                 }
                 else
                 {
@@ -64,8 +63,8 @@ namespace WebApplicationApi.Controllers
             return BadRequest(ModelState);
         }
 
-
-        //[HttpPost("login")]
+        // Login method with JWT token generation
+        [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginModel model)
         {
             if (ModelState.IsValid)
@@ -78,7 +77,7 @@ namespace WebApplicationApi.Controllers
                     var token = GenerateJwtToken(user);
 
                     _logger.LogInformation("User {Username} logged in successfully.", model.Username);
-                    return Ok(new { Message = "Login successful!", Token = token });
+                    return Ok(new { Token = token, Message = "Login successful." });
                 }
                 else
                 {
@@ -118,21 +117,13 @@ namespace WebApplicationApi.Controllers
 
             var token = new JwtSecurityToken(
                 issuer: _configuration["Jwt:Issuer"],
-                audience: _configuration["Jwt:Issuer"],
+                audience: _configuration["Jwt:Audience"],
                 claims: claims,
-                expires: DateTime.Now.AddHours(1),
-                signingCredentials: creds
-            );
+                expires: DateTime.Now.AddMinutes(double.Parse(_configuration["Jwt:TokenExpiryMinutes"])),
+                signingCredentials: creds);
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
-
-
-
-
-
-
-
 
     }
 }

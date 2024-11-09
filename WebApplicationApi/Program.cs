@@ -19,6 +19,25 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
 
+// Add JWT Authentication services
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+        ValidAudience = builder.Configuration["Jwt:Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+    };
+});
 
 // Add Swagger services for API documentation
 builder.Services.AddEndpointsApiExplorer();
@@ -40,7 +59,7 @@ else
 {
     // Restrict CORS in production to specific origins (replace with your allowed origins)
     app.UseCors(policy => policy
-        .WithOrigins("https://yourproductionurl.com")
+        .WithOrigins("https://mnbstrcut.onrender.com")
         .AllowAnyMethod()
         .AllowAnyHeader());
 }
@@ -56,7 +75,6 @@ else
     // Ensure HTTPS redirection in production
     app.UseHttpsRedirection();
 }
-
 
 // Add Authentication and Authorization middleware in the correct order
 app.UseAuthentication();  // This should come before UseAuthorization
