@@ -62,24 +62,23 @@ else
 {
     // Restrict CORS in production to specific origins (replace with your allowed origins)
     app.UseCors(policy => policy
-        .WithOrigins("https://yourproductionurl.com")
+        .WithOrigins("https://mohammednoureddinbay.tech")
         .AllowAnyMethod()
         .AllowAnyHeader());
 }
 app.MapControllers();
+// Ensure HTTPS redirection in production
+app.UseHttpsRedirection();
 
 //// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
+
     app.UseSwagger();
     app.UseSwaggerUI();
-}
-else
-{
-    // Ensure HTTPS redirection in production
-    app.UseHttpsRedirection();
-}
 
+builder.Services.AddLogging(config => {
+    config.AddConsole();
+    config.AddDebug();
+});
 
 // Add Authentication and Authorization middleware in the correct order
 app.UseAuthentication();  // This should come before UseAuthorization
