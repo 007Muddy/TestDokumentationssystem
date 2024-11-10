@@ -26,7 +26,7 @@ COPY --from=publish /app/publish .
 RUN mkdir -p /data && chmod -R 777 /data
 
 # Set the connection string to point to the new path in your application
-ENV DATABASE_PATH="/data/DokumentationssystemDB.db3"
+ENV DATABASE_PATH="Data/DokumentationssystemDB.db3"
 
 # Entry point for the application
 ENTRYPOINT ["dotnet", "WebApplicationApi.dll"]
