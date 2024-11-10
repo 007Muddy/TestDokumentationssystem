@@ -18,5 +18,8 @@ WORKDIR /app
 # Copy published output to the final container
 COPY --from=publish /app/publish .
 
+# Set environment variables to avoid potential database locking issues
+ENV ASPNETCORE_ENVIRONMENT=Production
+
 # Run the application
 ENTRYPOINT ["dotnet", "WebApplicationApi.dll"]
