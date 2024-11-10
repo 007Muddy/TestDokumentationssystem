@@ -13,6 +13,7 @@ builder.Services.AddControllers();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlite($"Data Source={Path.Combine(AppContext.BaseDirectory, "DokumentationssystemDB.db3")}")
 );
+builder.Services.AddControllers();
 
 
 // Add Identity services
@@ -65,6 +66,7 @@ else
         .AllowAnyMethod()
         .AllowAnyHeader());
 }
+app.MapControllers();
 
 //// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
