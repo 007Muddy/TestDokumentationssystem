@@ -96,7 +96,7 @@ namespace WebApplicationApi.Controllers
     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
     new Claim(ClaimTypes.NameIdentifier, user.Id) // Add the UserId as a claim
 };
-
+            //req
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
