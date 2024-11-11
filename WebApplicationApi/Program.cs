@@ -62,7 +62,7 @@ else
 {
     // Restrict CORS in production to specific origins (replace with your allowed origins)
     app.UseCors(policy => policy
-        .WithOrigins("https://mohammednoureddinbay.tech")
+        .WithOrigins("https://dokumentationssystem.shop")
         .AllowAnyMethod()
         .AllowAnyHeader());
 }
