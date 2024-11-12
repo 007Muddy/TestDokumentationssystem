@@ -22,7 +22,8 @@ COPY --from=publish /app/publish .
 ENV ASPNETCORE_ENVIRONMENT=Production
 
 # Set up SQL Server connection string as an environment variable
-ENV ConnectionStrings__DefaultConnection="Server=localhost;Database=DokumentationssystemDB;User Id=your_user;Password=your_password;"
+# Use "sqlserver" as the server name to match the service name in docker-compose.yml
+ENV ConnectionStrings__DefaultConnection="Server=sqlserver;Database=DokumentationssystemDB;User Id=sa;Password=YourStrong@Passw0rd;"
 
 # Run the application
 ENTRYPOINT ["dotnet", "WebApplicationApi.dll"]
