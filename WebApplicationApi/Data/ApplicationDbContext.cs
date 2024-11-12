@@ -12,9 +12,16 @@ namespace WebApplicationApi.Data
         {
         }
 
-        public DbSet<Inspection> Inspections { get; set; }  // Add Inspections DbSet
-        public DbSet<Photo> Photos { get; set; }  // Add Photos DbSet
+        public DbSet<Inspection> Inspections { get; set; }
+        public DbSet<Photo> Photos { get; set; }
         public DbSet<LoginModel> LoginModels { get; set; }
-    }
 
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (!optionsBuilder.IsConfigured)
+            {
+                optionsBuilder.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=DokumentationssystemDB;Trusted_Connection=True;");
+            }
+        }
+    }
 }

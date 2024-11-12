@@ -18,11 +18,12 @@ WORKDIR /app
 # Copy published output to the final container
 COPY --from=publish /app/publish .
 
-# Copy the SQLite database to the /app directory
-COPY ["WebApplicationApi/DokumentationssystemDB.db3", "/app/DokumentationssystemDB.db3"]
-
-# Set environment variables to avoid potential database locking issues
+# Set environment variables to Production
 ENV ASPNETCORE_ENVIRONMENT=Production
+
+# Set up SQL Server connection string
+ENV ConnectionStrings__DefaultConnection="Server=(localdb)\\MSSQLLocalDB;Database=DokumentationssystemDB;"
 
 # Run the application
 ENTRYPOINT ["dotnet", "WebApplicationApi.dll"]
+
