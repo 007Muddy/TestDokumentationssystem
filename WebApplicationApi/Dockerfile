@@ -21,27 +21,8 @@ COPY --from=publish /app/publish .
 # Set environment variables to Production
 ENV ASPNETCORE_ENVIRONMENT=Production
 
-# Set up SQL Server connection string
-version: '3.4'
-
-services:
-  sqlserver:
-    image: mcr.microsoft.com/mssql/server:2022-latest
-    environment:
-      SA_PASSWORD: "YourStrong@Passw0rd"
-      ACCEPT_EULA: "Y"
-    ports:
-      - "1433:1433"
-
-  webapplicationapi:
-    build: .
-    environment:
-      ConnectionStrings__DefaultConnection: "Server=sqlserver;Database=DokumentationssystemDB;"
-    ports:
-      - "5000:80"
-    depends_on:
-      - sqlserver
+# Set up SQL Server connection string as an environment variable
+ENV ConnectionStrings__DefaultConnection="Server=localhost;Database=DokumentationssystemDB;User Id=your_user;Password=your_password;"
 
 # Run the application
 ENTRYPOINT ["dotnet", "WebApplicationApi.dll"]
-

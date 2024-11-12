@@ -10,10 +10,9 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllers();
 
+// Add DbContext
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-builder.Services.AddControllers();
-
 
 // Add Identity services
 builder.Services.AddIdentity<IdentityUser, IdentityRole>()
@@ -45,8 +44,24 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// Configure logging
+builder.Services.AddLogging(config =>
+{
+    config.AddConsole();
+    config.AddDebug();
+});
+
 // Build the app (this must come before `app.UseCors`)
 var app = builder.Build();
+
+// Configure the HTTP request pipeline.
+
+// Enable Swagger based on environment
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 
 // Configure CORS based on environment
 if (app.Environment.IsDevelopment())
@@ -65,19 +80,9 @@ else
         .AllowAnyMethod()
         .AllowAnyHeader());
 }
-app.MapControllers();
+
 // Ensure HTTPS redirection in production
 app.UseHttpsRedirection();
-
-//// Configure the HTTP request pipeline.
-
-    app.UseSwagger();
-    app.UseSwaggerUI();
-
-builder.Services.AddLogging(config => {
-    config.AddConsole();
-    config.AddDebug();
-});
 
 // Add Authentication and Authorization middleware in the correct order
 app.UseAuthentication();  // This should come before UseAuthorization
