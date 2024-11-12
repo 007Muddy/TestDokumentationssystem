@@ -62,7 +62,8 @@ else
 {
     // Restrict CORS in production to specific origins (replace with your allowed origins)
     app.UseCors(policy => policy
-        .WithOrigins("https://dokumentationssystem.shop")
+    .WithOrigins("https://dokumentationssystem.shop", "https://localhost:7250")
+
         .AllowAnyMethod()
         .AllowAnyHeader());
 }
