@@ -74,18 +74,25 @@ namespace WebApplicationApi.Controllers
 
 
         // POST: api/inspections/createinspection - Create a new inspection with photo upload
-        [HttpPost("create-inspection")]
-        public async Task<IActionResult> CreateInspection([FromBody] Inspection inspection)
+        [HttpPost("createinspection")]
+        [Authorize]
+        public async Task<IActionResult> CreateInspection([FromForm] Inspection model)
         {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value; // Get current user ID
+            var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+
             if (string.IsNullOrEmpty(userId))
             {
-                return BadRequest("User ID is required");
+                return Unauthorized(new { message = "User is not authenticated." });
             }
-            inspection.UserId = userId; // Assign the user ID
-            _context.Inspections.Add(inspection);
+
+
+
+
+            model.CreatedBy = userId;
+            _context.Inspections.Add(model);
             await _context.SaveChangesAsync();
-            return Ok(inspection);
+
+            return Ok(model);
         }
 
 

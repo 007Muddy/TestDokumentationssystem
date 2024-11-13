@@ -136,7 +136,7 @@ namespace Dokumentationssystem.Views
 
             try
             {
-                var response = await httpClient.GetAsync("https://struct.onrender.com/api/auth/users");
+                var response = await httpClient.GetAsync("https://localhost:8585/api/auth/users");
                 if (response.IsSuccessStatusCode)
                 {
                     var jsonResponse = await response.Content.ReadAsStringAsync();
@@ -173,7 +173,7 @@ namespace Dokumentationssystem.Views
 
             [JsonPropertyName("email")]
             public string Email { get; set; }
-         
+
         }
     }
 }
