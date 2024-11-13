@@ -109,7 +109,7 @@ namespace Dokumentationssystem.Views
 
             try
             {
-                var response = await httpClient.DeleteAsync($"https://localhost:8585/api/auth/delete/{username}");
+                var response = await httpClient.DeleteAsync($"https://struct.onrender.com/api/auth/delete/{username}");
                 if (response.IsSuccessStatusCode)
                 {
                     await DisplayAlert("Success", "User deleted successfully", "OK");
@@ -136,7 +136,7 @@ namespace Dokumentationssystem.Views
 
             try
             {
-                var response = await httpClient.GetAsync("https://localhost:8585/api/auth/users");
+                var response = await httpClient.GetAsync("https://struct.onrender.com/api/auth/users");
                 if (response.IsSuccessStatusCode)
                 {
                     var jsonResponse = await response.Content.ReadAsStringAsync();
