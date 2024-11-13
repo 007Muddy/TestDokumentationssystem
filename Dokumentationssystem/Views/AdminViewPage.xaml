@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Dokumentationssystem.Views.AdminViewPage"
+             BackgroundImageSource="test2.jpg">
+
+    <Shell.BackButtonBehavior>
+        <BackButtonBehavior IsVisible="False" />
+    </Shell.BackButtonBehavior>
+    <ContentPage.Content>
+        <Grid>
+            <!-- Semi-transparent overlay for better readability -->
+            <BoxView Color="Black" Opacity="0.5" />
+
+            <ScrollView>
+                <StackLayout Padding="20">
+
+                    <!-- Page Title -->
+                    <Label Text="Admin Dashboard" 
+                           FontSize="30" 
+                           FontAttributes="Bold" 
+                           HorizontalOptions="Center" 
+                           TextColor="White"
+                           Margin="0,20,0,20"/>
+
+                    <!-- Section to Register a New User -->
+                    <Label Text="Register New User" FontSize="22" TextColor="White" Margin="0,20,0,10"/>
+
+                    <!-- Username Field with Icon -->
+                    <Frame BackgroundColor="White" Padding="0" CornerRadius="12" HeightRequest="50">
+                        <HorizontalStackLayout Padding="10,0">
+                            <Image Source="user.png" WidthRequest="24" HeightRequest="24" VerticalOptions="Center" />
+                            <Entry x:Name="UsernameEntry" Placeholder="Username" TextColor="Black" 
+                                   BackgroundColor="Transparent" Margin="10,0,0,0" />
+                        </HorizontalStackLayout>
+                    </Frame>
+
+                    <!-- Email Field with Icon -->
+                    <Frame BackgroundColor="White" Padding="0" CornerRadius="12" HeightRequest="50">
+                        <HorizontalStackLayout Padding="10,0">
+                            <Image Source="email.png" WidthRequest="24" HeightRequest="24" VerticalOptions="Center" />
+                            <Entry x:Name="EmailEntry" Placeholder="Email" TextColor="Black" 
+                                   BackgroundColor="Transparent" Margin="10,0,0,0" />
+                        </HorizontalStackLayout>
+                    </Frame>
+
+                    <!-- Password Field with Icon -->
+                    <Frame BackgroundColor="White" Padding="0" CornerRadius="12" HeightRequest="50">
+                        <HorizontalStackLayout Padding="10,0">
+                            <Image Source="padlock.png" WidthRequest="24" HeightRequest="24" VerticalOptions="Center" />
+                            <Entry x:Name="PasswordEntry" Placeholder="Password" IsPassword="True" TextColor="Black" 
+                                   BackgroundColor="Transparent" Margin="10,0,0,0" />
+                        </HorizontalStackLayout>
+                    </Frame>
+
+                    <!-- Register Button -->
+                    <Button Text="Register User" 
+                            BackgroundColor="#4CAF50" 
+                            TextColor="White" 
+                            CornerRadius="10"
+                            FontSize="18"
+                            Margin="0,10,0,0"
+                            Padding="10"
+                            Clicked="OnRegisterUserClicked" />
+
+                    <!-- Section to View All Users -->
+                    <Label Text="User List" FontSize="22" TextColor="White" Margin="0,30,0,10"/>
+                    <Button Text="View All Users" 
+                            BackgroundColor="#2196F3" 
+                            TextColor="White" 
+                            CornerRadius="10"
+                            FontSize="18"
+                            Margin="0,10,0,0"
+                            Padding="10"
+                            Clicked="OnViewUsersClicked" />
+
+                    <!-- Username and Email Headers -->
+                    <Grid Margin="0,20,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="2*" />
+                            <ColumnDefinition Width="2*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <Label Text="Username" FontSize="18" TextColor="White" Grid.Column="0" />
+                        <Label Text="Email" FontSize="18" TextColor="White" Grid.Column="1" />
+                    </Grid>
+
+                    <!-- User List -->
+                    <ListView x:Name="UsersListView" BackgroundColor="Transparent" Margin="0,10,0,0">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <ViewCell>
+                                    <Frame BackgroundColor="White" CornerRadius="12" Padding="10" Margin="0,5,0,5">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="2*" />
+                                                <ColumnDefinition Width="2*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <Label Text="{Binding UserName}" 
+                                                   FontSize="18" 
+                                                   TextColor="Black"
+                                                   VerticalOptions="Center" 
+                                                   Grid.Column="0" />
+                                            <Label Text="{Binding Email}" 
+                                                   FontSize="16" 
+                                                   TextColor="Gray"
+                                                   VerticalOptions="Center" 
+                                                   Grid.Column="1"/>
+                                            <Button Text="Delete" 
+                                                    BackgroundColor="#E74C3C" 
+                                                    TextColor="White" 
+                                                    CornerRadius="10"
+                                                    FontSize="16"
+                                                    Padding="5"
+                                                    VerticalOptions="Center"
+                                                    Clicked="OnDeleteUserClicked" 
+                                                    CommandParameter="{Binding UserName}" 
+                                                    Grid.Column="2"/>
+                                        </Grid>
+                                    </Frame>
+                                </ViewCell>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+
+                </StackLayout>
+            </ScrollView>
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>

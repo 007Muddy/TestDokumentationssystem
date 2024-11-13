@@ -10,6 +10,6 @@
     </Shell.BackButtonBehavior>
 
     <!-- Register the RegistrationPage -->
-    <ShellContent ContentTemplate="{DataTemplate views:StartPage}" />
+    <ShellContent ContentTemplate="{DataTemplate views:LoginPage}" />
 
 </Shell>

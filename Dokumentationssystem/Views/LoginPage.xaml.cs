@@ -9,14 +9,14 @@ namespace Dokumentationssystem.Views
     {
         // Define base address based on platform
         public static string BaseAddress =
-            DeviceInfo.Platform == DevicePlatform.Android ? "https://struct.onrender.com" : "https://struct.onrender.com";
+            DeviceInfo.Platform == DevicePlatform.Android ? "https://struct.onrender.com" : "https://localhost:8585";
         public static string LoginUrl = $"{BaseAddress}/api/auth/login";
 
-        public LoginPage()      
+        public LoginPage()
         {
             InitializeComponent(); // This links the XAML elements to the code-behind
-
         }
+
         protected override void OnAppearing()
         {
             base.OnAppearing();
@@ -24,25 +24,19 @@ namespace Dokumentationssystem.Views
         }
 
         private async void OnLoginClicked(object sender, EventArgs e)
-
         {
             await AnimateButton((Button)sender);
 
-            var username = UsernameEntry.Text; // UsernameEntry from XAML
-            var password = PasswordEntry.Text; // PasswordEntry from XAML
+            var username = UsernameEntry.Text;
+            var password = PasswordEntry.Text;
 
-            // Ensure both fields are filled
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
             {
                 await DisplayAlert("Error", "Please fill in both fields", "OK");
                 return;
             }
 
-            var loginModel = new
-            {
-                Username = username,
-                Password = password
-            };
+            var loginModel = new { Username = username, Password = password };
 
             var httpClient = new HttpClient();
             var json = JsonSerializer.Serialize(loginModel);
@@ -50,29 +44,27 @@ namespace Dokumentationssystem.Views
 
             try
             {
-                // Use the platform-specific LoginUrl for the API call
                 var response = await httpClient.PostAsync(LoginUrl, content);
 
-                // After successful login
                 if (response.IsSuccessStatusCode)
                 {
-                    // Read the response content
                     var resultJson = await response.Content.ReadAsStringAsync();
-
-                    // Deserialize the response to extract the token
                     var result = JsonSerializer.Deserialize<LoginResponse>(resultJson);
 
-                    // Check if the token was received
                     if (result != null && !string.IsNullOrEmpty(result.Token))
                     {
-                        // Save the JWT token
                         Preferences.Set("JwtToken", result.Token);
 
-                        // Show success message
-                        await DisplayAlert("Success", "Login successful! welcome to our system", "OK");
+                        await DisplayAlert("Success", $"Login successful! Role: {result.Role}", "OK"); // Debugging line to show the role
 
-                        // Redirect to the CreateInspectionPage after successful login
-                        await Navigation.PushAsync(new SeeOrCreateNewInspection());
+                        if (result.Role == "Admin")
+                        {
+                            await Navigation.PushAsync(new AdminViewPage());
+                        }
+                        else
+                        {
+                            await Navigation.PushAsync(new SeeOrCreateNewInspection());
+                        }
                     }
                     else
                     {
@@ -81,17 +73,17 @@ namespace Dokumentationssystem.Views
                 }
                 else
                 {
-                    // Capture and display the API error message
                     var errorMessage = await response.Content.ReadAsStringAsync();
-                    await DisplayAlert("Error", $"Login failed: username or password is incorrect", "OK");
+                    await DisplayAlert("Error", "Login failed: Username or password is incorrect", "OK");
                 }
             }
             catch (Exception ex)
             {
-                // Log any exceptions and show an error message
                 await DisplayAlert("Error", $"An error occurred: {ex.Message}", "OK");
             }
         }
+
+
         private async Task AnimateButton(Button button)
         {
             // Move the button down slightly
@@ -100,6 +92,7 @@ namespace Dokumentationssystem.Views
             // Move the button back to its original position
             await button.TranslateTo(0, 0, 100, Easing.CubicInOut);
         }
+
         private async void OnBackButtonClicked(object sender, EventArgs e)
         {
             // Animate the button
@@ -115,5 +108,8 @@ namespace Dokumentationssystem.Views
     {
         [JsonPropertyName("token")]  // Match the JSON field name to the property
         public string Token { get; set; }  // The token field returned by the API
+
+        [JsonPropertyName("role")]  // Assume the API response includes a role field
+        public string Role { get; set; }  // The role of the user, e.g., "Admin" or "User"
     }
 }
