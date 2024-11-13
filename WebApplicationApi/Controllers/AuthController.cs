@@ -49,7 +49,8 @@ namespace WebApplicationApi.Controllers
                 // Check if the Admin role exists; if not, create it
                 if (!await _roleManager.RoleExistsAsync("Admin"))
                 {
-                    await _roleManager.CreateAsync(new IdentityRole("Admin"));
+                    var roleResult = await _roleManager.CreateAsync(new IdentityRole("Admin"));
+                    Console.WriteLine($"Admin role created: {roleResult.Succeeded}");
                 }
 
                 // Check if the admin user exists
@@ -63,7 +64,8 @@ namespace WebApplicationApi.Controllers
                     if (result.Succeeded)
                     {
                         // Assign Admin role to the user
-                        await _userManager.AddToRoleAsync(adminUser, "Admin");
+                        var roleAssignmentResult = await _userManager.AddToRoleAsync(adminUser, "Admin");
+                        Console.WriteLine($"Admin role assigned to user: {roleAssignmentResult.Succeeded}");
                     }
                     else
                     {
@@ -76,6 +78,7 @@ namespace WebApplicationApi.Controllers
                 Console.WriteLine("An error occurred while creating the admin user: " + ex.Message);
             }
         }
+
 
         [Authorize(Roles = "Admin")]
         [HttpGet("users")]
