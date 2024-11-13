@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace WebApplicationApi.Migrations
 {
     /// <inheritdoc />
-    public partial class backtoorginaæ : Migration
+    public partial class djsmfpadjsmfwqr : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -195,7 +195,8 @@ namespace WebApplicationApi.Migrations
                     PhotoData = table.Column<byte[]>(type: "BLOB", nullable: true),
                     PhotoName = table.Column<string>(type: "TEXT", nullable: true),
                     Description = table.Column<string>(type: "TEXT", nullable: true),
-                    InspectionId = table.Column<int>(type: "INTEGER", nullable: false)
+                    InspectionId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Rating = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {

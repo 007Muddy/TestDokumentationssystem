@@ -75,7 +75,7 @@ namespace Dokumentationssystem.Views
 
             try
             {
-                var response = await httpClient.PostAsync("https://localhost:8585/api/auth/register", content);
+                var response = await httpClient.PostAsync("https://struct.onrender.com/api/auth/register", content);
                 if (response.IsSuccessStatusCode)
                 {
                     await DisplayAlert("Success", "User registered successfully", "OK");

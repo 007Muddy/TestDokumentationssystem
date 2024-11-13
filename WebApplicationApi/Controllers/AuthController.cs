@@ -1,13 +1,13 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using WebApplicationApi.Model;
-using Microsoft.EntityFrameworkCore;
 using WebApplicationApi.Data;
+using WebApplicationApi.Model;
 
 namespace WebApplicationApi.Controllers
 {
@@ -19,20 +19,20 @@ namespace WebApplicationApi.Controllers
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly IConfiguration _configuration;
         private readonly RoleManager<IdentityRole> _roleManager;
-        private readonly ApplicationDbContext _context; // Add DbContext
+        private readonly ApplicationDbContext _context;
 
         public AuthController(
             UserManager<IdentityUser> userManager,
             SignInManager<IdentityUser> signInManager,
             IConfiguration configuration,
             RoleManager<IdentityRole> roleManager,
-            ApplicationDbContext context) // Inject DbContext
+            ApplicationDbContext context)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _configuration = configuration;
             _roleManager = roleManager;
-            _context = context; // Initialize DbContext
+            _context = context;
 
             // Initialize the admin user and role only once
             Task.Run(() => CreateAdminUser()).Wait();
@@ -46,23 +46,19 @@ namespace WebApplicationApi.Controllers
                 string adminUsername = "adminUser";
                 string adminPassword = "AdminPassword123!";
 
-                // Check if the Admin role exists; if not, create it
                 if (!await _roleManager.RoleExistsAsync("Admin"))
                 {
                     await _roleManager.CreateAsync(new IdentityRole("Admin"));
                 }
 
-                // Check if the admin user exists
                 var adminUser = await _userManager.FindByNameAsync(adminUsername);
                 if (adminUser == null)
                 {
-                    // Create the admin user
                     adminUser = new IdentityUser { UserName = adminUsername, Email = "admin@example.com" };
                     var result = await _userManager.CreateAsync(adminUser, adminPassword);
 
                     if (result.Succeeded)
                     {
-                        // Assign Admin role to the user
                         await _userManager.AddToRoleAsync(adminUser, "Admin");
                     }
                     else
@@ -92,8 +88,6 @@ namespace WebApplicationApi.Controllers
             return Ok(users);
         }
 
-
-        // Assign "Admin" role to a specific user (Admin only)
         [Authorize(Roles = "Admin")]
         [HttpPost("assign-admin-role")]
         public async Task<IActionResult> AssignAdminRole([FromBody] string username)
@@ -111,7 +105,6 @@ namespace WebApplicationApi.Controllers
             return result.Succeeded ? Ok("Admin role assigned successfully") : BadRequest("Failed to assign admin role");
         }
 
-        // Register a new user (Admin only)
         [Authorize(Roles = "Admin")]
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterModel model)
@@ -135,7 +128,6 @@ namespace WebApplicationApi.Controllers
             return BadRequest(ModelState);
         }
 
-        // Log in user
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginModel model)
         {
@@ -148,9 +140,8 @@ namespace WebApplicationApi.Controllers
                     var user = await _userManager.FindByNameAsync(model.Username);
                     var token = GenerateJwtToken(user);
 
-                    // Get the user's roles
                     var roles = await _userManager.GetRolesAsync(user);
-                    var role = roles.FirstOrDefault() ?? "User"; // Default role to "User" if none assigned
+                    var role = roles.FirstOrDefault() ?? "User";
 
                     return Ok(new { Token = token, Role = role });
                 }
@@ -163,7 +154,6 @@ namespace WebApplicationApi.Controllers
             return BadRequest(ModelState);
         }
 
-        // Delete a user (Admin only)
         [Authorize(Roles = "Admin")]
         [HttpDelete("delete/{username}")]
         public async Task<IActionResult> DeleteUser(string username)
@@ -175,7 +165,6 @@ namespace WebApplicationApi.Controllers
             return result.Succeeded ? Ok("User deleted successfully") : BadRequest("Failed to delete user");
         }
 
-        // Generate JWT Token with roles
         private string GenerateJwtToken(IdentityUser user)
         {
             var claims = new List<Claim>
@@ -185,7 +174,6 @@ namespace WebApplicationApi.Controllers
                 new Claim(ClaimTypes.NameIdentifier, user.Id)
             };
 
-            // Add role claims
             var roles = _userManager.GetRolesAsync(user).Result;
             claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
 

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
@@ -84,9 +85,6 @@ namespace WebApplicationApi.Controllers
             {
                 return Unauthorized(new { message = "User is not authenticated." });
             }
-
-
-
 
             model.CreatedBy = userId;
             _context.Inspections.Add(model);
@@ -243,8 +241,8 @@ namespace WebApplicationApi.Controllers
         }
 
 
-// GET: api/inspections/{id}/photos - Get photos with names and descriptions for a specific inspection
-[HttpGet("{id}/photos")]
+        // GET: api/inspections/{id}/photos - Get photos with names and descriptions for a specific inspection
+        [HttpGet("{id}/photos")]
         [Authorize]
         public async Task<IActionResult> GetPhotosForInspection(int id)
         {

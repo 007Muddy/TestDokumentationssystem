@@ -22,7 +22,7 @@ namespace Dokumentationssystem.Views
         public CreateInspectionPage()
         {
             InitializeComponent();
-            LoadUserInfo(); 
+            LoadUserInfo();
         }
         private async Task AnimateButton(Button button)
         {
@@ -108,7 +108,7 @@ namespace Dokumentationssystem.Views
 
         private void ClearAddressSuggestions()
         {
-  
+
             AddressSuggestionsList.ItemsSource = null;
             AddressSuggestionsList.IsVisible = false;
         }
@@ -119,7 +119,7 @@ namespace Dokumentationssystem.Views
             {
                 AddressEntry.Text = e.SelectedItem.ToString();
                 AddressSuggestionsList.IsVisible = false;
-                AddressSuggestionsList.SelectedItem = null; 
+                AddressSuggestionsList.SelectedItem = null;
             }
         }
 
