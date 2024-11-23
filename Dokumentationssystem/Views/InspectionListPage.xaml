@@ -1,33 +1,35 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Dokumentationssystem.Views.InspectionListPage"
-             BackgroundImageSource="listinspition.jpg">
+             BackgroundImageSource="background2.webp">
     <Shell.BackButtonBehavior>
         <BackButtonBehavior IsVisible="False" />
     </Shell.BackButtonBehavior>
-    <!-- Semi-transparent overlay grid for better readability -->
-    <Grid Padding="20" BackgroundColor="#80000000">
 
+    <!-- Main Content Grid -->
+    <Grid Padding="20" BackgroundColor="Transparent">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <!-- Back Button styled to match the overall design -->
-        <Button Text="← Back" 
-                FontAttributes="Bold" 
-                BackgroundColor="#FFFFFFE6" 
-                TextColor="Black" 
+        <!-- Back Button -->
+        <Button Text="← Back"
+                FontAttributes="Bold"
+                BackgroundColor="#FFFFFFE6"
+                TextColor="Black"
                 CornerRadius="8"
                 Padding="10"
                 FontSize="18"
                 Clicked="OnBackButtonClicked"
-                HorizontalOptions="Start" 
+                HorizontalOptions="Start"
                 VerticalOptions="Start"
                 Margin="0,10,0,10" />
 
+        <!-- Actions Button -->
         <Button Text="Actions ▼"
                 FontAttributes="Bold"
                 BackgroundColor="#FFFFFFE6"
@@ -40,43 +42,62 @@
                 VerticalOptions="Start"
                 Margin="0, 10, 0, 10" />
 
-        <!-- Page Title styled similarly to the Login and Registration pages -->
+        <!-- Title Label -->
         <Label Grid.Row="1"
-               Text="Your Inspections" 
-               FontSize="28" 
-               FontAttributes="Bold" 
-               HorizontalOptions="Center" 
-               VerticalOptions="Start" 
+               Text="Your Inspections"
+               FontSize="28"
+               FontAttributes="Bold"
+               HorizontalOptions="Center"
+               VerticalOptions="Start"
                TextColor="White"
-               Margin="0, 10, 0, 10"/>
+               Margin="0, 10, 0, 5" />
 
-        <!-- Search Bar directly under the title -->
-        <SearchBar Grid.Row="2" Background="Beige"
+        <!-- Search Bar -->
+        <SearchBar Grid.Row="2"
+                   BackgroundColor="#FFFFFFE6"
                    TextColor="Black"
-                   Placeholder="Search by inspection name" 
+                   Placeholder="Search by inspection name"
                    TextChanged="OnSearchBarTextChanged"
-                   Margin="20, 10, 20, 20"
-                   VerticalOptions="Start"/>
+                   Margin="20, 5, 20, 5"
+                   VerticalOptions="Start" />
 
-        <!-- CollectionView to display list of inspections -->
-        <CollectionView Grid.Row="3"
+        <!-- Download and Delete Buttons -->
+        <HorizontalStackLayout Grid.Row="3"
+                               BackgroundColor="Transparent"
+                               HorizontalOptions="End"
+                               Spacing="10"
+                               Margin="0, 5, 10, 5">
+            <ImageButton Source="downloads.png"
+                         HeightRequest="40"
+                         WidthRequest="40"
+                         Padding="5"
+                         Clicked="OnDownloadButtonClicked"
+                         Aspect="AspectFit" />
+
+            <ImageButton Source="bin.png"
+                 HeightRequest="40"
+                 WidthRequest="40"
+                 Padding="5"
+                 Clicked="OnDeleteButtonClicked"
+                 Aspect="AspectFit" />
+
+        </HorizontalStackLayout>
+
+        <!-- Inspections CollectionView -->
+        <CollectionView Grid.Row="4"
                         x:Name="InspectionsCollectionView"
                         SelectionMode="None"
                         VerticalOptions="FillAndExpand"
                         HorizontalOptions="FillAndExpand"
-                        BackgroundColor="Transparent"
                         ItemsLayout="VerticalList">
             <CollectionView.ItemTemplate>
                 <DataTemplate>
-                    <!-- Frame styled similar to the fields in Login and Registration pages -->
-                    <Frame CornerRadius="15" 
-                           BorderColor="Transparent" 
-                           Padding="20" 
-                           Margin="15,5" 
-                           HasShadow="True" 
+                    <Frame CornerRadius="15"
+                           BorderColor="Transparent"
+                           Padding="20"
+                           Margin="15,5"
+                           HasShadow="True"
                            BackgroundColor="#FFFFFFE6">
-
-                        <!-- TapGestureRecognizer added to the Frame -->
                         <Frame.GestureRecognizers>
                             <TapGestureRecognizer Command="{Binding Source={x:Reference InspectionsCollectionView}, Path=BindingContext.InspectionSelectedCommand}"
                                                   CommandParameter="{Binding}" />
@@ -84,30 +105,30 @@
 
                         <VerticalStackLayout Spacing="8">
                             <HorizontalStackLayout>
-
-                                <!-- Checkbox for selection -->
+                                <!-- Checkbox for selection, visibility controlled by AreCheckboxesVisible -->
                                 <CheckBox IsChecked="{Binding IsSelected}"
                                           IsVisible="{Binding Source={x:Reference InspectionsCollectionView}, Path=BindingContext.AreCheckboxesVisible}"
                                           VerticalOptions="Center"
-                                          Background="Beige"/>
+                                          BackgroundColor="Beige" />
 
                                 <VerticalStackLayout>
                                     <Label Text="{Binding CreatedBy, StringFormat='Created By: {0}'}"
                                            FontSize="14"
                                            TextColor="#555555" />
-                                    <Label Text="{Binding InspectionName, StringFormat='Inspection Name: {0}'}" 
-                                           FontSize="16" 
-                                           TextColor="#222222" 
+                                    <Label Text="{Binding InspectionName, StringFormat='Inspection Name: {0}'}"
+                                           FontSize="16"
+                                           TextColor="#222222"
                                            FontAttributes="Bold" />
-                                    <Label Text="{Binding Address, StringFormat='Address: {0}'}" 
-                                           FontSize="14" 
+                                    <Label Text="{Binding Address, StringFormat='Address: {0}'}"
+                                           FontSize="14"
                                            TextColor="#555555" />
-                                    <Label Text="{Binding Date, StringFormat='Date: {0:dd MMM yyyy}'}" 
-                                           FontSize="14" 
-                                           TextColor="#555555"/>
+                                    <Label Text="{Binding Date, StringFormat='Date: {0:dd MMM yyyy}'}"
+                                           FontSize="14"
+                                           TextColor="#555555" />
                                 </VerticalStackLayout>
                             </HorizontalStackLayout>
 
+                            <!-- Edit Button -->
                             <HorizontalStackLayout HorizontalOptions="End" Spacing="12">
                                 <ImageButton Source="edit.png"
                                              HeightRequest="22"
@@ -115,22 +136,6 @@
                                              BackgroundColor="Transparent"
                                              Padding="1"
                                              Command="{Binding Source={x:Reference InspectionsCollectionView}, Path=BindingContext.EditInspectionCommand}"
-                                             CommandParameter="{Binding}"
-                                             Aspect="AspectFit" />
-                                <ImageButton Source="downloads.png" 
-                                             HeightRequest="22"
-                                             WidthRequest="22"
-                                             BackgroundColor="Transparent"
-                                             Padding="1"
-                                             Command="{Binding Source={x:Reference InspectionsCollectionView}, Path=BindingContext.DownloadInspectionCommand}"
-                                             CommandParameter="{Binding}"
-                                             Aspect="AspectFit" />
-                                <ImageButton Source="bin.png" 
-                                             HeightRequest="22"
-                                             WidthRequest="22"
-                                             BackgroundColor="Transparent"
-                                             Padding="1"
-                                             Command="{Binding Source={x:Reference InspectionsCollectionView}, Path=BindingContext.DeleteInspectionCommand}" 
                                              CommandParameter="{Binding}"
                                              Aspect="AspectFit" />
                             </HorizontalStackLayout>

@@ -25,6 +25,8 @@ namespace Dokumentationssystem
             builder.Services.AddSingleton<InspectionDetailsPage>();
             builder.Services.AddSingleton<FullImagePage>();
             builder.Services.AddSingleton<AdminViewPage>();
+            builder.Services.AddSingleton<DownloadInspectionsPage>();
+            
 
 
             builder.UseMauiApp<App>().UseMauiCommunityToolkit();

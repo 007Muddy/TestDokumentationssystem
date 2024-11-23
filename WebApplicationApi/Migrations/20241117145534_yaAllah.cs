@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace WebApplicationApi.Migrations
 {
     /// <inheritdoc />
-    public partial class databaseCreated : Migration
+    public partial class yaAllah : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -193,7 +193,7 @@ namespace WebApplicationApi.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    PhotoData = table.Column<byte[]>(type: "BYTEA", nullable: false),
+                    PhotoData = table.Column<byte[]>(type: "bytea", nullable: true),
                     PhotoName = table.Column<string>(type: "text", nullable: true),
                     Description = table.Column<string>(type: "text", nullable: true),
                     InspectionId = table.Column<int>(type: "integer", nullable: false),

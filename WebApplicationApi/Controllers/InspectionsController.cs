@@ -6,6 +6,11 @@ using System.Security.Claims;
 using WebApplicationApi.Data;
 using WebApplicationApi.Model;
 using System.IO;
+using iTextSharp.text;
+using iTextSharp.text.pdf;
+using DocumentFormat.OpenXml.Wordprocessing;
+using DocumentFormat.OpenXml;
+using DocumentFormat.OpenXml.Packaging;
 
 namespace WebApplicationApi.Controllers
 {
@@ -58,10 +63,254 @@ namespace WebApplicationApi.Controllers
 
             return Ok(inspectionDtos);
         }
+        //Methods for download
+        [HttpPost("download-inspections-pdf")]
+        [Authorize]
+        public async Task<IActionResult> DownloadMultipleInspectionsAsPdf([FromBody] List<int> inspectionIds)
+        {
+            if (inspectionIds == null || !inspectionIds.Any())
+            {
+                return BadRequest(new { message = "No inspections selected." });
+            }
+
+            var inspections = await _context.Inspections
+                                             .Where(i => inspectionIds.Contains(i.Id))
+                                             .ToListAsync();
+
+            if (!inspections.Any())
+            {
+                return NotFound(new { message = "No valid inspections found." });
+            }
+
+            using var stream = new MemoryStream();
+
+            try
+            {
+                var document = new iTextSharp.text.Document();
+                PdfWriter writer = PdfWriter.GetInstance(document, stream);
+                writer.CloseStream = false;
+                document.Open();
+
+                var titleFont = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 18);
+                var textFont = FontFactory.GetFont(FontFactory.HELVETICA, 12);
+
+                foreach (var inspection in inspections)
+                {
+                    var photos = await _context.Photos.Where(p => p.InspectionId == inspection.Id).ToListAsync();
+
+                    document.Add(new iTextSharp.text.Paragraph($"Inspection: {inspection.InspectionName}", titleFont));
+                    document.Add(new iTextSharp.text.Paragraph($"Address: {inspection.Address}", textFont));
+                    document.Add(new iTextSharp.text.Paragraph($"Date: {inspection.Date:yyyy-MM-dd HH:mm:ss}", textFont));
+                    document.Add(new iTextSharp.text.Paragraph(" "));
+
+                    foreach (var photo in photos)
+                    {
+                        document.Add(new iTextSharp.text.Paragraph(photo.PhotoName, FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 14)));
+                        document.Add(new iTextSharp.text.Paragraph($"Rating: {photo.Rating}", textFont));
+                        document.Add(new iTextSharp.text.Paragraph(photo.Description, textFont));
+
+                        if (photo.PhotoData != null && photo.PhotoData.Length > 0)
+                        {
+                            try
+                            {
+                                var image = iTextSharp.text.Image.GetInstance(photo.PhotoData);
+                                image.ScaleToFit(300f, 300f);
+                                image.Alignment = iTextSharp.text.Element.ALIGN_CENTER;
+                                document.Add(image);
+                            }
+                            catch
+                            {
+                                document.Add(new iTextSharp.text.Paragraph("Error loading image", textFont));
+                            }
+                        }
+
+                        document.Add(new iTextSharp.text.Paragraph(" "));
+                    }
+
+                    document.Add(new iTextSharp.text.Paragraph("------------------------------------------------------", textFont));
+                }
+
+                document.Close();
+                stream.Position = 0;
+
+                var pdfFileName = "Selected_Inspections.pdf";
+                return File(stream.ToArray(), "application/pdf", pdfFileName);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Error generating PDF", details = ex.Message });
+            }
+        }
 
 
-        // GET: api/inspections/{id} - Fetch a specific inspection by ID
-        [HttpGet("{id}")]
+
+        [HttpPost("download-inspections-word")]
+        [Authorize]
+        public async Task<IActionResult> DownloadMultipleInspectionsAsWord([FromBody] List<int> inspectionIds)
+        {
+            if (inspectionIds == null || !inspectionIds.Any())
+            {
+                return BadRequest(new { message = "No inspections selected." });
+            }
+
+            // Fetch the inspections and their associated photos
+            var inspections = await _context.Inspections
+                                             .Where(i => inspectionIds.Contains(i.Id))
+                                             .ToListAsync();
+
+            if (!inspections.Any())
+            {
+                return NotFound(new { message = "No valid inspections found." });
+            }
+
+            using (var stream = new MemoryStream())
+            {
+                using (WordprocessingDocument doc = WordprocessingDocument.Create(stream, WordprocessingDocumentType.Document, true))
+                {
+                    MainDocumentPart mainPart = doc.AddMainDocumentPart();
+                    mainPart.Document = new DocumentFormat.OpenXml.Wordprocessing.Document();
+                    Body body = mainPart.Document.AppendChild(new Body());
+
+                    foreach (var inspection in inspections)
+                    {
+                        // Get photos for each inspection
+                        var photos = await _context.Photos.Where(p => p.InspectionId == inspection.Id).ToListAsync();
+
+                        var timeZone = TimeZoneInfo.Local;
+                        var localDate = TimeZoneInfo.ConvertTimeFromUtc(inspection.Date, timeZone);
+
+                        // Add inspection details
+                        body.Append(CreateParagraph($"Inspection: {inspection.InspectionName}", 24, true, JustificationValues.Center));
+                        body.Append(CreateParagraph($"Address: {inspection.Address}", 14, false, JustificationValues.Center));
+                        body.Append(CreateParagraph($"Date: {localDate:yyyy-MM-dd HH:mm:ss}", 14, false, JustificationValues.Center));
+                        body.Append(new DocumentFormat.OpenXml.Wordprocessing.Paragraph(new DocumentFormat.OpenXml.Wordprocessing.Run(new DocumentFormat.OpenXml.Wordprocessing.Text("")))); // Spacer
+
+                        foreach (var photo in photos)
+                        {
+                            // Add photo details
+                            body.Append(CreateParagraph(photo.PhotoName, 18, true, JustificationValues.Left));
+                            body.Append(CreateParagraph($"Rating: {photo.Rating}", 14, false, JustificationValues.Left));
+                            body.Append(CreateParagraph(photo.Description, 12, false, JustificationValues.Left));
+
+                            if (photo.PhotoData != null && photo.PhotoData.Length > 0)
+                            {
+                                AddImageToBody(mainPart, body, photo.PhotoData);
+                            }
+
+                            body.Append(new DocumentFormat.OpenXml.Wordprocessing.Paragraph(new DocumentFormat.OpenXml.Wordprocessing.Run(new DocumentFormat.OpenXml.Wordprocessing.Text("")))); // Spacer
+                        }
+
+                        // Add a separator between inspections
+                        body.Append(CreateParagraph("------------------------------------------------------", 12, false, JustificationValues.Center));
+                        body.Append(new DocumentFormat.OpenXml.Wordprocessing.Paragraph(new DocumentFormat.OpenXml.Wordprocessing.Run(new DocumentFormat.OpenXml.Wordprocessing.Text(""))));
+                    }
+
+                    mainPart.Document.Save();
+                }
+
+                stream.Seek(0, SeekOrigin.Begin);
+                return File(stream.ToArray(), "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "Selected_Inspections.docx");
+            }
+        }
+
+
+        // Helper method to create a formatted paragraph
+        private DocumentFormat.OpenXml.Wordprocessing.Paragraph CreateParagraph(string text, int fontSize, bool bold, JustificationValues alignment)
+        {
+            RunProperties runProperties = new RunProperties();
+            runProperties.Append(new FontSize() { Val = (fontSize * 2).ToString() });
+            if (bold)
+            {
+                runProperties.Append(new Bold());
+            }
+
+            Run run = new Run();
+            run.Append(runProperties);
+            run.Append(new DocumentFormat.OpenXml.Wordprocessing.Text(text) { Space = SpaceProcessingModeValues.Preserve });
+
+            ParagraphProperties paragraphProperties = new ParagraphProperties();
+            paragraphProperties.Append(new Justification() { Val = alignment });
+
+            DocumentFormat.OpenXml.Wordprocessing.Paragraph paragraph = new DocumentFormat.OpenXml.Wordprocessing.Paragraph();
+            paragraph.Append(paragraphProperties);
+            paragraph.Append(run);
+
+            return paragraph;
+        }
+
+
+        // Helper method to add an image to the Word document
+        private void AddImageToBody(MainDocumentPart mainPart, Body body, byte[] imageData)
+        {
+            // Add image part to the document
+            ImagePart imagePart = mainPart.AddImagePart(ImagePartType.Jpeg);
+
+            // Feed the image data into the ImagePart
+            using (MemoryStream stream = new MemoryStream(imageData))
+            {
+                imagePart.FeedData(stream);
+            }
+
+            // Get the ID of the image part
+            string imageId = mainPart.GetIdOfPart(imagePart);
+
+            // Define the image drawing properties and add it to the document body
+            var element = new Drawing(
+                new DocumentFormat.OpenXml.Drawing.Wordprocessing.Inline(
+                    new DocumentFormat.OpenXml.Drawing.Wordprocessing.Extent() { Cx = 990000L, Cy = 792000L },
+                    new DocumentFormat.OpenXml.Drawing.Wordprocessing.EffectExtent()
+                    {
+                        LeftEdge = 0L,
+                        TopEdge = 0L,
+                        RightEdge = 0L,
+                        BottomEdge = 0L
+                    },
+                    new DocumentFormat.OpenXml.Drawing.Wordprocessing.DocProperties()
+                    {
+                        Id = (UInt32Value)1U,
+                        Name = "Picture"
+                    },
+                    new DocumentFormat.OpenXml.Drawing.Wordprocessing.NonVisualGraphicFrameDrawingProperties(
+                        new DocumentFormat.OpenXml.Drawing.GraphicFrameLocks() { NoChangeAspect = true }),
+                    new DocumentFormat.OpenXml.Drawing.Graphic(
+                        new DocumentFormat.OpenXml.Drawing.GraphicData(
+                            new DocumentFormat.OpenXml.Drawing.Pictures.Picture(
+                                new DocumentFormat.OpenXml.Drawing.Pictures.NonVisualPictureProperties(
+                                    new DocumentFormat.OpenXml.Drawing.Pictures.NonVisualDrawingProperties()
+                                    {
+                                        Id = (UInt32Value)0U,
+                                        Name = "Image.jpg"
+                                    },
+                                    new DocumentFormat.OpenXml.Drawing.Pictures.NonVisualPictureDrawingProperties()),
+                                new DocumentFormat.OpenXml.Drawing.Pictures.BlipFill(
+                                    new DocumentFormat.OpenXml.Drawing.Blip()
+                                    {
+                                        Embed = imageId,
+                                        CompressionState = DocumentFormat.OpenXml.Drawing.BlipCompressionValues.Print
+                                    },
+                                    new DocumentFormat.OpenXml.Drawing.Stretch(new DocumentFormat.OpenXml.Drawing.FillRectangle())),
+                                new DocumentFormat.OpenXml.Drawing.Pictures.ShapeProperties(
+                                    new DocumentFormat.OpenXml.Drawing.Transform2D(
+                                        new DocumentFormat.OpenXml.Drawing.Offset() { X = 0L, Y = 0L },
+                                        new DocumentFormat.OpenXml.Drawing.Extents() { Cx = 990000L, Cy = 792000L }),
+                                    new DocumentFormat.OpenXml.Drawing.PresetGeometry(new DocumentFormat.OpenXml.Drawing.AdjustValueList())
+                                    { Preset = DocumentFormat.OpenXml.Drawing.ShapeTypeValues.Rectangle })))))
+                {
+                    DistanceFromTop = (UInt32Value)0U,
+                    DistanceFromBottom = (UInt32Value)0U,
+                    DistanceFromLeft = (UInt32Value)0U,
+                    DistanceFromRight = (UInt32Value)0U,
+                    EditId = "50D07946"
+                });
+
+            // Add the image to a paragraph and then add the paragraph to the body
+            var paragraph = new DocumentFormat.OpenXml.Wordprocessing.Paragraph(new DocumentFormat.OpenXml.Wordprocessing.Run(element));
+            body.Append(paragraph);
+        }
+
+
+    // GET: api/inspections/{id} - Fetch a specific inspection by ID
+    [HttpGet("{id}")]
         public async Task<IActionResult> GetInspection(int id)
         {
             var inspection = await _context.Inspections.FindAsync(id);

@@ -1,0 +1,48 @@
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Dokumentationssystem.Views.DownloadInspectionsPage"
+             BackgroundImageSource="create.jpg">
+
+    <Grid Padding="20">
+        <!-- Semi-transparent overlay for readability -->
+        <Grid BackgroundColor="#CC000000" Padding="20" HorizontalOptions="Center" VerticalOptions="Center">
+            <StackLayout VerticalOptions="Center" HorizontalOptions="Center" Spacing="30">
+                <Label Text="Choose download format" 
+                       FontSize="Large" 
+                       HorizontalOptions="Center"
+                       TextColor="White" />
+
+                <!-- Horizontal layout for download buttons -->
+                <StackLayout Orientation="Horizontal" HorizontalOptions="Center" Spacing="30">
+                    <!-- PDF Download Button -->
+                    <StackLayout HorizontalOptions="Center">
+                        <ImageButton Source="pdf.png"
+                                     HeightRequest="80"
+                                     WidthRequest="80"
+                                     BackgroundColor="Transparent"
+                                     HorizontalOptions="Center"
+                                     Clicked="OnPdfButtonClicked" />
+                        <Label Text="PDF" 
+                               FontSize="Medium" 
+                               HorizontalOptions="Center"
+                               TextColor="White"/>
+                    </StackLayout>
+
+                    <!-- Word Download Button -->
+                    <StackLayout HorizontalOptions="Center">
+                        <ImageButton Source="doc.png"
+                                     HeightRequest="80"
+                                     WidthRequest="80"
+                                     BackgroundColor="Transparent"
+                                     HorizontalOptions="Center"
+                                     Clicked="OnWordButtonClicked" />
+                        <Label Text="Word" 
+                               FontSize="Medium" 
+                               HorizontalOptions="Center"
+                               TextColor="White"/>
+                    </StackLayout>
+                </StackLayout>
+            </StackLayout>
+        </Grid>
+    </Grid>
+</ContentPage>

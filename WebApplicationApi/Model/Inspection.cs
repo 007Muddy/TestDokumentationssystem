@@ -1,9 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using SQLite;
+﻿    using SQLite;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WebApplicationApi.Model
 {
@@ -31,10 +29,9 @@ namespace WebApplicationApi.Model
     {
         [Key]
         public int Id { get; set; }
+
         [System.ComponentModel.DataAnnotations.Schema.Column(TypeName = "BYTEA")]
         public byte[] PhotoData { get; set; }
-
-
         public string? PhotoName { get; set; }
         public string? Description { get; set; }
         public int InspectionId { get; set; }

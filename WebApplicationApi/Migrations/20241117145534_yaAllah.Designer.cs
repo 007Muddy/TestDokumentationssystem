@@ -12,8 +12,8 @@ using WebApplicationApi.Data;
 namespace WebApplicationApi.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241113174702_databaseCreated")]
-    partial class databaseCreated
+    [Migration("20241117145534_yaAllah")]
+    partial class yaAllah
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -284,8 +284,7 @@ namespace WebApplicationApi.Migrations
                         .HasColumnType("integer");
 
                     b.Property<byte[]>("PhotoData")
-                        .IsRequired()
-                        .HasColumnType("BYTEA");
+                        .HasColumnType("bytea");
 
                     b.Property<string>("PhotoName")
                         .HasColumnType("text");

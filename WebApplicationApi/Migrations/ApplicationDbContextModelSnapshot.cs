@@ -281,8 +281,7 @@ namespace WebApplicationApi.Migrations
                         .HasColumnType("integer");
 
                     b.Property<byte[]>("PhotoData")
-                        .IsRequired()
-                        .HasColumnType("BYTEA");
+                        .HasColumnType("bytea");
 
                     b.Property<string>("PhotoName")
                         .HasColumnType("text");

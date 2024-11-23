@@ -5,7 +5,7 @@
              xmlns:converters="clr-namespace:Dokumentationssystem.Converters"
              x:Class="Dokumentationssystem.Views.InspectionDetailsPage"
              Title=""
-             BackgroundImageSource="edit1.jpg">
+             BackgroundImageSource="background4.webp">
     <Shell.BackButtonBehavior>
         <BackButtonBehavior IsVisible="False" />
     </Shell.BackButtonBehavior>

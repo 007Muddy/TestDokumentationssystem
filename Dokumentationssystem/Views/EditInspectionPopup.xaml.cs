@@ -41,7 +41,9 @@ namespace Dokumentationssystem.Views
 
             _inspection.InspectionName = InspectionNameEntry.Text?.Trim();
             _inspection.Address = AddressEntry.Text?.Trim();
-            _inspection.Date = DateEntry.Date;
+
+            // Convert the selected date to UTC
+            _inspection.Date = DateEntry.Date.ToUniversalTime();
 
             if (string.IsNullOrEmpty(_inspection.InspectionName) || string.IsNullOrEmpty(_inspection.Address))
             {
@@ -89,5 +91,6 @@ namespace Dokumentationssystem.Views
                 }
             }
         }
+
     }
 }

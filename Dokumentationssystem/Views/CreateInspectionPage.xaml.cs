@@ -157,7 +157,11 @@ namespace Dokumentationssystem.Views
                 var formData = new MultipartFormDataContent();
                 formData.Add(new StringContent(inspectionName), "InspectionName");
                 formData.Add(new StringContent(address), "Address");
-                formData.Add(new StringContent(inspectionDate.ToString("yyyy-MM-dd")), "Date");
+                // Convert the inspection date to UTC
+                var utcInspectionDate = inspectionDate.ToUniversalTime();
+                formData.Add(new StringContent(utcInspectionDate.ToString("o")), "Date"); // Using "o" format for ISO 8601 UTC format
+
+
                 formData.Add(new StringContent(createdBy), "CreatedBy");
 
                 var response = await httpClient.PostAsync(CreateInspectionUrl, formData);
